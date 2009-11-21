@@ -36,10 +36,8 @@ has 'required' => (
 
 has 'validator' => (
     is          => 'rw',
-    isa         => 'Str',
+    isa         => 'Object',
     required    => 1,
-    does        => 'role_to_require',
-    default     => 1,
     lazy        => 1,
     # additional options
 );
@@ -48,3 +46,4 @@ has 'current_value' => (
     is          => 'rw',
 );
 
+1;
