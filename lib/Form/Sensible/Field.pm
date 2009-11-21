@@ -39,11 +39,31 @@ has 'validator' => (
     isa         => 'Object',
     required    => 1,
     lazy        => 1,
-    # additional options
 );
 
-has 'current_value' => (
+has 'renderer' => (
+    is          => 'rw',
+    isa         => 'Object',
+    required    => 1,
+);
+
+
+# values are of indeterminate type generally.
+has 'value' => (
     is          => 'rw',
 );
+
+has 'default_value' => (
+    is          => 'rw',
+);
+
+sub is_valid {
+    my ($self) = @_;
+    
+    if (!defined($self->value) && !$self->required ) {
+        return 1;
+    }
+    return $self->validator->validate($self, $value);
+}
 
 1;
