@@ -23,7 +23,7 @@ has 'label' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
-    default     => sub { return shift->name(); },
+    default     => sub { return ucfirst(shift->name()); },
     lazy        => 1,
 );
 
@@ -34,18 +34,34 @@ has 'required' => (
     default     => 0,
 );
 
-has 'validator' => (
+## validation is args to the validator that will be used
+## by default, the hashref can contain 'regex' - a ref to a 
+## regex.  or 'code' - a code ref.  If both are present, 
+## the regex will be checked first, then if that succeeds
+## the coderef will be processed.
+
+
+has 'validation' => (
     is          => 'rw',
-    isa         => 'Object',
+    isa         => 'HashRef',
     required    => 1,
     lazy        => 1,
 );
 
-has 'renderer' => (
+## render hints is a hashref that gives hints about rendering
+## for the various renderers.  for example:  
+## render_hints->{HTML} = hash containing information about 
+## how the field should be rendered.
+
+has 'render_hints' => (
     is          => 'rw',
-    isa         => 'Object',
+    isa         => 'HashRef',
     required    => 1,
+    default     => sub { return {}; },
+    lazy        => 1,
 );
+
+
 
 
 # values are of indeterminate type generally.
@@ -56,14 +72,5 @@ has 'value' => (
 has 'default_value' => (
     is          => 'rw',
 );
-
-sub is_valid {
-    my ($self) = @_;
-    
-    if (!defined($self->value) && !$self->required ) {
-        return 1;
-    }
-    return $self->validator->validate($self, $value);
-}
 
 1;
