@@ -217,11 +217,9 @@ sub _create_validator {
         ## we have, so get the class name and instantiate an object of that class
         my $classname = $self->validation->{class};
         $validator = $classname->new(config => $self->validation);
-        $validator->initialize_for_form($self);
     } else {
         ## otherwise, we create a Form::Sensible::Validator object.
         $validator = Form::Sensible::Validator->new(config => $self->validation);
-        $validator->initialize_for_form($self);
     }
 }
 
