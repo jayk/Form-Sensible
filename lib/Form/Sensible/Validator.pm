@@ -6,7 +6,7 @@ use Moose;
 ##
 ## should this be an abstract role that simply defines the interface to validators?
 
-has 'options' => (
+has 'config' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
@@ -41,12 +41,18 @@ sub form_is_valid {
     }
 }
 
+sub initialize_for_form {
+    my ($self, $form) = @_;
+    
+    $self->reset($form);
+}
+
 sub reset {
     my ($self, $form) = @_;
     
     $self->error_fields([]);
     $self->field_messages({});
-    $self->options($form->validation);
+    $self->config($form->validation);
 }
 
 sub validate {
