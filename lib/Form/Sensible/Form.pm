@@ -21,6 +21,14 @@ use Carp;
 
 ## 7b) if validation succeeds - complete_action is called.
 
+has 'name' => (
+    is          => 'rw',
+    isa         => 'Str',
+    required    => 1,
+    default     => 'form',
+);
+
+
 has '_fields' => (
     is          => 'rw',
     isa         => 'HashRef[Form::Sensible::Field]',
@@ -44,7 +52,6 @@ has 'render_hints' => (
     required    => 1,
     default     => sub { return {}; },
     lazy        => 1,
-    # additional options
 );
 
 ## validation hints - FULL form validation

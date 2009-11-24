@@ -70,7 +70,7 @@ sub reset {
             push @{$self->field_validators->{$fieldname}}, Form::Sensible::FieldValidator::Regex->new( regex => $field->validation->{'regex'});
         }
         if (defined($field->validation->{'code'})) {
-            push @{$self->field_validators->{$fieldname}}, Form::Sensible::FieldValidator::Code->new( code => $field->validation->{'regex'});
+            push @{$self->field_validators->{$fieldname}}, Form::Sensible::FieldValidator::Code->new( code => $field->validation->{'code'});
         }
     }
 }
