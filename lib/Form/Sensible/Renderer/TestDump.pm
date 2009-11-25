@@ -1,7 +1,7 @@
 package Form::Sensible::Renderer::TestDump;
 use Moose;
 use namespace::autoclean;
-
+use Data::Dumper;
 has 'form' => (
 	is => 'ro',
 	isa => 'Form::Sensible::Form',
@@ -35,11 +35,7 @@ sub dump_hoh {
 	my $self = shift;
 	my %hoh = $self->build_hoh;
 	
-	for ( sort keys %hoh ) {
-		print "$_ =>\n";
-		my $subkey = $hoh{$_};
-		print "\t $_ => $subkey->{$_}\n" for sort keys %$subkey;
-	}
+	print Dumper(\%hoh);
 }
 
 1;
