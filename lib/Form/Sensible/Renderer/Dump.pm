@@ -1,4 +1,4 @@
-package Form::Sensible::Renderer::TestDump;
+package Form::Sensible::Renderer::Dump;
 use Moose;
 use namespace::autoclean;
 use Data::Dumper;
