@@ -1,8 +1,8 @@
 package Form::Sensible::Validator;
 
 use Moose;
-use Form::Sensible::FieldValidator::Code;
-use Form::Sensible::FieldValidator::Regex;
+use Form::Sensible::Validator::Result;
+use Carp qw/croak/;
 
 ## this module provides the basics for validation of a Form.
 ##
@@ -16,66 +16,7 @@ has 'config' => (
     lazy        => 1,
 );
 
-has 'field_messages' => (
-    is          => 'rw',
-    isa         => 'HashRef[ArrayRef]',
-    required    => 1,
-    default     => sub { return {}; },
-    lazy        => 1,
-);
-
-has 'error_fields' => (
-    is          => 'rw',
-    isa         => 'ArrayRef',
-    required    => 1,
-    default     => sub { return []; },
-    lazy        => 1,
-    # additional options
-);
-
-has 'field_validators' => (
-    is          => 'rw',
-    isa         => 'HashRef[ArrayRef]',
-    required    => 1,
-    default     => sub { return {}; },
-    lazy        => 1,
-);
-
-
-sub form_is_valid {
-    my $self = shift;
-    
-    if ($#{$self->error_fields} == -1 ) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-## hook point for resetting validator state to process a new form.
-sub reset {
-    my ($self, $form) = @_;
-    
-    $self->error_fields([]);
-    $self->field_messages({});
-    $self->field_validators({});
-    $self->config($form->validation);
-    
-    ## maybe at some future date, we make this work for arbitrary field validators
-    ## my guess is, however, that anything more complex will require an external
-    ## form validation module
-    foreach my $fieldname ($form->fieldnames) {
-        my $field = $form->field($fieldname);
-        if (defined($field->validation->{'regex'})) {
-            push @{$self->field_validators->{$fieldname}}, Form::Sensible::FieldValidator::Regex->new( regex => $field->validation->{'regex'});
-        }
-        if (defined($field->validation->{'code'})) {
-            push @{$self->field_validators->{$fieldname}}, Form::Sensible::FieldValidator::Code->new( code => $field->validation->{'code'});
-        }
-    }
-}
-
-# returns 0 if validation failed, or 1 if validation succeeded.
+# returns a Form::Sensible::Validator::Result
 sub validate {
     my ($self, $form) = @_;
     
@@ -83,42 +24,84 @@ sub validate {
     ## the order provided by the form.  If all of those succeed, then proceed to 
     ## complete form validation if provided.
     
+    ## Prepare our validation result - it will be 'valid' unless we fail something.
+    my $validation_result = Form::Sensible::Validator::Result->new();
+    
     foreach my $fieldname ($form->fieldnames) {
         my $field = $form->field($fieldname);
         if ($field->value) {
+            
             ## field has value, so we run the field validators
-            foreach my $validator (@{$self->field_validators->{$fieldname}}) {
-                my $result = $validator->validate($field);
-                if($result) {
-                    push @{$self->error_fields}, $fieldname;
-                    push @{$self->field_messages->{$fieldname}}, $result;
+            ## first regex. 
+            if (defined($field->validation->{'regex'})) {
+                my $invalid = $self->validate_field_with_regex($field, $field->validation->{'regex'});
+                if ($invalid) {
+                    $validation_result->add_error($fieldname, $invalid);
+                }
+            }
+            ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
+            ## don't bother. 
+            if (defined($field->validation->{'code'}) && $validation_result->is_valid()) {
+                my $invalid = $self->validate_field_with_code($field, $field->validation->{'code'});
+                if ($invalid) {
+                    $validation_result->add_error($fieldname, $invalid);
                 }
             }
         } elsif ($field->required) {
             ## field was required but was empty.
-            push @{$self->error_fields}, $fieldname;
             if (exists($field->validation->{'missing_message'})) {
-                push @{$self->field_messages->{$fieldname}}, $field->validation->{'missing_message'};
+                $validation_result->add_missing($fieldname, $field->validation->{'missing_message'});
             } else {
-                push @{$self->field_messages->{$fieldname}}, $field->display_name . " is a required field and was not provided.";
+                $validation_result->add_missing($fieldname,  $field->display_name . " is a required field but was not provided.");
             }
         }
     }
     
-    if ($#{$self->error_fields} eq -1) {
-        if (defined($self->config->{'post_field_validation'}) && ref($self->config->{'post_field_validation'}) eq 'CODE') {
-            my $results = $self->config->{'post_field_validation'}->($form);
-            if (scalar keys %{$results}) {
-                foreach my $key (keys %{$results}) {
-                    push @{$self->error_fields}, $key;
-                    push @{$self->field_messages->{$key}}, @{$results->{$key}};
-                }
-                return 0;
-            }
+    if ($validation_result->is_valid()) {
+        if (defined($form->validation->{'code'}) && ref($form->validation->{'code'}) eq 'CODE') {
+            my $results = $form->validation->{'code'}->($form, $validation_result);
         }
-        return 1;
+    }
+    return $validation_result;
+}
+
+sub validate_field_with_regex {
+    my ($self, $field, $regex) = @_;
+    
+    if (ref($regex) ne 'Regexp') {
+        $regex = qr/$regex/;
+    }
+    
+    if ($field->value !~ $regex) {
+        if (exists($field->validation->{'invalid_message'})) {
+            return $field->validation->{'invalid_message'};
+        } else {
+            return $field->display_name . " is invalid.";
+        }
     } else {
         return 0;
+    }
+}
+
+sub validate_field_with_coderef {
+    my ($self, $field, $code) = @_;
+
+    if (ref($code) ne 'CODE') {
+        croak('Bad coderef provided to validate_field_with_coderef');
+    }
+    
+    my $results = $code->($field);
+    
+    ## if we get $results of 0 or a message, we return it.
+    ## if we get $results of simply one, we generate the invalid message
+    if ($results == 1) {
+        if (exists($field->validation->{invalid_message})) {
+            return $field->validation->{invalid_message};
+        } else {
+            return $field->display_name . " is invalid.";
+        }
+    } else {
+        return $results;
     }
 }
 

@@ -1,7 +1,7 @@
 package Form::Sensible::Form;
 
 use Moose;
-use Carp;
+use Carp qw/croak/;
 
 ## a form is a collection of fields. Different form types will work differently.
 
@@ -46,11 +46,33 @@ has 'field_order' => (
 );
 
 
+has 'renderer' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::Renderer',
+);
+
+
+
 has 'render_hints' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
     default     => sub { return {}; },
+    lazy        => 1,
+);
+
+has 'validator' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::Validator',
+    lazy        => 1,
+    builder     => '_create_validator'
+);
+
+has 'validator_args' => (
+    is          => 'rw',
+    isa         => 'ArrayRef',
+    required    => 1,
+    default     => sub { return []; },
     lazy        => 1,
 );
 
@@ -61,15 +83,7 @@ has 'validation' => (
     isa         => 'HashRef',
     required    => 1,
     default     => sub { return {}; },
-    lazy        => 1,    
-);
-
-
-has 'validator' => (
-    is          => 'rw',
-    isa         => 'Form::Sensible::Validator',
     lazy        => 1,
-    builder     => '_create_validator'
 );
 
 
@@ -227,19 +241,32 @@ sub _create_validator {
         
         ## we have, so get the class name and instantiate an object of that class
         my $classname = $self->validation->{class};
-        $validator = $classname->new(config => $self->validation);
+        $validator = $classname->new(@{$self->validator_args});
     } else {
         ## otherwise, we create a Form::Sensible::Validator object.
-        $validator = Form::Sensible::Validator->new(config => $self->validation);
+        $validator = Form::Sensible::Validator->new(@{$self->validator_args});
     }
+    return $validator;
 }
-
 
 sub validate {
     my ($self) = @_;
 
-    $self->validator->reset($self);
-    return $self->validator->validate($self);
+    if ($self->validator) {
+        return $self->validator->validate($self);
+    } else {
+        croak 'Failure attempting to load validator';
+    }
+}
+
+sub render {
+    my ($self) = @_;
+    
+    if ($self->renderer) {
+        return $self->renderer->render($self);
+    } else {
+        croak __PACKAGE__ . '->render() called but no renderer defined for this form (' . $self->name . ')';
+    }
 }
 
 sub get_configuration {
