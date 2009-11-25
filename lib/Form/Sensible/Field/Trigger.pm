@@ -7,13 +7,27 @@ extends Form::Sensible::Field;
 
 ## always has an activation trigger, even if it does nothing.
 
-has 'activation_trigger' => (
+has 'event_to_trigger' => (
     is          => 'rw',
-    isa         => 'CodeRef',
+    isa         => 'Str',
     required    => 1,
-    default     => sub { return sub {}; }
+    builder     => '_default_event_name',
+    lazy        => 1,
 );
 
+sub _default_event_name {
+    my ($self) = @_;
+    
+    return $self->name . "_triggered";
+}
 
 
+sub get_additional_configuration {
+    my $self = shift;
+    
+    return { 
+                'event_to_trigger' => $self->event_to_trigger,
+           };
+
+}
 1;

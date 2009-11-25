@@ -21,4 +21,14 @@ has 'potential_values' => (
     lazy        => 1,
 );
 
+sub get_additional_configuration {
+    my $self = shift;
+    
+    return { 
+                'accepts_multiple' => $self->accepts_multiple,
+                'potential_values' => $self->potential_values
+           };
+
+}
+
 1;

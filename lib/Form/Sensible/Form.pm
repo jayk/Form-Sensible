@@ -115,7 +115,6 @@ sub BUILD {
 sub add_field {
     my ($self, $field, $fieldname, $position) = @_;
     
-    
     if (!$fieldname) {
         $fieldname = $field->name;
     }
@@ -163,7 +162,7 @@ sub reorder_field {
     my ($self, $fieldname, $newposition) = @_;
     
     my $field = $self->remove_field($fieldname);
-    return $self->add_field($fieldname, $field, $newposition);
+    return $self->add_field($field, $fieldname, $newposition);
 }
 
 ## returns the field requested or undef if a field by that name is not found
@@ -241,6 +240,24 @@ sub validate {
 
     $self->validator->reset($self);
     return $self->validator->validate($self);
+}
+
+sub get_configuration {
+    my ($self) = @_;
+    
+    my $form_hash = { 
+    	                    'name' => $self->name,
+    	                    'render_hints' => $self->render_hints,
+    	                    'validation' => $self->validation,
+    	                    'fieldnames' => $self->fieldnames,
+    	            };
+
+    $form_hash->{'fields'} = [];
+
+    for my $fieldname ( $self->fieldnames ) {
+        push @{$form_hash->{'fields'}}, $self->field($fieldname)->get_configuration;
+    }
+    return $form_hash; 
 }
 
 1;

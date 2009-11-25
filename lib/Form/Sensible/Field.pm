@@ -62,9 +62,6 @@ has 'render_hints' => (
     lazy        => 1,
 );
 
-
-
-
 # values are of indeterminate type generally.
 has 'value' => (
     is          => 'rw',
@@ -73,5 +70,31 @@ has 'value' => (
 has 'default_value' => (
     is          => 'rw',
 );
+
+sub get_configuration {
+    my ($self) = @_;
+    
+    my %config = (
+                    name => $self->name,
+                    display_name => $self->display_name,
+                    required => $self->required,
+                    validation => $self->validation,
+                    default_value => $self->value,
+                 );
+                 
+    my $additional = $self->get_additional_configuration;
+    foreach my $key (keys %{$additional}) {
+        $config{$key} = $additional->{$key};
+    }
+    
+    return \%config;
+}
+
+## hook for adding additional config without having to do 'around' every time.
+sub get_additional_configuration {
+    my ($self) = @_;
+    
+    return {};
+}
 
 1;

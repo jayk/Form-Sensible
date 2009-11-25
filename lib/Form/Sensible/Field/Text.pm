@@ -12,6 +12,10 @@ has 'maximum_length' => (
     default     => 256,
 );
 
-
+sub get_additional_configuration {
+    my $self = shift;
+    
+    return { 'maximum_length' => $self->maximum_length };    
+}
 
 1;
