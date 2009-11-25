@@ -51,4 +51,70 @@ use Regexp::Common;
 ## MSSQL
 ## Oracle
 
+has 'dbms'	=> (
+	is			=> 'ro',
+	isa			=> 'Str',
+	required	=> 1,
+	lazy_build	=> 1,
+	default		=> 'Pg',
+);
+
+has 'sql_type' => (
+	is  		=> 'ro',
+	isa 		=> 'Str',
+	required 	=> 1,
+	lazy_build  => 1,
+	default     => 'Text'
+);
+
+has 'sql_types' => (
+	is			=> 'ro',
+	isa			=>	'ArrayRef[HashRef]',
+	default		=> { [{}] },
+	lazy_build 	=> 1,
+);
+
+has 'translated' => (
+	is			=> 'ro',
+	isa			=> 'ArrayRef[HashRef]',
+	default		=> { [{}] },
+	lazy_build 	=> 1,
+);
+
+## translate types
+## return AoH if successful, 
+## otherwise return error string
+sub map_types {
+	my $self = shift;
+	my @definitions = $self->sql_types;
+	my $type;
+	my $class;
+	my $class_type;
+	
+	for (@definitions) {
+		
+		$type  = $self->translate($_->[0]->{data_type});
+		$class_type = require "Form::Sensible::Field::$type";
+		eval { require $class_type };
+		unless ( $@ ){
+			$class = $class_type
+		} else {
+			return $@;
+		}
+		
+		ucfirst($type);
+		push @{$self->translated($_)}, [ { $form => { fields => { name => $name, class => $class } } } ];
+	}
+	
+	return $self->translated;
+}
+
+sub translate {
+	my ($self, $sql_type) = @_;
+	my $dbms = $self->dbms;
+	## big ass hash for mapping sql->form types
+	
+	return $types{$dbms}->{$sql_type};
+}
+
 1;
