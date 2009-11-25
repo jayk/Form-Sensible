@@ -45,6 +45,7 @@ has 'validation' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
+    default     => sub { return {}; },
     lazy        => 1,
 );
 

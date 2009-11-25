@@ -119,13 +119,13 @@ sub add_field {
         $self->remove_field($fieldname);
     }
     
-    $self->_fields->{$fieldname};
+    $self->_fields->{$fieldname} = $field;
     
     ## if position is larger than the current form size
     ## reset position so the field is added to the end of the
     ## list.
     
-    if ($position > $#{$self->field_order}) {
+    if ($position && $position > $#{$self->field_order}) {
         $position = undef;
     }
     if (!$position) {
