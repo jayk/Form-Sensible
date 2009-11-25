@@ -113,7 +113,12 @@ sub BUILD {
 ## the same $field->name
 
 sub add_field {
-    my ($self, $fieldname, $field, $position) = @_;
+    my ($self, $field, $fieldname, $position) = @_;
+    
+    
+    if (!$fieldname) {
+        $fieldname = $field->name;
+    }
     
     if (defined($self->_fields->{$fieldname})) {
         $self->remove_field($fieldname);
