@@ -14,14 +14,18 @@ sub build_hoh {
 	my $form = $self->form;
 	
 	for my $fieldname ( $form->fieldnames ) {
+		my $name  = $form->name;
 		my $field = $form->field($fieldname);
-		if ( $field->value ) {
-			
-			$params{'field_name'} = $fieldname;
-			$params{$fieldname}{'value'} = $field->value;
-		 	$params{$fieldname}{'validators'} = $field->field_validators->{$fieldname};
-			
-		}
+	
+		%params = (
+			$name => {
+			    field_name => $fieldname,
+	            validation => {
+		        	%{$field->validation}
+				}
+			}
+		);
+	
 	}
 	
 	return %params;

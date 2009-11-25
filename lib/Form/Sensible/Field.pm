@@ -47,7 +47,6 @@ has 'validation' => (
     required    => 1,
     default     => sub { return {}; },
     lazy        => 1,
-	default    => sub {{}},
 );
 
 ## render hints is a hashref that gives hints about rendering
