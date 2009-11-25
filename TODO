@@ -1,0 +1,8 @@
+TODO:
+- add accessibility methods for all public classes (something like catalyst has with the $c context object?)
+- Reflector::DBIC, "CLUE"
+- DBIC <-> F::S::F type mappings
+- Renderer
+- Docs
+- Examples
+- moar tests

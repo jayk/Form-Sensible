@@ -2,6 +2,7 @@ package Form::Sensible::Renderer::TestDump;
 use Moose;
 use namespace::autoclean;
 use Data::Dumper;
+
 has 'form' => (
 	is => 'ro',
 	isa => 'Form::Sensible::Form',
