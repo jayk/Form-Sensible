@@ -22,7 +22,21 @@ my %check_against =  (
 	                               'regex' => qr/(?-xism:^[0-9a-z]*$)/
 	                             },
 	             'field_name' => 'test_field'
-	           }
+	           },
+	'test' => {
+          		'validation' => {
+		                            'regex' => qr/(?-xism:^[0-9a-z]*$)/
+		                          },
+		          'field_name' => 'field_two'
+		        },
+	'test' => {
+          		 'validation' => {
+		                             'regex' => qr/(?-xism:^[0-9a-z]*$)/
+		                           },
+		           'field_name' => 'field_free'
+		         }
+		
 );
 
-is_deeply(\%check_against, \%validation
+is_deeply(\%check_against, \%validation);
+done_testing();
