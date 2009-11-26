@@ -26,4 +26,19 @@ sub get_additional_configuration {
 
 }
 
+sub validate {
+    my $self = shift;
+    
+    if ($self->value ne $self->on_value && $self->value ne $self->off_value) {
+    
+        if (exists($self->validation->{'invalid_message'})) {
+            return $self->validation->{'invalid_message'};
+        } else {
+            return $self->display_name . " was set to an invalid value";            
+        }        
+    } else {
+        return 0;
+    }
+}
+
 1;

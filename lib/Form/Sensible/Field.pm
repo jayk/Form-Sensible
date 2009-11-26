@@ -78,10 +78,17 @@ sub get_configuration {
                     name => $self->name,
                     display_name => $self->display_name,
                     required => $self->required,
-                    validation => $self->validation,
                     default_value => $self->value,
                  );
-                 
+    $config{'validation'} = {};
+    foreach my $key (keys %{$self->validation}) {
+        if (ref($self->validation->{$key})) {
+            my $f = $self->validation->{$key};
+            $config{'validation'}{$key} = "$f";
+        } else {
+            $config{'validation'}{$key} = $self->validation->{$key};   
+        }
+    }
     my $additional = $self->get_additional_configuration;
     foreach my $key (keys %{$additional}) {
         $config{$key} = $additional->{$key};
@@ -95,6 +102,13 @@ sub get_additional_configuration {
     my ($self) = @_;
     
     return {};
+}
+
+## built-in field specific validation.  Regex and code validation run first.
+sub validate {
+    my ($self) = @_;
+    
+    return 0;
 }
 
 1;

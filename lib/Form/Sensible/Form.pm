@@ -276,13 +276,13 @@ sub get_configuration {
     	                    'name' => $self->name,
     	                    'render_hints' => $self->render_hints,
     	                    'validation' => $self->validation,
-    	                    'fieldnames' => $self->fieldnames,
+    	                    'fieldnames' => [ $self->fieldnames ],
     	            };
 
     $form_hash->{'fields'} = [];
 
-    for my $fieldname ( $self->fieldnames ) {
-        push @{$form_hash->{'fields'}}, $self->field($fieldname)->get_configuration;
+    foreach my $fieldname ( $self->fieldnames ) {
+        push @{$form_hash->{'fields'}}, { $fieldname => $self->field($fieldname)->get_configuration };
     }
     return $form_hash; 
 }

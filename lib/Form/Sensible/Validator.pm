@@ -47,6 +47,11 @@ sub validate {
                     $validation_result->add_error($fieldname, $invalid);
                 }
             }
+            ## finally, we run the fields internal validate routine
+            my $invalid = $field->validate();
+            if ($invalid) {
+                $validation_result->add_error($fieldname, $invalid);
+            }
         } elsif ($field->required) {
             ## field was required but was empty.
             if (exists($field->validation->{'missing_message'})) {
