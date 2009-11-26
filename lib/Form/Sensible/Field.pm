@@ -23,7 +23,11 @@ has 'display_name' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
-    default     => sub { return ucfirst(shift->name()); },
+    default     => sub { 
+                            my $name = ucfirst(shift->name()); 
+                            $name =~ s/_/ /;
+                            return $name; 
+                        },
     lazy        => 1,
 );
 

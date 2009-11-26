@@ -99,6 +99,7 @@ sub in_step {
     if (!defined($value)) {
         $value = $self->value;
     }
+    
     ## we have to do the step check this way, because % will not deal with
     ## a fractional step value.
     my $div = $value / $step;
