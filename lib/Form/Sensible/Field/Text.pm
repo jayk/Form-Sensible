@@ -42,7 +42,6 @@ sub get_additional_configuration {
     return { 
                 'maximum_length' => $self->maximum_length,
                 'should_truncate' => $self->should_truncate
-             
            };    
 }
 

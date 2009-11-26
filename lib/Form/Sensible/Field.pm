@@ -1,17 +1,7 @@
 package Form::Sensible::Field;
 
 use Moose;
-
-=pod 
-                    name => $xyz,
-                    label => $xyz,
-                    type => $xyz,
-                    arg => $xyz,
-                    options => $xyz,
-                    required => 1, 
-                    valid_regex => qr/...../,
-                    valid_code => sub { .... }
-=cut
+use Carp;
 
 has 'name' => (
     is          => 'rw',
@@ -79,6 +69,7 @@ sub get_configuration {
     my ($self) = @_;
     
     my %config = (
+                    class => ref($self),
                     name => $self->name,
                     display_name => $self->display_name,
                     required => $self->required,
@@ -113,6 +104,23 @@ sub validate {
     my ($self) = @_;
     
     return 0;
+}
+
+## restores a flattened field structure.
+sub create_from_flattened {
+    my ($class, $fieldconfig ) = @_;
+    
+    my $fieldclass = $fieldconfig->{'class'};
+    if (!$fieldclass) {
+        croak "Unable to restore flattened field, no field class defined";
+    }
+    
+    # copy because we are going to remove class, as it wasn't there to begin with.
+    my $config = { %{$fieldconfig} };
+
+    delete $config->{'class'};
+    
+    return $fieldclass->new(%{$fieldconfig});
 }
 
 1;
