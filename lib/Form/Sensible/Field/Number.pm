@@ -42,7 +42,7 @@ sub validate {
         return $self->display_name . " must be an integer.";
     }
     
-    ## we ran the gauntlet last check is to see if value is near step.
+    ## we ran the gauntlet last check is to see if value is in step.
     if (defined($self->step) && !$self->in_step()) {
 
         return $self->display_name . " must be a multiple of " . $self->step;
