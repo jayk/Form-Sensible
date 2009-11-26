@@ -55,8 +55,8 @@ sub generate_range_by_step {
     my ($self, $step, $lower_bound, $upper_bound) = @_;
     
     if (!$step) {
-        $step = $self->step;
-    }
+        $step = $self->step || 1;
+    } 
     if (!defined($lower_bound)) {
         $lower_bound = $self->lower_bound;
     }
