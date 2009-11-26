@@ -21,8 +21,8 @@ has 'should_truncate' => (
 
 ## does truncation if should_truncate is set.
 around 'value' => sub {
-    my $self = shift;
     my $orig = shift;
+    my $self = shift;
     
     if (@_) {
         my $value = shift;
