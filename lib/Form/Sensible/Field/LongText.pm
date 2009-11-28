@@ -4,13 +4,12 @@ use Moose;
 extends 'Form::Sensible::Field::Text';
 
 ## provides a long text field (such as a 'text area' or 'notes' box)
+## for now the only difference is a longer length.  that may change.
 
-has 'maximum_length' => (
-    is          => 'rw',
-    isa         => 'Int',
-    required    => 1,
-    default     => 10240,
-);
-
+sub _set_max_length {
+    my ($self) = shift;
+    
+    return 10240;
+}
 
 1;

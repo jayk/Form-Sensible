@@ -21,14 +21,19 @@ has 'missing_fields' => (
 sub add_error {
     my ($self, $fieldname, $message) = @_;
     
-    $self->error_fields->{$fieldname} = $message;
+    if (!exists($self->error_fields->{$fieldname})) {
+        $self->error_fields->{$fieldname} = [];
+    }
+    push @{$self->error_fields->{$fieldname}}, $message;
 }
 
 sub add_missing {
     my ($self, $fieldname, $message) = @_;
     
-    $self->missing_fields->{$fieldname} = $message;
-}
+    if (!exists($self->missing_fields->{$fieldname})) {
+        $self->missing_fields->{$fieldname} = [];
+    }
+    push @{$self->missing_fields->{$fieldname}}, $message;}
 
 
 sub is_valid {

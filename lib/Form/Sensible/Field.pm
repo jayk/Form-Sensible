@@ -21,6 +21,14 @@ has 'display_name' => (
     lazy        => 1,
 );
 
+has 'field_type' => (
+    is          => 'rw',
+    isa         => 'Str',
+    required    => 1,
+    builder     => '_field_type',
+);
+
+
 has 'required' => (
     is          => 'rw',
     isa         => 'Bool',
@@ -64,6 +72,14 @@ has 'value' => (
 has 'default_value' => (
     is          => 'rw',
 );
+
+sub _field_type {
+    my $self = shift;
+    
+    my $class = ref($self);
+    $class =~ m/::([^:]*)$/;
+    return lc($1);
+}
 
 sub get_configuration {
     my ($self) = @_;

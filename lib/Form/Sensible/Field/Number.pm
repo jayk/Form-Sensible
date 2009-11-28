@@ -51,7 +51,7 @@ sub validate {
 
 
 ## this is used when generating a slider or select of valid values.
-sub generate_range_by_step {
+sub potential_values {
     my ($self, $step, $lower_bound, $upper_bound) = @_;
     
     if (!$step) {

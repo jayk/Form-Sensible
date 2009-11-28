@@ -160,7 +160,7 @@ sub add_field {
 sub remove_field {
     my ($self, $fieldname) = @_;
     
-    my $field = $self->_fields->{$fieldname};
+    my $field = $self->field($fieldname);
     delete($self->_fields->{$fieldname});
     foreach my $i (0..$#{$self->field_order}) {
         if ($self->field_order->[$i] eq $fieldname ) {
@@ -260,10 +260,10 @@ sub validate {
 }
 
 sub render {
-    my ($self) = @_;
+    my ($self) = shift;
     
     if ($self->renderer) {
-        return $self->renderer->render($self);
+        return $self->renderer->render($self, @_);
     } else {
         croak __PACKAGE__ . '->render() called but no renderer defined for this form (' . $self->name . ')';
     }
@@ -272,7 +272,7 @@ sub render {
 sub get_configuration {
     my ($self) = @_;
     
-    my $form_hash = { 
+    my $form_hash = {
     	                    'name' => $self->name,
     	                    'render_hints' => $self->render_hints,
     	                    'validation' => $self->validation,
