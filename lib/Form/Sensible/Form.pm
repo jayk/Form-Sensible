@@ -51,8 +51,6 @@ has 'renderer' => (
     isa         => 'Form::Sensible::Renderer',
 );
 
-
-
 has 'render_hints' => (
     is          => 'rw',
     isa         => 'HashRef',
@@ -74,6 +72,12 @@ has 'validator_args' => (
     required    => 1,
     default     => sub { return []; },
     lazy        => 1,
+);
+
+has 'validator_result' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::Validator::Result',
+    required    => 0,
 );
 
 ## validation hints - FULL form validation
@@ -249,11 +253,16 @@ sub _create_validator {
     return $validator;
 }
 
+## validation_results() are set automatically if validate is run from the form.
+## otherwise it is not set.
+
 sub validate {
     my ($self) = @_;
 
     if ($self->validator) {
-        return $self->validator->validate($self);
+        my $results = $self->validator->validate($self);
+        $self->validation_result($results);
+        return $self->validation_result();
     } else {
         croak 'Failure attempting to load validator';
     }

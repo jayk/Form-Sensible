@@ -3,13 +3,12 @@ package Form::Sensible::Field::LongText;
 use Moose;
 extends 'Form::Sensible::Field::Text';
 
+has '+maximum_length' => (
+    default => 10240,
+);
+
 ## provides a long text field (such as a 'text area' or 'notes' box)
 ## for now the only difference is a longer length.  that may change.
 
-sub _set_max_length {
-    my ($self) = shift;
-    
-    return 10240;
-}
 
 1;

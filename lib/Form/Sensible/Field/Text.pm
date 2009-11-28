@@ -9,7 +9,7 @@ has 'maximum_length' => (
     is          => 'rw',
     isa         => 'Int',
     required    => 1,
-    builder     => '_set_max_length',
+    default     => 256,
 );
 
 has 'should_truncate' => (
@@ -18,12 +18,6 @@ has 'should_truncate' => (
     required    => 1,
     default     => 0,
 );
-
-sub _set_max_length {
-    my ($self) = shift;
-    
-    return 256;
-}
 
 ## does truncation if should_truncate is set.
 around 'value' => sub {

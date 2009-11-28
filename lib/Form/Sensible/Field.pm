@@ -26,8 +26,8 @@ has 'field_type' => (
     isa         => 'Str',
     required    => 1,
     builder     => '_field_type',
+    lazy        => 1
 );
-
 
 has 'required' => (
     is          => 'rw',
@@ -90,6 +90,7 @@ sub get_configuration {
                     display_name => $self->display_name,
                     required => $self->required,
                     default_value => $self->value,
+                    field_type => $self->field_type,
                  );
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {

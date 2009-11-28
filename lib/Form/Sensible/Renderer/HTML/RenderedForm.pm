@@ -2,6 +2,7 @@ package Form::Sensible::Renderer::HTML::RenderedForm;
 
 use Moose;
 use Carp qw/croak/;
+use File::ShareDir;
 
 has 'form' => (
     is          => 'rw',
@@ -15,19 +16,27 @@ has 'template' => (
     required    => 1,
 );
 
+has 'template_fallback_order' => (
+    is          => 'rw',
+    isa         => 'ArrayRef[Str]',
+    required    => 1,
+    default     => sub { return [ shift->form->name ]; },
+    lazy        => 1,
+);
+
+has 'stash' => (
+    is          => 'rw',
+    isa         => 'HashRef',
+    required    => 1,
+    default     => sub { return {}; },
+    lazy        => 1,
+);
+
 has 'css_prefix' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
     default     => '',
-);
-
-has 'fields' => (
-    is          => 'rw',
-    isa         => 'ArrayRef',
-    required    => 1,
-    default     => sub { return []; },
-    lazy        => 1,
 );
 
 has 'status_messages' => (
@@ -45,6 +54,18 @@ has 'error_messages' => (
     default     => sub { return {}; },
     lazy        => 1,
 );
+
+has 'render_hints' => (
+    is          => 'rw',
+    isa         => 'HashRef',
+    required    => 1,
+    default     => sub { 
+                            my $self = shift;
+                            return { %{$self->form->render_hints} };
+                       },
+    lazy        => 1,
+);
+
 
 sub add_status_message {
     my ($self, $message) = @_;
@@ -85,12 +106,34 @@ sub start {
     if (!$method) {
         $method = 'POST';
     }
+    my $vars = {
+                    method => $method,
+                    action => $action
+               };
+
+    my $output;
+    $self->process_first_template($vars, \$output, 'form_start');
+
+    return $output;
 }
 
 ## render all messages - mostly just passes status/error messages to the messages template.
 sub messages {
     my ($self, $additionalmessages) = @_;
     
+    my $output;
+
+    $self->process_first_template({}, \$output, 'form_messages');
+    
+    return $output;
+    
+}
+
+## return the form field names.
+sub fieldnames {
+    my ($self) = @_;
+    
+    return @{$self->form->fieldnames};
 }
 
 ## render all the form fields in the order provided by the form object.
@@ -107,13 +150,14 @@ sub render_field {
     my ($self, $fieldname) = @_;
     
     my $field = $self->form->field($fieldname);
-    ## figure out what field template we need to load based on the field
-    my @templates_to_try = (
-                                $self->form->name . '/' . $fieldname,
-                                $self->form->name . '/' . $field->field_type,
-                                $fieldname,
-                                $field->field_type
-                           );
+    my $fieldtype = $field->field_type;
+    
+    ## allow render_hints to override field type - allowing a number to be rendered
+    ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
+    if (exists($field->render_hints->{'field_type'})) {
+        $fieldtype = $field->render_hints->{'field_type'};
+    }
+
     
     ## Order for trying templates should be:
     ## formname/fieldname
@@ -121,20 +165,72 @@ sub render_field {
     ## fieldname
     ## fieldtype
     
-    ## --jk need to set up $vars and such.
     my $output;
-    my $vars = {};
+    my $vars =  {
+                    'field' => $field,
+                    'field_type' => $fieldtype,
+                    'field_name' => $fieldname
+                };
+                
+    ## if we have field-specific render_hints, we have to add them
+    ## ourselves.  First we load any already-set render_hints
+    if (scalar keys %{$field->render_hints}) {
+        $vars->{'render_hints'} = { %{ $self->render_hints } };
+        foreach my $key (keys %{$field->render_hints}) {
+            $vars->{'render_hints'}{$key} = $field->render_hints->{$key};
+        }
+    }
+
+    ## process the field template we need to load based on the fieldname / field type
+    $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
+    
+    return $output;
+}
+
+## pass in the vars / output / template_names to use.  This method handles automatic fallback
+## of templates from most specific to least specific.  
+
+sub process_first_template {
+    ## I know.... splice is unusual there, but I want to pass templates and this looks better
+    ## than a ton of shifts;
+    my ($self, $vars, $output) = splice(@_, 0, 3);
+    my @template_names = splice(@_, 3);
+    
+    ## prefill anything provided already into the stash
+    my $stash_vars = { %{$self->stash } }; 
+     
+    $stash_vars->{'render_hints'} = $self->render_hints;
+    $stash_vars->{'form'} = $self->form;
+    $stash_vars->{'error_messages'} = $self->error_messages;
+    $stash_vars->{'status_messages'} = $self->status_messages;
+    
+    ## copy the vars array into the stash_vars
+    foreach my $key (keys %{$vars}) {
+      $stash_vars->{$key} = $vars->{$key};  
+    } 
+                         
+    my @templates_to_try;
+    
+    foreach my $path (@{$self->template_fallback_order}) {
+        foreach my $template_name (@template_names) {
+            push @templates_to_try, $path . '/' . $template_name;
+        }
+    }
+    
+    push @templates_to_try, @template_names;
+    
     my $template_found = 0;
     foreach my $template_name (@templates_to_try) {
-        my $res = $self->template->process($template_name, $vars, \$output);
+        my $res = $self->template->process($template_name, $stash_vars, $output);
         if ($res) {
             $template_found = 1;
             last;
         }
     }
+    
     if (!$template_found) {
         ## crap.  throw an error or something, we couldn't find ANY matching template.
-        croak "Unable to find any template for " . $self->form->name . ':' . $field->name . " tried: " . join(", ", @templates_to_try);
+        croak "Unable to find any template for processing, tried: " . join(", ", @templates_to_try);
     }
     return $output;
 }
@@ -143,5 +239,9 @@ sub render_field {
 sub end {
     my ($self) = @_;
     
+    my $output;
     
+    $self->process_first_template({}, \$output, 'form_end');
+
+    return $output;
 }
