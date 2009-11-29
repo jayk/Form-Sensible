@@ -36,7 +36,7 @@ has 'css_prefix' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
-    default     => '',
+    default     => 'fs_',
 );
 
 has 'status_messages' => (
@@ -148,7 +148,7 @@ sub fields {
 
 sub render_field {
     my ($self, $fieldname) = @_;
-    
+
     my $field = $self->form->field($fieldname);
     my $fieldtype = $field->field_type;
     

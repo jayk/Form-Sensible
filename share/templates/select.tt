@@ -4,9 +4,9 @@
         [% FOREACH item = field.options -%]
         [%- selected = "" -%]
         [%- FOREACH val = field.value -%]
-            [%- IF item.value == val %][% selected = "selected" %][% END -%]
+            [%- IF item.value == val %][% selected = " selected" %][% END -%]
         [%- END -%]
-       <option value="[% item.value %]" [% selected %]>[% item.name %]</option>
+       <option value="[% item.value %]"[%- selected -%]>[% item.name %]</option>
        [% END %]
     </select>  
 </div>

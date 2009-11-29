@@ -117,13 +117,13 @@ sub in_step {
 sub get_additional_configuration {
     my $self = shift;
     
-    return { 
-                'step'          => $self->step,
-                'lower_bound'   => $self->lower_bound,
-                'upper_bound'   => $self->upper_bound,
-                'integer_only'  => $self->integer_only
-           };
-
+    my $result_hash = {};
+    foreach my $field (qw/step lower_bound upper_bound integer_only/) {
+        if (defined($self->$field())) {
+            $result_hash->{$field} = $self->$field();
+        }
+    }
+    return $result_hash;
 }
 
 1;

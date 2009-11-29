@@ -2,6 +2,7 @@ package Form::Sensible::Field;
 
 use Moose;
 use Carp;
+use Data::Dumper;
 
 has 'name' => (
     is          => 'rw',
@@ -89,8 +90,9 @@ sub get_configuration {
                     name => $self->name,
                     display_name => $self->display_name,
                     required => $self->required,
-                    default_value => $self->value,
+                    default_value => $self->default_value,
                     field_type => $self->field_type,
+                    render_hints => $self->render_hints,
                  );
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {
@@ -134,9 +136,8 @@ sub create_from_flattened {
     
     # copy because we are going to remove class, as it wasn't there to begin with.
     my $config = { %{$fieldconfig} };
-
     delete $config->{'class'};
-    
+    #print Dumper($config);
     return $fieldclass->new(%{$fieldconfig});
 }
 
