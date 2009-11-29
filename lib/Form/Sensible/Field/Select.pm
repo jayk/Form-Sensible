@@ -13,7 +13,7 @@ has 'accepts_multiple' => (
     default     => 0,
 );
 
-has 'potential_values' => (
+has 'options' => (
     is          => 'rw',
     isa         => 'ArrayRef',
     required    => 1,
@@ -49,7 +49,9 @@ has 'value' => (
 #    }
 #};
 
-sub add_selection {
+
+
+sub set_selection {
     my ($self, $value) = @_;
     
     if (!$self->accepts_multiple && $#{$self->value} >= 0) {
@@ -60,12 +62,20 @@ sub add_selection {
     }
 }
 
+sub add_option {
+    my ($self, $value, $display_name) = @_;
+    
+    push @{$self->options}, { name => $display_name,
+                              value => $value };
+}
+
 sub get_additional_configuration {
     my $self = shift;
     
     return { 
                 'accepts_multiple' => $self->accepts_multiple,
-                'potential_values' => $self->potential_values
+                'options' => $self->options,
+                'display_names' => $self->display_names,
            };
 
 }
@@ -76,8 +86,8 @@ sub validate {
 
     foreach my $value (@{$self->value}) {
         my $valid = 0;
-        foreach my $potential_value (@{$self->potential_values}) {
-            if ($value eq $potential_value) {
+        foreach my $option (@{$self->options}) {
+            if ($value eq $option->{'value'}) {
                 $valid = 1;
                 last;
             }

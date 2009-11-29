@@ -51,7 +51,7 @@ sub validate {
 
 
 ## this is used when generating a slider or select of valid values.
-sub potential_values {
+sub get_potential_values {
     my ($self, $step, $lower_bound, $upper_bound) = @_;
     
     if (!$step) {
@@ -88,6 +88,13 @@ sub potential_values {
         $value+= $step;
     }
     return @vals;
+}
+
+## this allows a number to behave like a Select if used that way.
+sub options {
+    my ($self) = @_;
+    
+    return [ map { { name => $_, value => $_ } } $self->get_potential_values() ];
 }
 
 sub in_step {

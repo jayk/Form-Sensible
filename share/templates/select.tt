@@ -1,11 +1,13 @@
-<div id="[% css_prefix _ field.name %]_div" class="[% css_prefix -%] formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+<div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%] formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
     <span class="[% css_prefix -%]label [% css_prefix _ field_type %]_label">[% field.display_name %]</span>
     
-    <select name="[% field_name %]" id="[% css_prefix _ form.name %]_[% field.name %]_input" class="[% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
-       [% FOREACH item = field.potential_values %]
-       [% FOREACH %]
-       <option value="[% item %]" [% IF [% field.value][+ formname +].values.[+ field.name +] == item.id %] selected [% END %]>[% item.value %]</option>
+    <select name="[% field_name %]" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
+        [% FOREACH item = field.options %]
+        [% selected = "" %]
+        [% FOREACH val = field.value %]
+            [% IF item.value == val %][% selected = "selected" %][% END %]
+        [% END %]
+       <option value="[% item.value %]" [% selected %]>[% item.name %]</option>
        [% END %]
-    </select>
-    <input type="text"   value="[% field.value %]" />    
+    </select>  
 </div>
