@@ -261,8 +261,8 @@ sub validate {
 
     if ($self->validator) {
         my $results = $self->validator->validate($self);
-        $self->validation_result($results);
-        return $self->validation_result();
+        $self->validator_result($results);
+        return $self->validator_result();
     } else {
         croak 'Failure attempting to load validator';
     }
