@@ -1,0 +1,14 @@
+[% IF messages.size %]
+<div class="[% css_prefix -%] messageblock">
+    [% FOREACH message IN messages %]
+    <span class="[% css_prefix -%]message">[% message.value %]</span><br/>
+    [% END %]
+</div>
+[% END %]
+[% IF errormessages.size %]
+<div class="[% css_prefix -%]errorblock">
+    [% FOREACH error IN errormessages %]
+    <span class="[% css_prefix -%]error">[% error.value %]</span><br/>
+    [% END %]
+</div>
+[% END %]

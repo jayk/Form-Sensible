@@ -203,6 +203,7 @@ sub process_first_template {
     $stash_vars->{'form'} = $self->form;
     $stash_vars->{'error_messages'} = $self->error_messages;
     $stash_vars->{'status_messages'} = $self->status_messages;
+    $stash_vars->{'css_prefix'} = $self->css_prefix;
     
     ## copy the vars array into the stash_vars
     foreach my $key (keys %{$vars}) {
@@ -221,7 +222,7 @@ sub process_first_template {
     
     my $template_found = 0;
     foreach my $template_name (@templates_to_try) {
-        my $res = $self->template->process($template_name, $stash_vars, $output);
+        my $res = $self->template->process($template_name . ".tt", $stash_vars, $output);
         if ($res) {
             $template_found = 1;
             last;
