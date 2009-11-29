@@ -2,6 +2,7 @@ package Form::Sensible::Renderer::HTML;
 
 use Moose;
 use Template;
+use Form::Sensible::Renderer::HTML::RenderedForm;
 
 has 'include_paths' => (
     is          => 'rw',
@@ -49,7 +50,10 @@ sub render {
     # create RenderedForm object
     # setup RenderedForm object
     # return renderedForm object
-    
+
+    if (!defined($stash_prefill)) {
+        $stash_prefill = {};
+    }
     my $form_specific_stash = { %{$stash_prefill} };
     
     my $template = $self->template;
@@ -75,8 +79,8 @@ sub render {
     
     my $rendered_form = Form::Sensible::Renderer::HTML::RenderedForm->new( %args );
     
-    if (defined($self->form->validator_result)) {
-        $rendered_form->add_errors_from_validator_result($self->form->validator_result);
+    if (defined($form->validator_result)) {
+        $rendered_form->add_errors_from_validator_result($form->validator_result);
     }
     
     return $rendered_form;

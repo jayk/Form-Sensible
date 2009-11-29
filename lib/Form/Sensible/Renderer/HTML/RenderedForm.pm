@@ -126,7 +126,6 @@ sub messages {
     $self->process_first_template({}, \$output, 'form_messages');
     
     return $output;
-    
 }
 
 ## return the form field names.
@@ -144,6 +143,7 @@ sub fields {
     foreach my $field ($self->form->fieldnames) {
         push @rendered_fields, $self->render_field($field);
     }
+    return join("\n",@rendered_fields);
 }
 
 sub render_field {
@@ -181,6 +181,7 @@ sub render_field {
         }
     }
 
+    
     ## process the field template we need to load based on the fieldname / field type
     $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
     
@@ -193,8 +194,10 @@ sub render_field {
 sub process_first_template {
     ## I know.... splice is unusual there, but I want to pass templates and this looks better
     ## than a ton of shifts;
-    my ($self, $vars, $output) = splice(@_, 0, 3);
-    my @template_names = splice(@_, 3);
+    my $self = shift;
+    my $vars = shift;
+    my $output = shift;
+    my @template_names = @_;
     
     ## prefill anything provided already into the stash
     my $stash_vars = { %{$self->stash } }; 
@@ -222,6 +225,7 @@ sub process_first_template {
     
     my $template_found = 0;
     foreach my $template_name (@templates_to_try) {
+        print STDERR "trying " . $template_name . ".tt\n";
         my $res = $self->template->process($template_name . ".tt", $stash_vars, $output);
         if ($res) {
             $template_found = 1;
@@ -246,3 +250,5 @@ sub end {
 
     return $output;
 }
+
+1;

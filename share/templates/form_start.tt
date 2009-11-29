@@ -1,2 +1,2 @@
 <div id="[% css_prefix _ form.name %]">
-    <form action="[% action %]') %]" method="post" class="[% css_prefix _ form.name %]" accept-charset="utf-8">
+    <form action="[% action %]" method="post" class="[% css_prefix _ form.name %]" accept-charset="utf-8">
