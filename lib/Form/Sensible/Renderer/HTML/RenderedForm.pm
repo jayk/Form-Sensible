@@ -225,7 +225,6 @@ sub process_first_template {
     
     my $template_found = 0;
     foreach my $template_name (@templates_to_try) {
-        print STDERR "trying " . $template_name . ".tt\n";
         my $res = $self->template->process($template_name . ".tt", $stash_vars, $output);
         if ($res) {
             $template_found = 1;
