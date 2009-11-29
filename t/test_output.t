@@ -15,8 +15,13 @@ $form->add_field(Form::Sensible::Field::Number->new(name=>'a_number', validation
 $form->add_field(Form::Sensible::Field::Trigger->new(name=>'submit'));
 
 
-my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ '/home/jayk/Development/projects/Form-Sensible/share/templates' ] });
+my $dir = $FindBin::Bin;
+my @dirs = split '/', $dir;
+pop @dirs;
+$dir = join('/', @dirs);
+
+my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $dir . '/share/templates' ] });
 
 my $renderedform = $renderer->render($form);
 
-print join("\n", $renderedform->start, $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
+print join("\n", $renderedform->start('/do_stuff'), $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
