@@ -39,4 +39,7 @@ my %check_against =  (
 );
 
 is_deeply(\%check_against, \%validation);
+
+# now, let's try and create shit from the configuration alone
+my $config_textfield = Form::Sensible::Field::Text->new($form->get_configuration());
 done_testing();
