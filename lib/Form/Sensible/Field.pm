@@ -82,8 +82,8 @@ sub _field_type {
     return lc($1);
 }
 
-sub get_configuration {
-    my ($self) = @_;
+sub flatten {
+    my ($self, $template_only) = @_;
     
     my %config = (
                     class => ref($self),
@@ -94,6 +94,11 @@ sub get_configuration {
                     field_type => $self->field_type,
                     render_hints => $self->render_hints,
                  );
+    
+    if ($template_only) {
+        $config{'value'} = $self->value;
+    }
+    
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {
         if (ref($self->validation->{$key})) {

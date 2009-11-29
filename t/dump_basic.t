@@ -12,7 +12,7 @@ $form->add_field($textarea);
 $form->add_field($textarea, 'field_two');
 $form->add_field($textarea, 'field_free');
 
-print Dumper($form->get_configuration());
+print Dumper($form->flatten());
 
 my $dumper = Form::Sensible::Renderer::Dump->new(form=>$form);
 my %validation = $dumper->build_hoh;
