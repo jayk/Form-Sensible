@@ -1,2 +1,2 @@
-<div id="[% css_prefix _ form.name %]">
-    <form action="[% action %]" method="[% method %]" class="[% css_prefix _ form.name %]" accept-charset="utf-8">
+<div id="[% css_prefix _ form.name %]_form" class="[% css_prefix %]form_container [% css_prefix _ form.name %]_form_container">
+    <form action="[% action %]" method="[% method %]" class="[% css_prefix %]form [% css_prefix _ form.name %]_form" accept-charset="utf-8">

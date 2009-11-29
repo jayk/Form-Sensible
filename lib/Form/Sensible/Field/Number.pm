@@ -79,7 +79,7 @@ sub get_potential_values {
         # provided bound.
         my $div = $value / $step;
         
-        $value = ($div+1) * $step;
+        $value = (int($div)+1) * $step;
     }
     
     my @vals;

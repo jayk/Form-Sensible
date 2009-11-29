@@ -1,14 +1,14 @@
 [%- IF messages.size -%]
-<div class="[% css_prefix -%] messageblock">
+<div class="[% css_prefix -%]messageblock [% css_prefix _ form.name %]_messageblock">
     [%- FOREACH message IN messages -%]
-    <span class="[% css_prefix -%]message">[% message.value %]</span><br/>
+    <span class="[% css_prefix -%]message [% css_prefix _ form.name %]_message">[% message.value %]</span><br/>
     [%- END -%]
 </div>
 [%- END -%]
 [%- IF errormessages.size -%]
-<div class="[% css_prefix -%]errorblock">
+<div class="[% css_prefix -%]errorblock [% css_prefix _ form.name %]_errorblock">
     [%- FOREACH error IN errormessages -%]
-    <span class="[% css_prefix -%]error">[% error.value %]</span><br/>
+    <span class="[% css_prefix -%]error [% css_prefix _ form.name %]_error">[% error.value %]</span><br/>
     [%- END -%]
 </div>
 [%- END -%]
