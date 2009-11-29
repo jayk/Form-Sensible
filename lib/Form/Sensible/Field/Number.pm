@@ -125,3 +125,5 @@ sub get_additional_configuration {
            };
 
 }
+
+1;
