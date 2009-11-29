@@ -1,7 +1,7 @@
 package Form::Sensible::Field::Trigger;
 
 use Moose;
-extends Form::Sensible::Field;
+extends 'Form::Sensible::Field';
 
 ## provides an action trigger
 

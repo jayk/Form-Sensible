@@ -1,7 +1,7 @@
 package Form::Sensible::Field::Toggle;
 
 use Moose;
-extends Form::Sensible::Field;
+extends 'Form::Sensible::Field';
 
 ## provides a simple on/off field
 

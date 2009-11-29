@@ -1,7 +1,7 @@
 package Form::Sensible::Field::Select;
 
 use Moose;
-extends Form::Sensible::Field;
+extends 'Form::Sensible::Field';
 
 ## provides a select field - potentially with multiple selections
 ## this could be a dropdown box or a radio-select group
