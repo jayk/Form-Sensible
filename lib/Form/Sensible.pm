@@ -1,6 +1,7 @@
 package Form::Sensible;
 
 use Moose;
+use Class::MOP;
 use Form::Sensible::Form;
 use Form::Sensible::Field;
 use Form::Sensible::Field::Number;
@@ -25,7 +26,7 @@ use Data::Dumper;
 ## same call would produce an HTML field if the $sensible object was configured
 ## to work with HTML.
 
-sub create_form_from_template {
+sub create_form {
     my ($class, $template) = @_;
     
     my $formhash = { %{$template} };
@@ -43,4 +44,16 @@ sub create_form_from_template {
     }
     return $form;
 }
+
+sub get_renderer {
+    my ($class, $type, $options) = @_;
+
+    
+}
+
+sub get_validator {
+    my ($class, $type, $options) = @_;
+    
+}
+
 1;

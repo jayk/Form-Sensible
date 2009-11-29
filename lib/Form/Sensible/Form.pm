@@ -278,8 +278,8 @@ sub render {
     }
 }
 
-sub get_configuration {
-    my ($self) = @_;
+sub flatten {
+    my ($self, $template_only) = @_;
     
     my $form_hash = {
     	                    'name' => $self->name,
@@ -291,7 +291,7 @@ sub get_configuration {
     $form_hash->{'fields'} = [];
 
     foreach my $fieldname ( $self->fieldnames ) {
-        push @{$form_hash->{'fields'}}, { $fieldname => $self->field($fieldname)->get_configuration };
+        push @{$form_hash->{'fields'}}, { $fieldname => $self->field($fieldname)->flatten($template_only) };
     }
     return $form_hash; 
 }

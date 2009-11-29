@@ -42,11 +42,11 @@ my $renderedform = $renderer->render($form);
 
 my $firstformoutput = join("\n", $renderedform->start('/do_stuff'), $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
 
-my $flattenned_form = $form->get_configuration();
+my $flattenned_form = $form->flatten();
 #print Dumper($flattenned_form);
 
 ## now we create the new form from the flattened version... let's see how it goes.
-my $newform = Form::Sensible->create_form_from_template($flattenned_form);
+my $newform = Form::Sensible->create_form($flattenned_form);
 $newform->field('a_number')->value(17);
 $newform->field('another_number')->value(60);
 
