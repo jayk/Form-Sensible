@@ -1,7 +1,9 @@
 package Form::Sensible::Form;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use Carp qw/croak/;
+use Class::MOP;
 
 ## a form is a collection of fields. Different form types will work differently.
 
@@ -285,15 +287,16 @@ sub flatten {
     	                    'name' => $self->name,
     	                    'render_hints' => $self->render_hints,
     	                    'validation' => $self->validation,
-    	                    'fieldnames' => [ $self->fieldnames ],
+    	                    'field_order' => $self->field_order,
     	            };
 
-    $form_hash->{'fields'} = [];
+    $form_hash->{'fields'} = {};
 
     foreach my $fieldname ( $self->fieldnames ) {
-        push @{$form_hash->{'fields'}}, { $fieldname => $self->field($fieldname)->flatten($template_only) };
+        $form_hash->{'fields'}{$fieldname} = $self->field($fieldname)->flatten($template_only);
     }
     return $form_hash; 
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

@@ -1,6 +1,7 @@
 package Form::Sensible::Renderer::HTML;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use Template;
 use Form::Sensible::Renderer::HTML::RenderedForm;
 
@@ -93,4 +94,5 @@ sub new_template {
     return Template->new( $self->tt_config );
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

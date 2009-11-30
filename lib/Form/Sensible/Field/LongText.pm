@@ -1,6 +1,7 @@
 package Form::Sensible::Field::LongText;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field::Text';
 
 has '+maximum_length' => (
@@ -10,5 +11,5 @@ has '+maximum_length' => (
 ## provides a long text field (such as a 'text area' or 'notes' box)
 ## for now the only difference is a longer length.  that may change.
 
-
+__PACKAGE__->meta->make_immutable;
 1;

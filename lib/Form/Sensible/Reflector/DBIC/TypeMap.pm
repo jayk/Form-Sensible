@@ -1,5 +1,6 @@
 package Form::Sensible::Reflector::DBIC::TypeMap;
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use namespace::clean;
 use Regexp::Common;
 
@@ -117,4 +118,5 @@ sub translate {
 	return $types{$dbms}->{$sql_type};
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

@@ -1,6 +1,7 @@
 package Form::Sensible::Renderer::HTML::RenderedForm;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use Carp qw/croak/;
 use File::ShareDir;
 
@@ -140,7 +141,7 @@ sub fields {
     my ($self) = @_;
     
     my @rendered_fields;
-    foreach my $field ($self->form->fieldnames) {
+    foreach my $field (@{$self->form->field_order}) {
         push @rendered_fields, $self->render_field($field);
     }
     return join("\n",@rendered_fields);
@@ -250,4 +251,5 @@ sub end {
     return $output;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

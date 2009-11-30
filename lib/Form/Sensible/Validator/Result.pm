@@ -1,6 +1,7 @@
 package Form::Sensible::Validator::Result;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 
 has 'error_fields' => (
     is          => 'rw',
@@ -46,4 +47,5 @@ sub is_valid {
     }
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

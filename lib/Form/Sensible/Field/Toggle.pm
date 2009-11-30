@@ -1,6 +1,7 @@
 package Form::Sensible::Field::Toggle;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
 ## provides a simple on/off field
@@ -41,4 +42,5 @@ sub validate {
     }
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
