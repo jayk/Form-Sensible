@@ -14,15 +14,17 @@ my $form = Form::Sensible::Form->new(name=>'test');
 my $textarea = Form::Sensible::Field::Text->new(name=>'test_field', validation => { regex => qr/^[0-9a-z]*$/  });
 
 $form->add_field($textarea);
-$form->add_field(Form::Sensible::Field::Number->new(name=>'a_number', validation => { regex => qr/^[0-9]*$/  }));
-$form->add_field(Form::Sensible::Field::Number->new(
-                                                        name=>'another_number',
-                                                        lower_bound => 18,
-                                                        upper_bound => 89,
-                                                        step => 10, 
-                                                        validation => { regex => qr/^[0-9]*$/  },
-                                                        render_hints => { field_type => 'select'},
-                                                    ));
+#$form->add_field(Form::Sensible::Field::Number->new(name=>'a_number', validation => { regex => qr/^[0-9]*$/  }));
+$form->add_field({ class => 'Number', name => 'a_number', validation => { regex => qr/^[0-9]*$/ }});
+$form->add_field({
+                    class => 'Number',
+                    name=>'another_number',
+                    lower_bound => 18,
+                    upper_bound => 89,
+                    step => 10, 
+                    validation => { regex => qr/^[0-9]*$/  },
+                    render_hints => { field_type => 'select'},
+                 });
 
 $form->add_field(Form::Sensible::Field::Trigger->new(name=>'submit'));
 

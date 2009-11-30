@@ -31,8 +31,9 @@ sub create_form {
     
     if (ref($template->{'fields'}) eq 'ARRAY') {
         foreach my $field (@{$template->{'fields'}}) {
-            my $newfield = Form::Sensible::Field->create_from_flattened($field);
-            $form->add_field($newfield, $newfield->name);
+            $form->add_field($field, $field->{name});
+            #Form::Sensible::Field->create_from_flattened($field);
+            #$form->add_field($newfield, $newfield->name);
         }
     } else {
         my @field_order;
@@ -42,8 +43,10 @@ sub create_form {
             push @field_order, keys %{$template->{'fields'}};
         }
         foreach my $fieldname (@field_order) {
-            my $newfield = Form::Sensible::Field->create_from_flattened($template->{'fields'}{$fieldname});
-            $form->add_field($newfield, $fieldname);
+            $form->add_field($template->{'fields'}{$fieldname}, $fieldname);
+            
+            #my $newfield = Form::Sensible::Field->create_from_flattened($template->{'fields'}{$fieldname});
+            #$form->add_field($newfield, $fieldname);
         }
     }
     return $form;

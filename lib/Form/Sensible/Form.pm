@@ -136,11 +136,22 @@ sub add_field {
     my ($self, $field, $fieldname, $position) = @_;
     
     if (!$fieldname) {
-        $fieldname = $field->name;
+        if (ref($field) =~ /^Form::Sensible::Field/) {
+            $fieldname = $field->name;
+        } elsif (ref($field) eq 'HASH') {
+            $fieldname = $field->{'name'};
+        } 
     }
     
     if (defined($self->_fields->{$fieldname})) {
         $self->remove_field($fieldname);
+    }
+    
+    ## this will cause an unblessed hash passed to add_field to auto-create
+    ## the appropriate field type.
+    if (ref($field) eq 'HASH') {
+        my $newfield = $field;
+        $field = Form::Sensible::Field->create_from_flattened($newfield);
     }
     
     $self->_fields->{$fieldname} = $field;

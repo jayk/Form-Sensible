@@ -4,6 +4,7 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use Data::Dumper;
+use Class::MOP;
 
 has 'name' => (
     is          => 'rw',
@@ -87,7 +88,6 @@ sub flatten {
     my ($self, $template_only) = @_;
     
     my %config = (
-                    class => ref($self),
                     name => $self->name,
                     display_name => $self->display_name,
                     required => $self->required,
@@ -96,7 +96,14 @@ sub flatten {
                     render_hints => $self->render_hints,
                  );
     
-    if ($template_only) {
+    my $class = ref($self);
+    if ($class =~ /^Form::Sensible::Field::(.*)$/) {
+        $class = $1;
+    } else {
+        $class = '+' . $class;
+    }
+    $config{class} = $class;
+    if (!$template_only) {
         $config{'value'} = $self->value;
     }
     
@@ -139,12 +146,19 @@ sub create_from_flattened {
     if (!$fieldclass) {
         croak "Unable to restore flattened field, no field class defined";
     }
+    my $class_to_load;
+    if ($fieldclass =~ /^\+(.*)$/) {
+        $class_to_load = $1;
+    } else {
+        $class_to_load = 'Form::Sensible::Field::' . $fieldclass;
+    }
+    Class::MOP::load_class($class_to_load);
     
     # copy because we are going to remove class, as it wasn't there to begin with.
     my $config = { %{$fieldconfig} };
     delete $config->{'class'};
     #print Dumper($config);
-    return $fieldclass->new(%{$fieldconfig});
+    return $class_to_load->new(%{$fieldconfig});
 }
 
 __PACKAGE__->meta->make_immutable;
