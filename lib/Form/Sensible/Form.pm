@@ -254,15 +254,22 @@ sub _create_validator {
     my $validator;
 
     ## first see if we have had our validator class overridden
-    if (defined($self->validation->{class})) {
-        
+    my $classname;
+    if (defined($self->validation->{'validator_class'})) {
         ## we have, so get the class name and instantiate an object of that class
-        my $classname = $self->validation->{class};
-        $validator = $classname->new(@{$self->validator_args});
+        $classname = $self->validation->{'validator_class'};
     } else {
         ## otherwise, we create a Form::Sensible::Validator object.
-        $validator = Form::Sensible::Validator->new(@{$self->validator_args});
+        $classname = '+Form::Sensible::Validator';
     }
+    if ($classname =~ /^\+(.*)$/) {
+        $classname = $1;
+    } else {
+        $classname = 'Form::Sensible::Validator::' . $classname;
+    }
+    Class::MOP::load_class($classname);
+    $validator = $classname->new(@{$self->validator_args});
+    
     return $validator;
 }
 
@@ -288,6 +295,16 @@ sub render {
         return $self->renderer->render($self, @_);
     } else {
         croak __PACKAGE__ . '->render() called but no renderer defined for this form (' . $self->name . ')';
+    }
+}
+
+sub set_values {
+    my ($self, $values) = @_;
+    
+    foreach my $fieldname ( $self->fieldnames ) {
+        if (exists($values->{$fieldname})) {
+            $self->field($fieldname)->value($values->{$fieldname});
+        }
     }
 }
 

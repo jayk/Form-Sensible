@@ -102,7 +102,7 @@ sub flatten {
     } else {
         $class = '+' . $class;
     }
-    $config{class} = $class;
+    $config{'field_class'} = $class;
     if (!$template_only) {
         $config{'value'} = $self->value;
     }
@@ -142,7 +142,7 @@ sub validate {
 sub create_from_flattened {
     my ($class, $fieldconfig ) = @_;
     
-    my $fieldclass = $fieldconfig->{'class'};
+    my $fieldclass = $fieldconfig->{'field_class'};
     if (!$fieldclass) {
         croak "Unable to restore flattened field, no field class defined";
     }
@@ -156,11 +156,10 @@ sub create_from_flattened {
     
     # copy because we are going to remove class, as it wasn't there to begin with.
     my $config = { %{$fieldconfig} };
-    delete $config->{'class'};
+    delete $config->{'field_class'};
     #print Dumper($config);
     return $class_to_load->new(%{$fieldconfig});
 }
 
 __PACKAGE__->meta->make_immutable;
-
 1;

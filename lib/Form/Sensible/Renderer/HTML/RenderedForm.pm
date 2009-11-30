@@ -122,8 +122,13 @@ sub start {
 sub messages {
     my ($self, $additionalmessages) = @_;
     
+    ## if we haven't already added error_messages and we have a validator_result in the form
+    ## then we add the errors immediately before processing.
+    if ((!scalar keys %{$self->error_messages}) && defined($self->form->validator_result)) {
+        $self->add_errors_from_validator_result($self->form->validator_result);
+    }
+    
     my $output;
-
     $self->process_first_template({}, \$output, 'form_messages');
     
     return $output;

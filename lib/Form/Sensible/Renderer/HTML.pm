@@ -80,10 +80,6 @@ sub render {
     
     my $rendered_form = Form::Sensible::Renderer::HTML::RenderedForm->new( %args );
     
-    if (defined($form->validator_result)) {
-        $rendered_form->add_errors_from_validator_result($form->validator_result);
-    }
-    
     return $rendered_form;
 }
 
