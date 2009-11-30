@@ -256,5 +256,11 @@ sub end {
     return $output;
 }
 
+sub complete {
+    my ($self) = @_;
+    
+    return join('', $self->start, $self->messages, $self->fields, $self->end);
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

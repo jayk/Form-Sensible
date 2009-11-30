@@ -93,9 +93,23 @@ Form::Sensible - A sensible way to handle form based user interface
 
     use Form::Sensible;
     
-    my $object = Form::Sensible::foo->new();
-
-    $object->do_stuff();
+    my $form = Form::Sensible->create_form({ ..... });
+    
+    $form->set_values($c->req->params);
+    
+    my $validation_result = $form->validate();
+    
+    if ($validation_result->is_valid) { 
+    
+        #... do stuff
+    
+    } else {
+    
+        my $renderer = Form::Sensible->get_renderer('HTML');
+        my $rendered_form = $renderer->render($form);
+        $c->stash->{renderedform} = $rendered_form;
+    
+    }
 
 =head1 DESCRIPTION
 
