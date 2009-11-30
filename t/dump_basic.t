@@ -12,7 +12,7 @@ $form->add_field($textarea);
 $form->add_field($textarea, 'field_two');
 $form->add_field($textarea, 'field_free');
 
-print Dumper($form->flatten());
+#print Dumper($form->flatten());
 
 my $dumper = Form::Sensible::Renderer::Dump->new(form=>$form);
 my %validation = $dumper->build_hoh;
@@ -41,5 +41,8 @@ my %check_against =  (
 is_deeply(\%check_against, \%validation);
 
 # now, let's try and create shit from the configuration alone
-my $config_textfield = Form::Sensible::Field::Text->new($form->get_configuration());
+my $config_textfield = Form::Sensible::Field::Text->new($form->flatten());
+my $other_textfield_dumper = Form::Sensible::Renderer::Dump->new(form=>$form);
+my %other_textfield_hash = $other_textfield_dumper->build_hoh;
+is_deeply(\%validation, \%other_textfield_hash);
 done_testing();
