@@ -43,7 +43,7 @@ my $renderedform = $renderer->render($form);
 my $firstformoutput = join("\n", $renderedform->start('/do_stuff'), $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
 
 my $flattenned_form = $form->flatten();
-#print Dumper($flattenned_form);
+print Dumper($flattenned_form);
 
 ## now we create the new form from the flattened version... let's see how it goes.
 my $newform = Form::Sensible->create_form($flattenned_form);

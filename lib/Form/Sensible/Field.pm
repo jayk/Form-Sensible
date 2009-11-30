@@ -1,6 +1,7 @@
 package Form::Sensible::Field;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use Carp;
 use Data::Dumper;
 
@@ -145,5 +146,7 @@ sub create_from_flattened {
     #print Dumper($config);
     return $fieldclass->new(%{$fieldconfig});
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;

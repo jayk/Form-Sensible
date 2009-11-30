@@ -1,6 +1,7 @@
 package Form::Sensible::Field::Text;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
 ## provides a plain text field
@@ -54,4 +55,5 @@ sub validate {
     return 0;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

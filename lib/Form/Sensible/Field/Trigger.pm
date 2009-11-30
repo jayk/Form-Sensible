@@ -1,6 +1,7 @@
 package Form::Sensible::Field::Trigger;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
 ## provides an action trigger
@@ -30,4 +31,6 @@ sub get_additional_configuration {
            };
 
 }
+
+__PACKAGE__->meta->make_immutable;
 1;

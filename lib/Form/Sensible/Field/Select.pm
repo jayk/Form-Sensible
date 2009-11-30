@@ -1,6 +1,7 @@
 package Form::Sensible::Field::Select;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
 ## provides a select field - potentially with multiple selections
@@ -103,4 +104,5 @@ sub validate {
     return 0;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

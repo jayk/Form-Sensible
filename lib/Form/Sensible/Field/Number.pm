@@ -1,6 +1,7 @@
 package Form::Sensible::Field::Number;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
 has 'integer_only' => (
@@ -126,4 +127,5 @@ sub get_additional_configuration {
     return $result_hash;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

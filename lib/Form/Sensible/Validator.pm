@@ -1,6 +1,7 @@
 package Form::Sensible::Validator;
 
-use Moose;
+use Moose; 
+use namespace::autoclean;
 use Form::Sensible::Validator::Result;
 use Carp qw/croak/;
 
@@ -110,4 +111,5 @@ sub validate_field_with_coderef {
     }
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
