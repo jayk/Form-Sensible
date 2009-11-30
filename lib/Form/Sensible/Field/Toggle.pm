@@ -16,7 +16,6 @@ has 'off_value' => (
     default     => 'off',
 );
 
-
 sub get_additional_configuration {
     my $self = shift;
     
@@ -25,6 +24,12 @@ sub get_additional_configuration {
                 'off_value' => $self->off_value
            };
 
+}
+
+sub options {
+    my $self = shift;
+    
+    return [ map { { name => $_, value => $_ } } ($self->on_value, $self->off_value) ];
 }
 
 sub validate {
