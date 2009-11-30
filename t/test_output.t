@@ -14,6 +14,7 @@ my $form = Form::Sensible::Form->new(name=>'test');
 my $textarea = Form::Sensible::Field::Text->new(name=>'test_field', validation => { regex => qr/^[0-9a-z]*$/  });
 
 $form->add_field($textarea);
+## old way
 #$form->add_field(Form::Sensible::Field::Number->new(name=>'a_number', validation => { regex => qr/^[0-9]*$/  }));
 $form->add_field({ class => 'Number', name => 'a_number', validation => { regex => qr/^[0-9]*$/ }});
 $form->add_field({
