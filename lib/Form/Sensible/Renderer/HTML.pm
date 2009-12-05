@@ -3,6 +3,7 @@ package Form::Sensible::Renderer::HTML;
 use Moose; 
 use namespace::autoclean;
 use Template;
+use Data::Dumper;
 use Form::Sensible::Renderer::HTML::RenderedForm;
 
 has 'include_paths' => (
@@ -75,6 +76,19 @@ sub render {
     if (ref($options) eq 'HASH') {
         foreach my $key (keys %{$options}) {
             $args{$key} = $options->{$key};
+        }
+    }
+    
+    ## take care of any subforms we have in this form.
+    my $subform_init_hash = { %args };
+    $args{'subform_renderers'} = {};
+    foreach my $fieldname (@{$form->field_order}) {
+        my $field = $form->field($fieldname);
+        if ($field->DOES('Form::Sensible::Field::SubForm')) {
+            $subform_init_hash->{'form'} = $field->form;
+            print "FOO!! $fieldname\n";
+            $args{'subform_renderers'}{$fieldname} = Form::Sensible::Renderer::HTML::RenderedForm->new( $subform_init_hash );
+            #print Dumper($args{'subform_renderers'}{$fieldname});
         }
     }
     

@@ -138,6 +138,7 @@ sub add_field {
     if (!$fieldname) {
         if (ref($field) =~ /^Form::Sensible::Field/) {
             $fieldname = $field->name;
+            print "foo!\n";
         } elsif (ref($field) eq 'HASH') {
             $fieldname = $field->{'name'};
         } 
@@ -152,6 +153,10 @@ sub add_field {
     if (ref($field) eq 'HASH') {
         my $newfield = $field;
         $field = Form::Sensible::Field->create_from_flattened($newfield);
+    }
+    
+    if ($field->DOES('Form::Sensible::Field::SubForm') && $field->form == $self) {
+        croak "Unable to add sub-form. sub-form is the same as me. Infinite recursion will occur, dying now instead of later.";
     }
     
     $self->_fields->{$fieldname} = $field;

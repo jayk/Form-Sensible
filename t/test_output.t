@@ -63,4 +63,12 @@ print $firstformoutput . "\n=======\n";
 print $secondformoutput . "\n=======\n";
 
 ok( $firstformoutput eq $secondformoutput, "flatten and deflatten work properly");
+delete($flattenned_form->{'render_hints'});
+my $subform_field = $form->add_field({ field_class => 'SubForm', name => 'subform_thing', form => $flattenned_form });
+
+$renderedform = $renderer->render($form);
+
+$firstformoutput = join("\n", $renderedform->start('/do_stuff'), $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
+
+print "\n\n\n\n\n\n" . $firstformoutput . "\n=======\n";
 done_testing();

@@ -92,6 +92,57 @@ Form::Sensible - A sensible way to handle form based user interface
 =head1 SYNOPSIS
 
     use Form::Sensible;
+    use Form::Sensible::Renderer::HTML;
+    
+    my $form = Form::Sensible->create_form( {
+                                                name => 'test',
+                                                fields => [
+                                                             { 
+                                                                field_class => 'Text',
+                                                                name => 'username',
+                                                                validation => {  regex => '^[0-9a-z]*'  }
+                                                             },
+                                                             {
+                                                                 field_class => 'Text',
+                                                                 name => 'password',
+                                                                 render_hints => {  field_type => 'password' }
+                                                             },
+                                                             {
+                                                                 field_class => 'Trigger',
+                                                                 name => 'submit'
+                                                             }
+                                                          ],
+                                            } );
+
+    my $renderer = Form::Sensible::Renderer::HTML->new( tt_config => { INCLUDE_PATH => [ '/path/to/templates' ] });
+
+    my $output = $renderer->render($form)->complete;
+
+    
+    ######### OR - more programmatic creation of forms #########
+
+    use Form::Sensible;
+    use Form::Sensible::Field::Text;
+    use Form::Sensible::Field::Trigger;    
+    use Form::Sensible::Renderer::HTML;
+    
+    my $form = Form::Sensible::Form->new(name=>'test');
+
+    my $username_field = Form::Sensible::Field::Text->new(  name=>'username', validation => { regex => qr/^[0-9a-z]*$/  });
+    $form->add_field($username_field);
+
+    my $password_field = Form::Sensible::Field::Text->new(  name=>'password',
+                                                            render_hints => { field_type => 'password' } );
+    $form->add_field($password_field);
+
+    my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
+    $form->add_field($submit_button);
+
+    my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] });
+ 
+    my $output = $renderer->render($form)->complete;
+    
+    ##
     
     my $form = Form::Sensible->create_form({ ..... });
     

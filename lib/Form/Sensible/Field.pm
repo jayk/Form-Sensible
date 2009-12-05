@@ -28,7 +28,7 @@ has 'field_type' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
-    builder     => '_field_type',
+    builder     => '_default_field_type',
     lazy        => 1
 );
 
@@ -63,7 +63,7 @@ has 'render_hints' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
-    default     => sub { return {}; },
+    builder     => '_default_render_hints', 
     lazy        => 1,
 );
 
@@ -76,12 +76,18 @@ has 'default_value' => (
     is          => 'rw',
 );
 
-sub _field_type {
+sub _default_field_type {
     my $self = shift;
     
     my $class = ref($self);
     $class =~ m/::([^:]*)$/;
     return lc($1);
+}
+
+sub _default_render_hints {
+    my $self = shift;
+    
+    return {};
 }
 
 sub flatten {
@@ -116,7 +122,7 @@ sub flatten {
             $config{'validation'}{$key} = $self->validation->{$key};   
         }
     }
-    my $additional = $self->get_additional_configuration;
+    my $additional = $self->get_additional_configuration($template_only);
     foreach my $key (keys %{$additional}) {
         $config{$key} = $additional->{$key};
     }

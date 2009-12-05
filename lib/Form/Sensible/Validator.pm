@@ -6,8 +6,6 @@ use Form::Sensible::Validator::Result;
 use Carp qw/croak/;
 
 ## this module provides the basics for validation of a Form.
-##
-## should this be an abstract role that simply defines the interface to validators?
 
 has 'config' => (
     is          => 'rw',
@@ -49,7 +47,7 @@ sub validate {
                 }
             }
             ## finally, we run the fields internal validate routine
-            my $invalid = $field->validate();
+            my $invalid = $field->validate($self);
             if ($invalid) {
                 $validation_result->add_error($fieldname, $invalid);
             }

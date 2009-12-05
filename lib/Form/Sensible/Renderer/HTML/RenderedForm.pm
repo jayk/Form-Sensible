@@ -40,6 +40,23 @@ has 'css_prefix' => (
     default     => 'fs_',
 );
 
+has 'form_template_prefix' => (
+    is          => 'rw',
+    isa         => 'Str',
+    required    => 1,
+    builder     => '_default_form_template_prefix',
+    lazy        => 1,
+);
+
+has 'subform_renderers' => (
+    is          => 'rw',
+    isa         => 'HashRef',
+    required    => 1,
+    default     => sub { return {}; },
+    lazy        => 1
+);
+
+
 has 'status_messages' => (
     is          => 'rw',
     isa         => 'ArrayRef[Str]',
@@ -67,6 +84,15 @@ has 'render_hints' => (
     lazy        => 1,
 );
 
+sub _default_form_template_prefix {
+    my $self = shift;
+    
+    if (exists($self->form->render_hints->{form_template_prefix})) {
+        return $self->form->render_hints->{form_template_prefix};
+    } else {
+        return 'form';
+    }
+}
 
 sub add_status_message {
     my ($self, $message) = @_;
@@ -112,8 +138,9 @@ sub start {
                     action => $action
                };
 
+    
     my $output;
-    $self->process_first_template($vars, \$output, 'form_start');
+    $self->process_first_template($vars, \$output, $self->form_template_prefix . '_start');
 
     return $output;
 }
@@ -129,7 +156,7 @@ sub messages {
     }
     
     my $output;
-    $self->process_first_template({}, \$output, 'form_messages');
+    $self->process_first_template({}, \$output, $self->form_template_prefix . '_messages');
     
     return $output;
 }
@@ -158,40 +185,44 @@ sub render_field {
     my $field = $self->form->field($fieldname);
     my $fieldtype = $field->field_type;
     
-    ## allow render_hints to override field type - allowing a number to be rendered
-    ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
-    if (exists($field->render_hints->{'field_type'})) {
-        $fieldtype = $field->render_hints->{'field_type'};
-    }
-
-    
-    ## Order for trying templates should be:
-    ## formname/fieldname
-    ## formname/fieldtype
-    ## fieldname
-    ## fieldtype
-    
-    my $output;
-    my $vars =  {
-                    'field' => $field,
-                    'field_type' => $fieldtype,
-                    'field_name' => $fieldname
-                };
-                
-    ## if we have field-specific render_hints, we have to add them
-    ## ourselves.  First we load any already-set render_hints
-    if (scalar keys %{$field->render_hints}) {
-        $vars->{'render_hints'} = { %{ $self->render_hints } };
-        foreach my $key (keys %{$field->render_hints}) {
-            $vars->{'render_hints'}{$key} = $field->render_hints->{$key};
+    if (exists($self->subform_renderers->{$fieldname})) {
+        ## handle fields that are subforms.  
+        return $self->subform_renderers->{$fieldname}->complete();
+    } else {
+        ## allow render_hints to override field type - allowing a number to be rendered
+        ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
+        if (exists($field->render_hints->{'field_type'})) {
+            $fieldtype = $field->render_hints->{'field_type'};
         }
-    }
 
     
-    ## process the field template we need to load based on the fieldname / field type
-    $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
+        ## Order for trying templates should be:
+        ## formname/fieldname
+        ## formname/fieldtype
+        ## fieldname
+        ## fieldtype
     
-    return $output;
+        my $output;
+        my $vars =  {
+                        'field' => $field,
+                        'field_type' => $fieldtype,
+                        'field_name' => $fieldname
+                    };
+                
+        ## if we have field-specific render_hints, we have to add them
+        ## ourselves.  First we load any already-set render_hints
+        if (scalar keys %{$field->render_hints}) {
+            $vars->{'render_hints'} = { %{ $self->render_hints } };
+            foreach my $key (keys %{$field->render_hints}) {
+                $vars->{'render_hints'}{$key} = $field->render_hints->{$key};
+            }
+        }
+    
+        ## process the field template we need to load based on the fieldname / field type
+        $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
+    
+        return $output;
+    }
 }
 
 ## pass in the vars / output / template_names to use.  This method handles automatic fallback
@@ -251,7 +282,7 @@ sub end {
     
     my $output;
     
-    $self->process_first_template({}, \$output, 'form_end');
+    $self->process_first_template({}, \$output, $self->form_template_prefix . '_end');
 
     return $output;
 }
