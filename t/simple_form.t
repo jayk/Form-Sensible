@@ -5,7 +5,6 @@ use Data::Dumper;
 use Form::Sensible;
 
 use Form::Sensible::Form;
-use Form::Sensible::Renderer::HTML;
 
 my $lib_dir = $FindBin::Bin;
 my @dirs = split '/', $lib_dir;
@@ -25,7 +24,7 @@ $lib_dir = join('/', @dirs);
     my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
     $form->add_field($submit_button);
     
-    my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] });
+    my $renderer = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] }});
      
     my $output = $renderer->render($form)->complete;
     
@@ -51,9 +50,9 @@ $lib_dir = join('/', @dirs);
                                                           ],
                                             } );
 
-    my $renderer2 = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] });
-
-    my $output_2 = $renderer->render($form)->complete;
+    my $renderer2 = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] }});
+    
+    my $output_2 = $renderer2->render($form)->complete;
     
 ok( $output eq $output_2, "flat creation and programmatic creation produce the same results");
 

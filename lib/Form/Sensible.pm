@@ -11,6 +11,7 @@ use Form::Sensible::Field::Text;
 use Form::Sensible::Field::LongText;
 use Form::Sensible::Field::Toggle;
 use Form::Sensible::Field::Trigger;
+use Form::Sensible::Field::SubForm;
 use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 
@@ -70,6 +71,9 @@ sub get_validator {
     my ($class, $type, $options) = @_;
  
     my $class_to_load;
+    if (!defined($type)) {
+        $type = "+Form::Sensible::Validator";
+    }
     if ($type =~ /^\+(.*)$/) {
         $class_to_load = $1;
     } else {
@@ -92,20 +96,80 @@ Form::Sensible - A sensible way to handle form based user interface
 =head1 SYNOPSIS
 
     use Form::Sensible;
-    use Form::Sensible::Renderer::HTML;
+        
+    my $form = Form::Sensible->create_form( { ... } );
+
+    my $renderer = Form::Sensible->get_renderer('HTML', { tt_config => { INCLUDE_PATH => [ '/path/to/templates' ] }}); 
+
+    my $output = $renderer->render($form)->complete;
     
+    ## Form Validation:
+    
+    my $validation_result = $form->validate();
+    
+    if ($validation_result->is_valid()) {
+        ## do form was valid stuff
+    } else {
+        my $output_with_messages = $renderer->render($form)->complete;
+    }
+
+=head1 DESCRIPTION
+
+Form::Sensible is a different kind of form library. Form::Sensible is not just
+another HTML form creator, or a form validator, though it can do both.
+Form::Sensible, instead, focuses on what forms are: a method to relay
+information to and from a user interface.
+
+Form::Sensible forms are primarily tied to the data they represent.
+Form::Sensible is not tied to HTML in any way. You could render Form::Sensible
+forms using any presentation system you like, whether that's HTML, console
+prompts, WxPerl or voice prompts. (* currently only an HTML renderer is
+provided with Form::Sensible, but work is already under way to produce
+others.)
+
+The Form::Sensible form lifecycle works as follows:
+
+=head2 Phase 1 - Show a form
+
+    1) Create form object
+    2) Create or get a renderer
+    3) Use renderer to render form
+
+
+=head2 Phase 2 - Validate input
+    
+    1) Create form object
+    2) Retrieve user input and place it into form 
+    3) Validate form
+    4) If form data is invalid, re-render the form with messages
+
+One of the most important features of Form::Sensible is that Forms, once
+created, are easily stored for re-generation later. A form's definition and
+state are easily converted to a hashref data structure ready for serializing.
+Likewise, the serialized data structure can be used to create a complete
+Form::Sensible form object ready for use. This makes re-use of forms extremely
+easy and provides for dynamic creation and processing of forms.
+
+=head1 EXAMPLES 
+
+=over 8
+
+=item Form creation from simple data structure
+
+    use Form::Sensible;
+        
     my $form = Form::Sensible->create_form( {
                                                 name => 'test',
                                                 fields => [
                                                              { 
                                                                 field_class => 'Text',
                                                                 name => 'username',
-                                                                validation => {  regex => '^[0-9a-z]*'  }
+                                                                validation => { regex => '^[0-9a-z]*'  }
                                                              },
                                                              {
                                                                  field_class => 'Text',
                                                                  name => 'password',
-                                                                 render_hints => {  field_type => 'password' }
+                                                                 render_hints => { field_type => 'password' }
                                                              },
                                                              {
                                                                  field_class => 'Trigger',
@@ -114,59 +178,61 @@ Form::Sensible - A sensible way to handle form based user interface
                                                           ],
                                             } );
 
-    my $renderer = Form::Sensible::Renderer::HTML->new( tt_config => { INCLUDE_PATH => [ '/path/to/templates' ] });
+This example creates a form from a simple hash structure. This example creates
+a simple (and all too familiar) login form.
 
-    my $output = $renderer->render($form)->complete;
-
-    
-    ######### OR - more programmatic creation of forms #########
+=item Creating a form programmatically
 
     use Form::Sensible;
-    use Form::Sensible::Field::Text;
-    use Form::Sensible::Field::Trigger;    
-    use Form::Sensible::Renderer::HTML;
     
     my $form = Form::Sensible::Form->new(name=>'test');
 
-    my $username_field = Form::Sensible::Field::Text->new(  name=>'username', validation => { regex => qr/^[0-9a-z]*$/  });
+    my $username_field = Form::Sensible::Field::Text->new(  
+                                                            name=>'username', 
+                                                            validation => { regex => qr/^[0-9a-z]*$/  }
+                                                         );
+
     $form->add_field($username_field);
 
-    my $password_field = Form::Sensible::Field::Text->new(  name=>'password',
-                                                            render_hints => { field_type => 'password' } );
+    my $password_field = Form::Sensible::Field::Text->new(  
+                                                            name=>'password',
+                                                            render_hints => { field_type => 'password' } 
+                                                         );
     $form->add_field($password_field);
 
     my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
+
     $form->add_field($submit_button);
 
-    my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] });
- 
-    my $output = $renderer->render($form)->complete;
+This example creates the exact same form as the first example. This time,
+however, it is done by creating each field object individually, and then
+adding each in turn to the form.
     
-    ##
+Both of these methods will produce the exact same results when rendered.
+
+=item Form validation
     
-    my $form = Form::Sensible->create_form({ ..... });
-    
+    ## set_values takes a hash of name->value pairs 
     $form->set_values($c->req->params);
     
     my $validation_result = $form->validate();
     
     if ($validation_result->is_valid) { 
     
-        #... do stuff
+        #... do stuff if form submission is ok.
     
     } else {
     
         my $renderer = Form::Sensible->get_renderer('HTML');
-        my $rendered_form = $renderer->render($form);
-        $c->stash->{renderedform} = $rendered_form;
-    
+        my $output = $renderer->render($form)->complete;    
     }
 
-=head1 DESCRIPTION
+Here we fill in the values provided to us via $c->req->params and then run validation
+on the form.  Validation follows the rules provided in the B<validation> definitions for
+each field.  Whole-form validation is can also be done if provided.  When validation
+is run using this process, the messages are automatically available during rendering.
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+=back
 
 =head2 Methods
 
