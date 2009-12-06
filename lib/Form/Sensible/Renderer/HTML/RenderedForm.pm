@@ -288,9 +288,9 @@ sub end {
 }
 
 sub complete {
-    my ($self) = @_;
+    my ($self, $action, $method) = @_;
     
-    return join('', $self->start, $self->messages, $self->fields, $self->end);
+    return join('', $self->start($action, $method), $self->messages, $self->fields, $self->end);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -211,12 +211,13 @@ Validate form
 If form data is invalid, re-render the form with messages
 
 =back
+
 One of the most important features of Form::Sensible is that Forms, once
 created, are easily stored for re-generation later. A form's definition and
 state are easily converted to a hashref data structure ready for serializing.
-Likewise, the serialized data structure can be used to create a complete
-Form::Sensible form object ready for use. This makes re-use of forms extremely
-easy and provides for dynamic creation and processing of forms.
+Likewise, the data structure can be used to create a complete Form::Sensible
+form object ready for use. This makes re-use of forms extremely easy and
+provides for dynamic creation and processing of forms.
 
 =head1 EXAMPLES 
 
@@ -299,31 +300,44 @@ each field.  Whole-form validation is can also be done if provided.  When valida
 is run using this process, the messages are automatically available during rendering.
 
 
-=head2 Methods
+=head1 METHODS
+
+All methods in the Form::Sensible package are class methods. Note that by
+C<use>ing the Form::Sensible module, the C<Form::Sensible::Form> and
+C<Form::Sensible::Field::*> classes are also C<use>d.
 
 =over 8
 
-=item C<new>
+=item C<create_form($formhash)>
 
-Returns a new My::Module object.
+This method creates a form from the given hash structure. The hash structure
+accepts all the same attributes that L<Form::Sensible::Form>'s new method
+accepts. Field definitions are provided as an array under the C<field> key.
+Returns the created L<Form::Sensible::Form> object.
 
-=item C<as_string>
+=item C<get_renderer($render_class, $options)>
 
-Returns a stringified representation of
-the object. This is mainly for debugging
-purposes.
+Creates a renderer of the given class using the C<$options> provided. The
+format of the class name follows the convention of a bare name being appended
+to C<Form::Sensible::Renderer::>. In other words if you call
+C<<Form::Sensible->get_renderer('HTML', { 'foo' => 'bar' })>> Form::Sensible
+will ensure the Form::Sensible::Renderer::HTML class is loaded and will create
+an object by passing the hashref provided to the C<new> method. If you wish to
+provide a class outside of the C<Form::Sensible::Renderer::> namespace,
+prepend the string with a C<+>. For example, to load the class
+C<MyRenderer::ProprietaryUI> you would pass C<'+MyRenderer::ProprietaryUI'>.
+
+=item C<get_validator($validator_class, $options)>
+
+Creates a validator of the given class using the C<$options> provided. Follows
+the same convention for class name passing as the get_renderer method.
 
 =back
-
-=head1 LICENSE
-
-This is released under the Artistic 
-License. See L<perlartistic>.
 
 
 =head1 AUTHOR
 
-Jay Kuri - <jayk@cpan.org>
+Jay Kuri - E<lt>jayk[at]cpan.orgE<gt>
 
 =head1 SPONSORED BY
 
@@ -332,6 +346,14 @@ Ionzero LLC. L<http://ionzero.com/>
 =head1 SEE ALSO
 
 L<Form::Sensible>
+
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk[at]cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
 
 =cut
 
