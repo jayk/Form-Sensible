@@ -489,7 +489,7 @@ be included in the returned hashref.
 
 =head1 AUTHOR
 
-Jay Kuri - E<lt>jayk[at]cpan.orgE<gt>
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
 
 =head1 SPONSORED BY
 
@@ -501,7 +501,7 @@ L<Form::Sensible>
 
 =head1 LICENSE
 
-Copyright 2009 by Jay Kuri E<lt>jayk[at]cpan.orgE<gt>
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
