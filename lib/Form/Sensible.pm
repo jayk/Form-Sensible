@@ -127,22 +127,90 @@ prompts, WxPerl or voice prompts. (* currently only an HTML renderer is
 provided with Form::Sensible, but work is already under way to produce
 others.)
 
+=head2 FEATURES
+
+=over 8
+=item *
+
+Easy form creation
+
+=item *
+
+Easy form validation
+
+=item *
+
+Ability to easily save created forms for future use
+
+=item *
+
+Define form once, render any number of ways
+
+=item *
+
+Flexible built-in form validator
+
+=item *
+
+Easily extended to produce new renderers, field types and validation
+
+=item *
+
+HTML renderer produces sane html that can be easily styled via CSS
+
+=item *
+
+HTML renderer allows for custom templates for all aspects of form rendering.
+
+=item *
+
+HTML output not tied to any javascript library.
+
+=back
+
+=head2 Form::Sensible form lifecycle
+
 The Form::Sensible form lifecycle works as follows:
 
-=head2 Phase 1 - Show a form
+=head3 Phase 1 - Show a form
 
-    1) Create form object
-    2) Create or get a renderer
-    3) Use renderer to render form
+=over 8
 
+=item 1.
 
-=head2 Phase 2 - Validate input
-    
-    1) Create form object
-    2) Retrieve user input and place it into form 
-    3) Validate form
-    4) If form data is invalid, re-render the form with messages
+Create form object
 
+=item 2.
+
+Create or get a renderer
+
+=item 3.
+
+Use renderer to render form
+
+=back
+
+=head3 Phase 2 - Validate input
+
+=over 8
+
+=item 1. 
+
+Create form object
+
+=item 2. 
+
+Retrieve user input and place it into form 
+
+=item 3.
+
+Validate form
+
+=item 4.
+
+If form data is invalid, re-render the form with messages
+
+=back
 One of the most important features of Form::Sensible is that Forms, once
 created, are easily stored for re-generation later. A form's definition and
 state are easily converted to a hashref data structure ready for serializing.
@@ -152,9 +220,7 @@ easy and provides for dynamic creation and processing of forms.
 
 =head1 EXAMPLES 
 
-=over 8
-
-=item Form creation from simple data structure
+=head3 Form creation from simple data structure
 
     use Form::Sensible;
         
@@ -181,7 +247,7 @@ easy and provides for dynamic creation and processing of forms.
 This example creates a form from a simple hash structure. This example creates
 a simple (and all too familiar) login form.
 
-=item Creating a form programmatically
+=head3 Creating a form programmatically
 
     use Form::Sensible;
     
@@ -210,7 +276,7 @@ adding each in turn to the form.
     
 Both of these methods will produce the exact same results when rendered.
 
-=item Form validation
+=head3 Form validation
     
     ## set_values takes a hash of name->value pairs 
     $form->set_values($c->req->params);
@@ -232,7 +298,6 @@ on the form.  Validation follows the rules provided in the B<validation> definit
 each field.  Whole-form validation is can also be done if provided.  When validation
 is run using this process, the messages are automatically available during rendering.
 
-=back
 
 =head2 Methods
 
