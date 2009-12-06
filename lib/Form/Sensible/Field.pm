@@ -169,3 +169,70 @@ sub create_from_flattened {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Field - 
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Field;
+    
+    my $object = Form::Sensible::Field->new();
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+=head1 ATTRIBUTES
+
+=over 8
+=item C<'name'> 
+=item C<'display_name'> 
+=item C<'field_type'> 
+=item C<'required'> 
+=item C<'validation'> 
+=item C<'render_hints'> 
+=item C<'value'> 
+=item C<'default_value'> 
+
+=back 
+
+=head1 METHODS
+
+=over 8
+
+=item C<_default_field_type> 
+=item C<_default_render_hints> 
+=item C<flatten> 
+=item C<get_additional_configuration> 
+=item C<validate> 
+=item C<create_from_flattened> 
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut

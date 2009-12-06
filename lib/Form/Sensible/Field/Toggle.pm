@@ -49,3 +49,63 @@ sub validate {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Field::Toggle - 
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Field::Toggle;
+    
+    my $object = Form::Sensible::Field::Toggle->new();
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+=head1 METHODS
+
+=over 8
+
+=item C<'on_value'> has
+=item C<'off_value'> has
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<get_additional_configuration> sub
+=item C<options> sub
+=item C<validate> sub
+
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut

@@ -111,3 +111,61 @@ sub validate_field_with_coderef {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Validator - Default Validator for Form::Sensible forms
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Validator;
+    
+    my $object = Form::Sensible::Validator->new();
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+=head1 ATTRIBUTES 
+
+=over 8
+
+=item C<'config'> 
+
+=back 
+
+=head1 METHODS
+
+=over 8
+
+=item C<validate> 
+=item C<validate_field_with_regex> 
+=item C<validate_field_with_coderef> 
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut

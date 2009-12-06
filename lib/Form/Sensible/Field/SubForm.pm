@@ -51,3 +51,62 @@ sub validate {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Field::SubForm - encapsulate an entire form within another.
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Field::SubForm;
+    
+    my $object = Form::Sensible::Field::SubForm->new( form => $otherform );
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+
+=head1 Attributes
+
+=over 8
+
+=item C<'form'> has
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<get_additional_configuration> sub
+=item C<validate> sub
+
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut

@@ -106,3 +106,63 @@ sub new_template {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Renderer::HTML - an HTML based Form renderer
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Renderer::HTML;
+    
+    my $object = Form::Sensible::Renderer::HTML->new();
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+=head1 ATTRIBUTES
+
+=over 8
+
+=item C<'include_paths'> has
+=item C<'tt_config'> has
+=item C<'template'> has
+=item C<'default_options'> has
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<render> sub
+=item C<new_template> sub
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut

@@ -9,6 +9,7 @@ has 'form' => (
     is          => 'rw',
     isa         => 'Form::Sensible::Form',
     required    => 1,
+    weak_ref    => 1,
 );
 
 has 'template' => (
@@ -295,3 +296,79 @@ sub complete {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=head1 NAME
+
+Form::Sensible::Renderer::HTML::RenderedForm - A HTML based rendered form handle.
+
+=head1 SYNOPSIS
+
+    use Form::Sensible::Renderer::HTML::RenderedForm;
+    
+    my $object = Form::Sensible::Renderer::HTML::RenderedForm->new();
+
+    $object->do_stuff();
+
+=head1 DESCRIPTION
+
+This module does not really exist, it
+was made for the sole purpose of
+demonstrating how POD works.
+
+=head1 ATTRIBUTES
+
+=over 8
+=item C<'form'> has
+=item C<'template'> has
+=item C<'template_fallback_order'> has
+=item C<'stash'> has
+=item C<'css_prefix'> has
+=item C<'form_template_prefix'> has
+=item C<'subform_renderers'> has
+=item C<'status_messages'> has
+=item C<'error_messages'> has
+=item C<'render_hints'> has
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<_default_form_template_prefix> sub
+=item C<add_status_message> sub
+=item C<add_error_message> sub
+=item C<add_errors_from_validator_result> sub
+=item C<start> sub
+=item C<messages> sub
+=item C<fieldnames> sub
+=item C<fields> sub
+=item C<render_field> sub
+=item C<process_first_template> sub
+=item C<end> sub
+=item C<complete> sub
+
+
+=back
+
+=head1 AUTHOR
+
+Jay Kuri - E<lt>jayk@cpan.orgE<gt>
+
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
+=head1 SEE ALSO
+
+L<Form::Sensible>
+
+=head1 LICENSE
+
+Copyright 2009 by Jay Kuri E<lt>jayk@cpan.orgE<gt>
+
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut
