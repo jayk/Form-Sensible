@@ -22,7 +22,7 @@ has 'missing_fields' => (
 sub add_error {
     my ($self, $fieldname, $message) = @_;
     
-    if (ref($message) && $message->DOES('Form::Sensible::Validator::Result')) {
+    if (ref($message) && $message->isa('Form::Sensible::Validator::Result')) {
         $self->merge_from_result($message);
     } else {
         if (!exists($self->error_fields->{$fieldname})) {
@@ -35,7 +35,7 @@ sub add_error {
 sub add_missing {
     my ($self, $fieldname, $message) = @_;
     
-    if (ref($message) && $message->DOES('Form::Sensible::Validator::Result')) {
+    if (ref($message) && $message->isa('Form::Sensible::Validator::Result')) {
         $self->merge_from_result($message);
     } else {
         if (!exists($self->missing_fields->{$fieldname})) {

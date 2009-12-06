@@ -84,7 +84,7 @@ sub render {
     $args{'subform_renderers'} = {};
     foreach my $fieldname (@{$form->field_order}) {
         my $field = $form->field($fieldname);
-        if ($field->DOES('Form::Sensible::Field::SubForm')) {
+        if ($field->isa('Form::Sensible::Field::SubForm')) {
             $subform_init_hash->{'form'} = $field->form;
             print "FOO!! $fieldname\n";
             $args{'subform_renderers'}{$fieldname} = Form::Sensible::Renderer::HTML::RenderedForm->new( $subform_init_hash );

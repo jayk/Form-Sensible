@@ -154,7 +154,7 @@ sub add_field {
         $field = Form::Sensible::Field->create_from_flattened($newfield);
     }
     
-    if ($field->DOES('Form::Sensible::Field::SubForm') && $field->form == $self) {
+    if ($field->isa('Form::Sensible::Field::SubForm') && $field->form == $self) {
         croak "Unable to add sub-form. sub-form is the same as me. Infinite recursion will occur, dying now instead of later.";
     }
     
@@ -348,7 +348,7 @@ Form::Sensible::Form - Form::Sensible's Form class
     
     my $form = Form::Sensible::Form->new( name => 'login_form' );
 
-    $object->do_stuff();
+    $form->add_field({ ... });
 
 =head1 DESCRIPTION
 
