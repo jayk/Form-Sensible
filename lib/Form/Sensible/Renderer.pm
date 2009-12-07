@@ -24,11 +24,7 @@ This module does not really exist and may go away entirely.
 
 =over 8
 
-=item C<new>
-
-Returns a new My::Module object.
-
-=item C<as_string>
+=item C<render($form)>
 
 Returns a stringified representation of
 the object. This is mainly for debugging

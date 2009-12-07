@@ -349,12 +349,31 @@ Form::Sensible::Form - Form::Sensible's Form class
     my $form = Form::Sensible::Form->new( name => 'login_form' );
 
     $form->add_field({ ... });
+    
+    # later
+    
+    $form->set_values( $cgi->Vars );
+    
+    my $validation_result = $form->validate();
+
+    if ( !$validation_result->is_valid() ) {
+        # re-render form with errors.
+    }
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+Form::Sensible::Form is the main class in the Form::Sensible module. It
+represents a complete set of fields to be presented to the user in more or
+less a single transaction. Unlike an HTML form which has certain presentation
+and behaviors associated with it, a Form::Sensible::Form is simply a container
+of fields. Forms exist primarily as a handle to allow easy operation upon a
+group of fields simultaneously. I< Note that while Forms may only contain
+Fields, it is possible to include forms into other forms by using subforms
+(L<Form::Sensible::Field::SubForm>) >
+
+Note also that Renderer and Validator objects are built to operate on 
+potentially multiple Forms during their lifecycle. The C<render()> and 
+C<validate()> are primarily convenience routines.
 
 =head1 ATTRIBUTES
 

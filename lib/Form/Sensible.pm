@@ -160,13 +160,14 @@ HTML renderer produces sane html that can be easily styled via CSS
 
 =item *
 
-HTML renderer allows for custom templates for all aspects of form rendering.
+HTML renderer allows for custom templates to control all aspects of form rendering.
 
 =item *
 
 HTML output not tied to any javascript library.
 
 =back
+
 
 =head2 Form::Sensible form lifecycle
 
