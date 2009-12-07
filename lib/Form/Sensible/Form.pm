@@ -3,7 +3,7 @@ package Form::Sensible::Form;
 use Moose; 
 use namespace::autoclean;
 use Carp qw/croak/;
-use Class::MOP;
+use Class::MOP;    ## I don't believe this is required
 
 ## a form is a collection of fields. Different form types will work differently.
 
