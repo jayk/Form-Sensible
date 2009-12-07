@@ -36,7 +36,7 @@ my $form = Form::Sensible->create_form( {
                                                          { 
                                                             field_class => 'Text',
                                                             name => 'username',
-                                                            validation => {  regex => '^[0-9a-z]*'  }
+                                                            validation => {  regex => '^[0-9a-z]*$'  }
                                                          },
                                                          {
                                                              field_class => 'Text',
