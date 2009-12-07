@@ -55,5 +55,15 @@ $lib_dir = join('/', @dirs);
     my $output_2 = $renderer2->render($form)->complete;
     
 ok( $output eq $output_2, "flat creation and programmatic creation produce the same results");
+## here we should add some fields
 
+## here we should check these fields
+
+
+## here we should make sure proper validation passes
+
+## here we should make sure improper validation is handled properly, aka fail for
+## non-passing data
+
+## here we should render the form, and make sure stuff lines up properly
 done_testing();
