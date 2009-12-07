@@ -69,6 +69,11 @@ is($validation_result->is_valid, 1, "Validates okay");
 
 ## here we should make sure improper validation is handled properly, aka fail for
 ## non-passing data
+$form->set_values({ username => '*&#*&@)(*&)', password => 'test' });
+is_deeply ({ username => '*&#*&@)(*&)', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value });
+
+my $validation_result = $form->validate();
+isnt($validation_result->is_valid, 1, "Validation fails");
 
 ## here we should render the form, and make sure stuff lines up properly
 
