@@ -55,7 +55,7 @@ sub validate {
     my ($self) = @_;
     
     if ($#{$self->valid_extensions} != -1) {
-        my $extensions = ".", join('|.', @{$self->valid_extensions});
+        my $extensions = "." . join('|.', @{$self->valid_extensions});
         if ($self->value !~ /($extensions)$/) {
             return $self->display_name . " is not a valid file type";
         }
@@ -68,7 +68,7 @@ sub validate {
         return $self->display_name . " is not readable";
     }
     if ($self->maximum_size) {
-        $filesize = -s $self->value;
+        my $filesize = -s $self->value;
         if ($filesize > $self->maximum_size) {
             return $self->display_name . " is too large";
         }
