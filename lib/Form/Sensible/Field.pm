@@ -228,6 +228,10 @@ such as decimal or integer, upper and lower bounds, etc.
 A Trigger.  Causes something to happen, most often form validation and processing. Trigger 
 fields are most often rendered as buttons in graphical interfaces.  
 
+=item FileSelector: L<Form::Sensible::Field::FileSelector|Form::Sensible::Field::FileSelector>
+
+A File selector.  Used to pick a file.  Works locally or as a file upload, depending on your renderer.
+
 =item SubForm: L<Form::Sensible::Field::SubForm|Form::Sensible::Field::SubForm>
 
 A field type that allows you to include an entire other form into the current form.  Useful

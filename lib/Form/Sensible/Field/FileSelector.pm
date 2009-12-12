@@ -6,6 +6,11 @@ extends 'Form::Sensible::Field';
 
 ## provides a plain text field
 
+has 'file_ref' => (
+    is          => 'rw',
+);
+
+
 has 'valid_extensions' => (
     is          => 'rw',
     isa         => 'ArrayRef',
@@ -36,9 +41,6 @@ has 'must_be_readable' => (
     default     => 1,
     lazy        => 1,
 );
-
-
-
 
 sub get_additional_configuration {
     my ($self) = @_;
@@ -83,40 +85,47 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::FileSelector - 
+Form::Sensible::Field::FileSelector - A File selection field
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::FileSelector;
     
-    my $object = Form::Sensible::Field::FileSelector->new();
+    my $object = Form::Sensible::Field::FileSelector->new({
+        name => 'upload_file',
+        valid_extensions => [ "jpg", "gif", "png" ],
+        maximum_size => 262144,
+    });
 
-    $object->do_stuff();
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+This Field represents a File.  When this field type is used, the user will
+be prompted to select a file.  Depending on the user interface, it may be
+prompting for a local file or a file upload.  
 
 =head1 ATTRIBUTES
 
 =over 8
 
-=item C<'maximum_length'> has
-=item C<'should_truncate'> has
+=item C<value>
+The local filename of the file selected.  
 
-=back
+=item C<maximum_size>
+The maximum file size allowed for the file.
 
-=head1 METHODS
+=item C<valid_extensions>
+An array ref containing the valid extensions for this file. 
 
-=over 8
+=item C<must_exist>
+A true / false indicating whether the file must exist by the time the field is validated.  Defaults to true.
 
-=item C<'maximum_length'> has
-=item C<'should_truncate'> has
-=item C<get_additional_configuration> sub
-=item C<validate> sub
+=item C<must_be_readable>
+A true / false indicating whether the file must be readable by the time the field is validated.  Defaults to true.
 
+=item C<file_ref>
+A reference to the file.  This will only be defined if appropriate for your interface type.  This will be defined,
+for example, within a Catalyst app to hold the Catalyst::Request::Upload object.
 
 =back
 
