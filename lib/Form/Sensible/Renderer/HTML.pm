@@ -89,6 +89,12 @@ sub render {
             print "FOO!! $fieldname\n";
             $args{'subform_renderers'}{$fieldname} = Form::Sensible::Renderer::HTML::RenderedForm->new( $subform_init_hash );
             #print Dumper($args{'subform_renderers'}{$fieldname});
+            
+            ## dirty hack for now.  If we have subforms, then we automatically assume we have to be
+            ## multipart/form-data.  What we should do is check all the subforms... but we aren't doing that at this point.
+            $args{'stash'}{'form_enctype'} = 'multipart/form-data'
+        } elsif ($field->isa('Form::Sensible::Field::FileSelector')) {
+            $args{'stash'}{'form_enctype'} = 'multipart/form-data';
         }
     }
     

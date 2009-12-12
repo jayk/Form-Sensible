@@ -174,33 +174,110 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field - 
+Form::Sensible::Field - Field base class for Form::Sensible
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field;
     
-    my $object = Form::Sensible::Field->new();
+    my $field = Form::Sensible::Field->create_from_flattened( { 
+        field_class => 'Text',
+        name => 'username',
+        validation => {  regex => '^[0-9a-z]*$'  }
+     } );
 
-    $object->do_stuff();
+    $field->value('bob');
+
+    my $saveforlater = $field->flatten();
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+Form::Sensible::Field provides the basic functionality for all field types in
+Form::Sensible. All form field classes indended for use with Form::Sensible
+should extend Form::Sensible::Field.  Form::Sensible is distributed with the
+following field classes:
+
+=over 8
+
+=item Text: L<Form::Sensible::Field::Text|Form::Sensible::Field::Text>
+
+Simple text field, for storage of simple strings of text. Defaults to a
+maximum length of 256. If you are looking for multi-line text, it's probably
+better to use the LongText type.
+
+=item LongText: L<Form::Sensible::Field::LongText|Form::Sensible::Field::LongText>
+
+Similar to the Text field type, only intended for longer, multi-line strings of text.  
+
+=item Select: L<Form::Sensible::Field::Select|Form::Sensible::Field::Select>
+
+Multiple-choice field type.  Provides for selecting one or more items out of a group 
+of pre-defined options.
+
+=item Toggle: L<Form::Sensible::Field::Toggle|Form::Sensible::Field::Toggle>
+
+Similar to the select type, but provides for only on/off state.
+
+=item Number: L<Form::Sensible::Field::Number|Form::Sensible::Field::Number>
+
+Number field type.  Contains options for defining number-specific options and limits
+such as decimal or integer, upper and lower bounds, etc.  
+
+=item Trigger: L<Form::Sensible::Field::Trigger|Form::Sensible::Field::Trigger>
+
+A Trigger.  Causes something to happen, most often form validation and processing. Trigger 
+fields are most often rendered as buttons in graphical interfaces.  
+
+=item SubForm: L<Form::Sensible::Field::SubForm|Form::Sensible::Field::SubForm>
+
+A field type that allows you to include an entire other form into the current form.  Useful
+for creating blocks of fields which can be included into other forms easily.
+
+=back
+
+We believe that almost all form based values can fit into these types. Keep in
+mind that these are not intended to represent all I<presentations> of form
+data. Select fields, for example could be rendered as a dropdown select-box or
+as a group of checkboxes, depending on the renderer selected and the
+render_hints provided.
+
+If you feel we've missed something, please drop us a line, or drop by
+#form-sensible on irc.perl.org.
 
 =head1 ATTRIBUTES
 
 =over 8
 =item C<'name'> 
+The field name, used to identify this field in your program.
+
 =item C<'display_name'> 
-=item C<'field_type'> 
+The name used when displaying messages about this field, such as errors, etc.  Defaults to C<uc($field->name)>.
+
+=item C<'field_type'>
+A string identifying this type of field.  Normally defaults to the last portion of the classname, for example, for a
+Form::Simple::Field::Text the field_type would be 'text'
+
 =item C<'required'> 
+Indicates whether it is an error if this field is left empty.
+
 =item C<'validation'> 
-=item C<'render_hints'> 
+Hashref containing information used in validation of this field. The content
+of the hashref depends on the validator being used. If the built-in
+L<Form::Sensible::Validator> is being used, the two keys that may be present
+are C<regex> and C<code>. The C<regex> element should contain either a regex
+pattern or a regex reference to be applied to the field. The C<code> element
+should contain an code reference used to validate the field's value. For more
+information, see L<Form::Sensible::Validator>.
+
+=item C<'render_hints'>
+Hashref containing hints to help the renderer render this field.  The hints available 
+depend on the renderer being used.  
+
 =item C<'value'> 
+The current value for this field.
+
 =item C<'default_value'> 
+The default value to use if none is provided.
 
 =back 
 
@@ -208,12 +285,30 @@ demonstrating how POD works.
 
 =over 8
 
-=item C<_default_field_type> 
-=item C<_default_render_hints> 
-=item C<flatten> 
-=item C<get_additional_configuration> 
-=item C<validate> 
-=item C<create_from_flattened> 
+=item C<validate()> 
+
+Validation specific to the field.  This is usually used to provide validation that only
+applies to the given type of field, for example, ensuring that the value provided 
+matches the available options in a select box.
+
+=item C<create_from_flattened()> 
+
+Creates a new field object using the provided flattenned field information.  Note that 
+this will use the C<field_class> element in the provided hash to determine the appropriate
+object type to create. 
+
+=item C<flatten([$template_only])> 
+
+Flattens the current field into a non-blessed hashref that can be used to recreate the
+field later.  If C<$template_only> is provided and is true, only the data required to 
+re-create the field is provided, and no additional state (such as the current value) 
+is returned.
+
+=item C<get_additional_configuration()> 
+
+Helper function to C<flatten()>, used by subclasses to add additional information specific to 
+the subclass type into in the flattened hash structure.  Should return a hashref to be merged 
+into the flattened field hash.
 
 =back
 

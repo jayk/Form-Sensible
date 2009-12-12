@@ -46,7 +46,7 @@ sub add_missing {
 }
 
 sub is_valid {
-    my ($self) = @_;
+    my ($self) = shift;
     
     if ((scalar keys %{$self->error_fields}) || (scalar keys %{$self->missing_fields})) {
         return 0;
@@ -72,6 +72,81 @@ sub merge_from_result {
             $self->missing_fields->{$fieldname} = [];
         }
         push @{$self->missing_fields->{$fieldname}}, @{$result->missing_fields->{$fieldname}};
+    }
+}
+
+## below here are things that make Form::Sensible::Validator results behave 
+## more like FormValidator::Simple 
+
+sub has_missing {
+    my $self = shift;
+    
+    if (scalar keys %{$self->missing_fields}) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub has_invalid {
+    my $self = shift;
+    
+    if (scalar keys %{$self->error_fields}) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub has_error {
+    my $self = shift;
+    
+    return !$self->is_valid();
+}
+
+sub success {
+    my $self = shift;
+    
+    return $self->is_valid();
+}
+
+sub missing {
+    my $self = shift;
+    
+    if ($#_ != -1) {
+        if (exists($self->missing_fields->{$_[0]})) {
+            return 1;
+        }
+    } else {
+        return keys %{$self->missing_fields};
+    }
+}
+
+sub invalid {
+    my $self = shift;
+    
+    if ($#_ != -1) {
+        if (exists($self->error_fields->{$_[0]})) {
+            return $self->error_fields->{$_[0]};
+        } else {
+            return 0;
+        }
+    } else {
+        return keys %{$self->error_fields};
+    }
+} 
+
+sub error {
+    my $self = shift;
+    
+    if ($#_ == -1) {
+        return keys %{$self->missing_fields}, keys %{$self->error_fields};
+    } else {
+        if ($_[1] eq 'NOT_BLANK' && exists($self->missing_fields->{$_[0]}) {
+            return 1;
+        } else {
+            return exists($self->error_fields->{$_[0]});
+        }
     }
 }
 
