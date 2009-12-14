@@ -134,21 +134,33 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::Number - 
+Form::Sensible::Field::Number - A Numeric field type.
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::Number;
     
-    my $object = Form::Sensible::Field::Number->new();
+    my $object = Form::Sensible::Field::Number->new( 
+                                                        integer_only => 1,
+                                                        lower_bound => 10,
+                                                        upper_bound => 100,
+                                                        step => 5,
+                                                    );
 
     $object->do_stuff();
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+The number field type is one of the more advanced 
+field types in Form::Sensible. It has a number of features for
+dealing specifically with numbers.  It can be set to have a lower and
+upper bound, allowing validation to ensure that the value selected is
+within a range.  It can also be set to have a 'step', which provides a
+constraint to what values are valid between the upper and lower bounds.
+It can also be made to accept integers only, or fractional values.  
+
+Finally, it can be rendered in a number of ways including select boxes,
+drop downs or even ranged-sliders if your renderer supports it.
 
 =head1 ATTRIBUTES
 

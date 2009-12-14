@@ -85,7 +85,7 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::FileSelector - A File selection field
+Form::Sensible::Field::FileSelector - Field used for file selection
 
 =head1 SYNOPSIS
 
@@ -100,9 +100,9 @@ Form::Sensible::Field::FileSelector - A File selection field
 
 =head1 DESCRIPTION
 
-This Field represents a File.  When this field type is used, the user will
-be prompted to select a file.  Depending on the user interface, it may be
-prompting for a local file or a file upload.  
+This field represents a File.  When the FileSelector field type is used, 
+the user will be prompted to select a file.  Depending on the user 
+interface, it may be prompting for a local file or a file upload.  
 
 =head1 ATTRIBUTES
 

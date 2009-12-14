@@ -18,27 +18,43 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::LongText - 
+Form::Sensible::Field::LongText - Field for representing large amounts of character-string data. 
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::LongText;
     
-    my $object = Form::Sensible::Field::LongText->new();
+    my $textfield = Form::Sensible::Field::LongText->new(
+                                                    name => 'username',
+                                                    maximum_length => 16,
+                                                    should_truncate => 0
+                                                  );
 
-    $object->do_stuff();
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+Form::Sensible::Field subclass for representing large amounts of
+character-string based data. It has all the same attributes and behaviors as
+Text, only is intended for larger amounts of text. It is separate from Text fields
+only because it is likely larger-blocks of text will require additional formatting and
+processing options.  
 
 =head1 ATTRIBUTES
 
 =over 8
 
-=item C<'+maximum_length'> has
+=item C<'maximum_length'>
+
+The maximum length this text field should accept. Note that any size of string
+can be placed in the field, it will simply fail validation if it is too large.
+Alternately if 'should_truncate' is true, the value will be truncated when it
+is set.
+
+=item C<'should_truncate'>
+
+Indicates that if value is set to a string larger than maximum_length, it
+should be automatically truncated to maximum_length. This has to be manually
+turned on, by default should_truncate is false.
 
 =back
 

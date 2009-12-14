@@ -53,13 +53,13 @@ has 'value' => (
 
 
 sub set_selection {
-    my ($self, $value) = @_;
+    my ($self) = shift;
     
-    if (!$self->accepts_multiple && $#{$self->value} >= 0) {
-        ## this instance doesn't accept multiple, so we replace the old value
-        $self->value([$value]);
+    
+    if (!$self->accepts_multiple) {
+        $self->value([ $_[0] ]);
     } else {
-        push @{$self->value}, $value;
+        push @{$self->value}, @_;
     }
 }
 
@@ -111,29 +111,45 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::Select - 
+Form::Sensible::Field::Select - A multiple-choice option field
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::Select;
     
-    my $object = Form::Sensible::Field::Select->new();
+    my $select_field = Form::Sensible::Field::Select->new( 
+                                                         name => 'bread_type'
+                                                         accepts_multiple => 0
+                                                    );
 
-    $object->do_stuff();
+    $select_field->add_option('wheat', 'Wheat Bread');
+    $select_field->add_option('white', 'White Bread');
+    $select_field->add_option('sour', 'Sourdough Bread');
+
+
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+This Field type allows a user to select one or more options from a
+provided set of options.  This could be rendered as a select box,
+a radio group or even a series of checkboxes, depending on the renderer
+and the render_hints provided.
+
+Note that the value returned by a select field will always be an arrayref,
+even if only a single option was selected.
 
 =head1 ATTRIBUTES
 
 =over 8
 
-=item C<'accepts_multiple'> has
-=item C<'options'> has
-=item C<'value'> has
+=item C<'options'> 
+
+An array ref containing the allowed options. Each option is represented as a
+hash containing a C<name> element and a C<value> element for the given option.
+
+=item C<'accepts_multiple'>
+
+Does this field allow multiple options to be selected.  Defaults to false.
 
 =back 
 
@@ -141,11 +157,16 @@ demonstrating how POD works.
 
 =over 8
 
-=item C<set_selection> sub
-=item C<add_option> sub
-=item C<get_additional_configuration> sub
-=item C<validate> sub
+=item C<set_selection($selected_option,...)> 
 
+Set's the provided option values as selected.  If C<accepts_multiple> is 
+false, only the first item will be set as selected.
+
+
+=item C<add_option($option_value, $option_display_name)>
+
+Adds the provided value and display name to the set of options that can
+be selected for this field.
 
 =back
 

@@ -54,39 +54,35 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::Toggle - 
+Form::Sensible::Field::Toggle - An on/off field
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::Toggle;
     
-    my $object = Form::Sensible::Field::Toggle->new();
-
-    $object->do_stuff();
+    my $object = Form::Sensible::Field::Toggle->new( 
+                                                      on_value => '100',
+                                                      off_value => '0'
+                                                    );
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+The Toggle field type represents a simple on/off selector.  A value is 
+provided for both on and off states.  A toggle can often be rendered in
+the same ways as a C<Select|Form::Sensible::Field::Select> field type, as
+in most cases it can be treated as a select with only two options, on and off.
 
-=head1 METHODS
+=head1 ATTRIBUTES
 
 =over 8
 
-=item C<'on_value'> has
+=item C<'on_value'> 
+
+The value to be used when the field is in the 'ON' state.
+
 =item C<'off_value'> has
 
-=back
-
-=head1 METHODS
-
-=over 8
-
-=item C<get_additional_configuration> sub
-=item C<options> sub
-=item C<validate> sub
-
+The value to be used when the field is in the 'OFF' state.
 
 =back
 
