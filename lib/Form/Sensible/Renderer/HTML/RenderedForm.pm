@@ -2,6 +2,7 @@ package Form::Sensible::Renderer::HTML::RenderedForm;
 
 use Moose; 
 use namespace::autoclean;
+use Data::Dumper;
 use Carp qw/croak/;
 use File::ShareDir;
 
@@ -9,7 +10,7 @@ has 'form' => (
     is          => 'rw',
     isa         => 'Form::Sensible::Form',
     required    => 1,
-    weak_ref    => 1,
+    #weak_ref    => 1,
 );
 
 has 'template' => (
@@ -181,7 +182,7 @@ sub fields {
 }
 
 sub render_field {
-    my ($self, $fieldname) = @_;
+    my ($self, $fieldname, $manual_hints) = @_;
 
     my $field = $self->form->field($fieldname);
     my $fieldtype = $field->field_type;
@@ -196,7 +197,6 @@ sub render_field {
             $fieldtype = $field->render_hints->{'field_type'};
         }
 
-    
         ## Order for trying templates should be:
         ## formname/fieldname
         ## formname/fieldtype
@@ -212,10 +212,15 @@ sub render_field {
                 
         ## if we have field-specific render_hints, we have to add them
         ## ourselves.  First we load any already-set render_hints
+        $vars->{'render_hints'} = { %{ $self->render_hints } };
         if (scalar keys %{$field->render_hints}) {
-            $vars->{'render_hints'} = { %{ $self->render_hints } };
             foreach my $key (keys %{$field->render_hints}) {
                 $vars->{'render_hints'}{$key} = $field->render_hints->{$key};
+            }
+        }
+        if (ref($manual_hints) eq 'HASH') {
+            foreach my $key (keys %{$manual_hints}) {
+                $vars->{'render_hints'}{$key} = $manual_hints->{$key};
             }
         }
     
@@ -267,6 +272,11 @@ sub process_first_template {
         if ($res) {
             $template_found = 1;
             last;
+        } else {
+            my $error = $self->template->error();
+            if ($error->info =~ /parse error/) {
+                croak 'Error processing ' . $template_name . ': ' . $error;
+            }
         }
     }
     

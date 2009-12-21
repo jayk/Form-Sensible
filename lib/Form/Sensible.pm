@@ -63,6 +63,9 @@ sub get_renderer {
         $class_to_load = 'Form::Sensible::Renderer::' . $type;
     }
     Class::MOP::load_class($class_to_load);
+    if (!$options) {
+        $options = {};
+    }
     
     return $class_to_load->new($options);
 }

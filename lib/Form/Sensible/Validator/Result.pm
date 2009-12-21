@@ -142,7 +142,7 @@ sub error {
     if ($#_ == -1) {
         return keys %{$self->missing_fields}, keys %{$self->error_fields};
     } else {
-        if ($_[1] eq 'NOT_BLANK' && exists($self->missing_fields->{$_[0]}) {
+        if ($_[1] eq 'NOT_BLANK' && exists($self->missing_fields->{$_[0]})) {
             return 1;
         } else {
             return exists($self->error_fields->{$_[0]});

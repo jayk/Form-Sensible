@@ -1,6 +1,37 @@
-<div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+[% IF render_hints.render_as && (render_hints.render_as == 'checkboxes' ) %]
+    [%- box_type = 'radio' -%]
+    [%- IF field.accepts_multiple %][%- box_type='checkbox' -%][% END -%]
+    [%- fields_across = 3 -%]
+    [%- IF render_hints.fields_across -%][% fields_across = render_hints.fields_across %][% END -%]
+    [% field_count = 0 %]
+    <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]checkbox_container [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+        <div class="[% css_prefix _ field_type %]_label_div"><span class="[% css_prefix -%]label [% css_prefix _ field_type %]_label">[% field.display_name %]</span></div>
+        <div class="[% css_prefix -%]checkboxes">
+             [% FOREACH item = field.options -%]
+                [% IF field_count == 0 %]<div class="[% css_prefix -%]checkbox_row" >[% END %]
+                [% field_count = field_count + 1 %]
+                [%- selected = "" -%]
+                [%- FOREACH val = field.value -%]
+                    [%- IF item.value == val %][% selected = " selected" %][% END -%]
+                [%- END -%]
+                <div class="[% css_prefix -%]checkbox [% css_prefix -%][% field_name %]_checkbox">
+                [% IF render_hints.checkbox_align && (render_hints.checkbox_align == 'right') %]
+                    <span class="[% css_prefix -%]name [% css_prefix _ field_type %]_name">[% item.name %]</span><input type="[% box_type %]" name="[% field.name %]" value="[% item.value %]"[%- selected -%]>
+                [% ELSE %]
+                    <input type="[% box_type %]" name="[% field.name %]" value="[% item.value %]"[%- selected -%]><span class="[% css_prefix -%]name [% css_prefix _ field_type %]_name">[% item.name %]</span>    
+                [% END %]
+                </div>
+                [% IF field_count >= fields_across || (item == field.options.last ) %][% field_count = 0 %]</div>[% END %]
+               [% END %]
+        </div>
+        </div>
+    </div>
+[% ELSE %]
+    [% select_size = '' %]
+    [%- IF render_hints.select_size %][% select_size='size="' _ render_hints.select_size _'"' %][% END -%]
+    <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
     <span class="[% css_prefix -%]label [% css_prefix _ field_type %]_label">[% field.display_name %]</span>
-    <select name="[% field_name %]" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
+    <select name="[% field_name %]" [%- IF field.accepts_multiple %]multiple[%- END %] [% select_size %] id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
         [% FOREACH item = field.options -%]
         [%- selected = "" -%]
         [%- FOREACH val = field.value -%]
@@ -9,4 +40,5 @@
        <option value="[% item.value %]"[%- selected -%]>[% item.name %]</option>
        [% END %]
     </select>  
-</div>
+    </div>
+[% END %]

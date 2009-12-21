@@ -16,6 +16,21 @@ has 'off_value' => (
     default     => 'off',
 );
 
+has 'on_label' => (
+    is          => 'rw',
+    isa         => 'Str',
+    lazy        => 1,
+    default     => sub { ucfirst(shift->on_value)},
+);
+
+has 'off_label' => (
+    is          => 'rw',
+    isa         => 'Str',
+    lazy        => 1,
+    default     => sub { ucfirst(shift->off_value)},
+);
+
+
 sub get_additional_configuration {
     my $self = shift;
     
@@ -29,7 +44,20 @@ sub get_additional_configuration {
 sub options {
     my $self = shift;
     
-    return [ map { { name => $_, value => $_ } } ($self->on_value, $self->off_value) ];
+    return [ { 
+                 name => $self->on_label, 
+                 value => $self->on_value
+             },
+             { 
+                 name => $self->off_label, 
+                 value => $self->off_value
+             },
+           ];
+}
+
+sub accepts_multiple {
+    my $self = shift;
+    return 0;
 }
 
 sub validate {

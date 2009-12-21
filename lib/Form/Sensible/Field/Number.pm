@@ -98,6 +98,12 @@ sub options {
     return [ map { { name => $_, value => $_ } } $self->get_potential_values() ];
 }
 
+sub accepts_multiple {
+    my ($self) = @_;
+    
+    return 0;
+}
+
 sub in_step {
     my ($self, $value, $step) = @_;
     
