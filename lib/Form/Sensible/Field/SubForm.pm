@@ -68,26 +68,19 @@ Form::Sensible::Field::SubForm - encapsulate an entire form within another.
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+The subform field type allows you to embed one form within another.  The fields
+in the subform are submitted and validated as though they belong to the primary
+form.  Please note that this feature is experimental at best and how it is 
+used is still subject to change.  
 
 
 =head1 Attributes
 
 =over 8
 
-=item C<'form'> has
+=item C<'form'>
 
-=back
-
-=head1 METHODS
-
-=over 8
-
-=item C<get_additional_configuration> sub
-=item C<validate> sub
-
+The sub-form to render at this field's position.
 
 =back
 

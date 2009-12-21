@@ -136,8 +136,9 @@ sub start {
         $method = 'POST';
     }
     my $vars = {
-                    method => $method,
-                    action => $action
+                    'form'  => $self->form,
+                    'method' => $method,
+                    'action' => $action,
                };
 
     
@@ -205,6 +206,7 @@ sub render_field {
     
         my $output;
         my $vars =  {
+                        'form'  => $self->form,
                         'field' => $field,
                         'field_type' => $fieldtype,
                         'field_name' => $fieldname
