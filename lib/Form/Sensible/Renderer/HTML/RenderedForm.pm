@@ -246,8 +246,11 @@ sub process_first_template {
     
     ## prefill anything provided already into the stash
     my $stash_vars = { %{$self->stash } }; 
-     
-    $stash_vars->{'render_hints'} = $self->render_hints;
+    
+    if (!exists($stash_vars->{'render_hints'})) {
+        $stash_vars->{'render_hints'} = $self->render_hints;
+    }
+    
     $stash_vars->{'form'} = $self->form;
     $stash_vars->{'error_messages'} = $self->error_messages;
     $stash_vars->{'status_messages'} = $self->status_messages;
@@ -332,16 +335,63 @@ demonstrating how POD works.
 =head1 ATTRIBUTES
 
 =over 8
-=item C<'form'> has
-=item C<'template'> has
-=item C<'template_fallback_order'> has
-=item C<'stash'> has
-=item C<'css_prefix'> has
-=item C<'form_template_prefix'> has
-=item C<'subform_renderers'> has
-=item C<'status_messages'> has
-=item C<'error_messages'> has
-=item C<'render_hints'> has
+
+=item C<stash>
+
+The stash used for the template processing.  Additional information is added
+to this stash automatically during field and form processing.
+
+=item C<css_prefix>
+
+This is applied to all html element CSS id's and class names.  By default, 
+css_prefix is set to C<fs_> 
+
+=item C<render_hints>
+
+Render hints provide information on how to render certain aspects of the form
+or field. The usage depends upon the field type in question. The information
+is passed through to the feild-specific templates as 'render_hints' during
+processing.
+
+=item C<status_messages>
+
+An array ref containing the status messages to be displayed on the form.
+
+=item C<error_messages> 
+
+An array ref containing the error messages to be displayed on the form. 
+
+=item C<form_template_prefix>
+
+Non-field related template names are prefixed with this value.  The three
+templates used for each form are:  C<start,> C<messages,> and C<end.> 
+The default value for C<form_template_prefix> is 'form', so by default
+the form templates used are: C<form_start.tt,> 
+C<form_messages.tt,> and C<form_end.tt.>
+
+=item C<subform_renderers> has
+
+This contains the references to subform renderers.  Subform rendering is
+experimental and is still subject to changes.  It's probably best to leave
+this attribute alone for now.
+
+=item C<form> 
+
+A reference to the L<form|Form::Sensible::Form> object that is being rendered.  
+
+=item C<template> 
+
+The template toolkit object to be used to process the templates.  This is 
+normally set up prior to rendering and should only be changed if you know 
+what you are doing.  In other words, unless you've read the source, it's 
+a good idea to leave this alone.
+
+=item C<template_fallback_order>
+
+An array ref containing the order to seek for overriding templates for 
+all elements of form rendering. By default, a subdirectory named 
+after the C<< $form->name >> is searched first, then the root 
+template directory is searched.
 
 =back
 
@@ -349,18 +399,48 @@ demonstrating how POD works.
 
 =over 8
 
-=item C<_default_form_template_prefix> sub
-=item C<add_status_message> sub
-=item C<add_error_message> sub
-=item C<add_errors_from_validator_result> sub
-=item C<start> sub
-=item C<messages> sub
+=item C<add_status_message($message)>
+
+Adds $message to the status messages to be displayed.
+
+=item C<add_error_message($fieldname, $message)>
+
+Adds the error message provided in C<$message> to the 
+list of error messages to be displayed. The error message 
+is associated with the C<$fieldname> given.
+
+=item C<add_errors_from_validator_result($validator_result)>
+
+Inspects $validator_result and adds any messages found to the
+list of errors to be displayed on the form.
+
+=item C<start($action, $method)>
+
+This renders the start of the form and sets it to be 
+submitted to the url provided in C<$action>.  C<$action> 
+is placed directly in to the C<action> attribute of the 
+C<form> element.  Returns the rendered HTML as a string.
+
+=item C<messages>
+
+This renders the messages portion of the form.  Returns 
+the rendered html as a string
+
+
+
 =item C<fieldnames> sub
 =item C<fields> sub
 =item C<render_field> sub
 =item C<process_first_template> sub
 =item C<end> sub
-=item C<complete> sub
+
+=item C<complete($action, $method)>
+
+Renders the entire form and returns the rendered results.  Calling 
+C<<$form->complete($action, $method) >> routine is functionally 
+equivalent to calling:
+
+ $form->start($action, $method) . $form->messages() . $form->fields() . $form->end();
 
 
 =back
