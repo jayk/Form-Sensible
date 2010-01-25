@@ -95,6 +95,90 @@ This module is a base class for writing reflectors, meaning you do not use
 this class directly. Instead you use one of the subclasses that deal with your
 data source type.
 
+=head1 USAGE
+
+    my $reflector = Form::Sensible::Form::Reflector::SomeSubclass->new();
+
+    my $generated_form = $reflector->reflect_from($data_source, $options);
+    
+By default, a Reflector will create a new form using the exact fields found 
+within the datasource.  It is possible, however, to adjust this behavior 
+using the C<$options> hashref passed to the C<reflect_from> call.  
+
+=head3 Adjusting the parameters of your new form
+
+    my $generated_form = $reflector->reflect_from($data_source, 
+                                                  { 
+                                                    form => {
+                                                        name => 'profile_form',
+                                                        validation => { 
+                                                            code => sub { ... }
+                                                        }
+                                                    }
+                                                  });
+
+If you want to adjust the parameters of the new form, you can provide a hashref 
+in the C<< $options->{form} >> that will be passed to the 
+C<< Form::Sensible::Form->new() >> call.  
+
+=head3 Providing your own form
+
+    $reflector->reflect_from($data_source, 
+                            { 
+                                form => $my_existing_form_object
+                            }
+                            );
+
+If you do not want to create a new form, but instead want the fields appended
+to an existing form, you can provide an existing form object in the options
+hash ( C<< $options->{form} >> )
+
+=head3 Changing field order
+
+    $reflector->reflect_from($data_source, 
+                            { 
+                                ## sort fields alphabetically
+                                fieldname_filter => sub { 
+                                                        return sort(@_);
+                                                    },
+                            }
+                            );
+                            
+If you are unhappy with the order that your fields are displaying in you can 
+adjust it by providing a subroutine in C<< $options->{'fieldname_filter'} >>.
+The subroutine takes the list of fields as returned by C<< get_fieldnames() >>
+and should return an array (not an array ref) of the fields in the new order.
+Note that you can also remove fields this way.  Note also that no checking
+is done to verify that the fieldnames you return are valid, if you return
+any fields that were not in the original array, you are likely to cause an 
+exception when the field definition is created.
+
+=head3 Changing field names
+
+$reflector->reflect_from($data_source, 
+                        { 
+                            ## change 'logon' field to be 'username' in the form
+                            ## and other related adjustments.
+                            fieldname_map => { 
+                                                logon => 'username',
+                                                pass => 'password',
+                                                address => 'email',
+                                                home_num => 'phone',
+                                                parent_account => undef,
+                                            },
+                        }
+                        );
+
+By default, the C<Form::Sensible> field names are exactly the same as the data
+source's feild names. If you would rather not expose your internal field names
+or have other reason to change them, you can provide a 
+C<< $options->{'fieldname_map'} >> hashref to change them on the fly. The
+C<fieldname_map> is simply an mapping between the original field name and the
+Form::Sensible field name you would like it to use. If you use this method you
+must provide a mapping for B<ALL> fields as a missing field (or a field with
+an undef value) is treated as a request to remove the field from the form
+entirely.  
+
 =head1 CREATING YOUR OWN REFLECTOR
 
 Creating a new reflector class is extraordinarily simple. All you need to do
