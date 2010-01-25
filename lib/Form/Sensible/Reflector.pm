@@ -82,33 +82,33 @@ Form::Sensible::Form::Reflector - A base class for writing Form::Sensible reflec
 
 =head1 DESCRIPTION
 
-A Reflector in Form::Sensible is a class that inspects a data 
-source and creates a form based on what it finds there.  In other 
-words it creates a form that 'reflects' the data elements found 
-in the data source.  
+A Reflector in Form::Sensible is a class that inspects a data source and
+creates a form based on what it finds there. In other words it creates a form
+that 'reflects' the data elements found in the data source.
 
-A good example of this would be to create forms based on a DBIx::Class 
-result_source (or table definition.)  Using the DBIC reflector, you 
-could create form for editing a user's profile information simply by 
-passing the User result_source into the reflector.  
+A good example of this would be to create forms based on a DBIx::Class
+result_source (or table definition.) Using the DBIC reflector, you could
+create form for editing a user's profile information simply by passing the
+User result_source into the reflector.
 
-This module is a base class for writing reflectors, meaning you do not
-use this class directly.  Instead you use one of the subclasses that 
-deal with your data source type.  
+This module is a base class for writing reflectors, meaning you do not use
+this class directly. Instead you use one of the subclasses that deal with your
+data source type.
 
 =head1 CREATING YOUR OWN REFLECTOR
 
-Creating a new reflector class is extraordinarily simple.  All you need
-to do is create a subclass of Form::Sensible::Reflector and then create
-two subroutines: C<get_fieldnames> and C<get_field_definition>.  
+Creating a new reflector class is extraordinarily simple. All you need to do
+is create a subclass of Form::Sensible::Reflector and then create two
+subroutines: C<get_fieldnames> and C<get_field_definition>.
 
-As you might expect, C<get_fieldnames> should return an array containing
-the names of the fields that are to be created. C<get_field_definition> 
-is then called for each field to be created and should return a 
-hashref representing that field suitable for passing to the 
-L<Form::Sensible::Field|Form::Sensible::Field> C<create_from_flattened> method.
+As you might expect, C<get_fieldnames> should return an array containing the
+names of the fields that are to be created. C<get_field_definition> is then
+called for each field to be created and should return a hashref representing
+that field suitable for passing to the
+L<Form::Sensible::Field|Form::Sensible::Field> C<create_from_flattened>
+method.
 
-Note that in both cases, the contents of C<$datasource> are specific to your 
+Note that in both cases, the contents of C<$datasource> are specific to your
 reflector subclass and are not inspected in any way by the base class.
 
 =head2 Subclass Boilerplate
@@ -143,14 +143,15 @@ reflector subclass and are not inspected in any way by the base class.
 
 =head2 Author's note 
 
-This is a base class to write reflectors for things like, 
-configuration files, or my favorite, a database schema.
+This is a base class to write reflectors for things like, configuration files,
+or my favorite, a database schema.
 
-The idea is to give you something that creates a form from some other source that already defines form-like
-properties, ie a database schema that already has all the properties and fields a form would need.
+The idea is to give you something that creates a form from some other source
+that already defines form-like properties, ie a database schema that already
+has all the properties and fields a form would need.
 
-I personally hate dealing with forms that are longer than a search field or login form, so this really
-fits into my style.
+I personally hate dealing with forms that are longer than a search field or
+login form, so this really fits into my style.
 
 =head1 AUTHOR
 
@@ -160,8 +161,8 @@ Devin Austin <dhoss@cpan.org>
 
 =head1 ACKNOWLEDGEMENTS
 
-Jay Kuri <jayk@cpan.org> for his awesome Form::Sensible library and helping me get this library
-in tune with it.
+Jay Kuri <jayk@cpan.org> for his awesome Form::Sensible library and helping me
+get this library in tune with it.
 
 =cut
 
