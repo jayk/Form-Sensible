@@ -158,6 +158,13 @@ Devin Austin <dhoss@cpan.org>
 
 =cut
 
+=head1 ACKNOWLEDGEMENTS
+
+Jay Kuri for his awesome Form::Sensible library and helping me get this library
+in tune with it.
+
+=cut
+
 =head1 SEE ALSO
 
 L<Form::Sensible>
