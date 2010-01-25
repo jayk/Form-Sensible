@@ -160,7 +160,7 @@ Devin Austin <dhoss@cpan.org>
 
 =head1 ACKNOWLEDGEMENTS
 
-Jay Kuri for his awesome Form::Sensible library and helping me get this library
+Jay Kuri <jayk@cpan.org> for his awesome Form::Sensible library and helping me get this library
 in tune with it.
 
 =cut
