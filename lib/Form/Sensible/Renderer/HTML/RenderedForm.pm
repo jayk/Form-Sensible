@@ -316,21 +316,24 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Renderer::HTML::RenderedForm - A HTML based rendered form handle.
+Form::Sensible::Renderer::HTML::RenderedForm - A rendered form handle for HTML
 
 =head1 SYNOPSIS
 
-    use Form::Sensible::Renderer::HTML::RenderedForm;
-    
-    my $object = Form::Sensible::Renderer::HTML::RenderedForm->new();
+    use Form::Sensible::Renderer::HTML;
 
-    $object->do_stuff();
+    my $renderer = Form::Sensible::Renderer::HTML->new();
+
+    my $renderedform = $renderer->render($form);
+    
+    print $renderedform->complete('/myform/submit', 'POST');
+    
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+The Form::Sensible::Renderer::HTML::RenderedForm class defines the result of 
+rendering a form as HTML.  It is not generally created directly, but rather is created
+by passing a form to the L<Form::Sensible::Renderer::HTML> C<render()> mathod.
 
 =head1 ATTRIBUTES
 
@@ -421,18 +424,31 @@ submitted to the url provided in C<$action>.  C<$action>
 is placed directly in to the C<action> attribute of the 
 C<form> element.  Returns the rendered HTML as a string.
 
-=item C<messages>
+=item C<messages()>
 
-This renders the messages portion of the form.  Returns 
-the rendered html as a string
+This renders the messages portion of the form.  Often (and by default)
+this is displayed before the form fields. Returns the rendered messages 
+html as a string.
 
+=item C<render_field($fieldname, $render_hints)> 
 
+Renders the field matching C<$fieldname> and returns the rendered HTML for the
+field.  If the C<$render_hints> hashref is provided, it will be merged into 
+any previously set render hints for the field.  When a key conflict occurs the
+passed C<$render_hints> will override any existing configuration.
 
-=item C<fieldnames> sub
-=item C<fields> sub
-=item C<render_field> sub
-=item C<process_first_template> sub
+=item C<fields()>
+
+A shortcut routine that renders all the fields in the form.  Returns all of the fields
+rendered as a single string.
+
 =item C<end> sub
+
+Renders the end of the form. Returns the rendered html as a string.
+
+=item C<fieldnames()> 
+
+Returns an array containing the fieldnames in the form (in their render order)
 
 =item C<complete($action, $method)>
 
@@ -441,7 +457,6 @@ C<<$form->complete($action, $method) >> routine is functionally
 equivalent to calling:
 
  $form->start($action, $method) . $form->messages() . $form->fields() . $form->end();
-
 
 =back
 

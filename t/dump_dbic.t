@@ -1,6 +1,6 @@
 use Test::More;
 use FindBin;
-use lib "$FindBin::bin/../lib";
+use lib "$FindBin::Bin/../lib";
 use Form::Sensible::Form;
 use Form::Sensible::Field::Text;
 use Form::Sensible::Renderer::Dump;

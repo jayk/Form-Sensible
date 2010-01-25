@@ -30,7 +30,7 @@ my $output = $renderer->render($form)->complete;
 
 ############ same thing - only the 'flat' way.
 
-my $form = Form::Sensible->create_form( {
+$form = Form::Sensible->create_form( {
                                             name => 'test',
                                             fields => [
                                                          { 
@@ -72,7 +72,7 @@ is($validation_result->is_valid, 1, "Validates okay");
 $form->set_values({ username => '*&#*&@)(*&)', password => 'test' });
 is_deeply ({ username => '*&#*&@)(*&)', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value });
 
-my $validation_result = $form->validate();
+$validation_result = $form->validate();
 isnt($validation_result->is_valid, 1, "Validation fails");
 
 ## here we should render the form, and make sure stuff lines up properly

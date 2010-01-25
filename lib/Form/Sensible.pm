@@ -133,41 +133,23 @@ others.)
 =head2 FEATURES
 
 =over 8
-=item *
+=item * Easy form creation
 
-Easy form creation
+=item * Easy form validation
 
-=item *
+=item * Ability to easily save created forms for future use
 
-Easy form validation
+=item * Define form once, render any number of ways
 
-=item *
+=item * Flexible built-in form validator
 
-Ability to easily save created forms for future use
+=item * Easily extended to produce new renderers, field types and validation
 
-=item *
+=item * HTML renderer produces sane html that can be easily styled via CSS
 
-Define form once, render any number of ways
+=item * HTML renderer allows for custom templates to control all aspects of form rendering.
 
-=item *
-
-Flexible built-in form validator
-
-=item *
-
-Easily extended to produce new renderers, field types and validation
-
-=item *
-
-HTML renderer produces sane html that can be easily styled via CSS
-
-=item *
-
-HTML renderer allows for custom templates to control all aspects of form rendering.
-
-=item *
-
-HTML output not tied to any javascript library.
+=item * HTML output not tied to any javascript library.
 
 =back
 
@@ -180,17 +162,11 @@ The Form::Sensible form lifecycle works as follows:
 
 =over 8
 
-=item 1.
+=item 1. Create form object
 
-Create form object
+=item 2. Create or get a renderer
 
-=item 2.
-
-Create or get a renderer
-
-=item 3.
-
-Use renderer to render form
+=item 3. Use renderer to render form
 
 =back
 
@@ -198,21 +174,13 @@ Use renderer to render form
 
 =over 8
 
-=item 1. 
+=item 1. Create form object
 
-Create form object
+=item 2. Retrieve user input and place it into form 
 
-=item 2. 
+=item 3. Validate form
 
-Retrieve user input and place it into form 
-
-=item 3.
-
-Validate form
-
-=item 4.
-
-If form data is invalid, re-render the form with messages
+=item 4. If form data is invalid, re-render the form with messages
 
 =back
 
@@ -348,6 +316,11 @@ Jay Kuri - E<lt>jayk@cpan.orgE<gt>
 Ionzero LLC. L<http://ionzero.com/>
 
 =head1 SEE ALSO
+
+Form::Sensible Wiki: L<http://wiki.catalyzed.org/cpan-modules/form-sensible>
+
+Form::Sensible Discussion: L<http://groups.google.com/group/formsensible>
+
 
 L<Form::Sensible>
 

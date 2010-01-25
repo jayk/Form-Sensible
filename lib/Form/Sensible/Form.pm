@@ -319,7 +319,6 @@ sub flatten {
     
     my $form_hash = {
     	                    'name' => $self->name,
-    	                    'display_name' => $self->display_name,
     	                    'render_hints' => $self->render_hints,
     	                    'validation' => $self->validation,
     	                    'field_order' => $self->field_order,
