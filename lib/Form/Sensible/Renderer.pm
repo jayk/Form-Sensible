@@ -7,6 +7,25 @@ use namespace::autoclean;
 ##
 ## should this be an abstract role that defines the interface for rendering?
 
+sub render_hints_for {
+    my ($self, $renderer_name, $thing) = @_;
+    
+    my $hints = $thing->render_hints();
+    
+    if (exists($hints->{$renderer_name})) {
+        return $hints->{$renderer_name};
+    } else {
+        return $hints;
+    }
+}
+
+sub render {
+    my ($self, $form) = @_;
+    
+    die "Unable to render " . $form->name . " because you are trying to use an abstract base class to render.";
+}
+
+
 __PACKAGE__->meta->make_immutable;
 1;
 
@@ -18,7 +37,8 @@ Form::Sensible::Renderer - Base class for Renderers.
 
 =head1 DESCRIPTION
 
-This module does not really exist and may go away entirely.
+This module provides a base class for renderers.  It's not
+very interesting.
 
 =head1 METHODS
 
@@ -26,9 +46,16 @@ This module does not really exist and may go away entirely.
 
 =item C<render($form)>
 
-Returns a stringified representation of
-the object. This is mainly for debugging
-purposes.
+Returns a rendered representation of
+the form.
+
+=item C<render_hints_for($renderer_name, $thing)>
+
+Returns the render hints for the given type. This looks for an element called
+C<renderer_name> in C<< $thing->render_hints >>. If found, it is returned,
+otherwise returns C<< $thing->render_hints >>. This is used to allow for
+specification of different renderhints within the same form for use by
+different renderers.
 
 =back
 

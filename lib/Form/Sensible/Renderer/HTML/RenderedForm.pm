@@ -81,7 +81,7 @@ has 'render_hints' => (
     required    => 1,
     default     => sub { 
                             my $self = shift;
-                            return { %{$self->form->render_hints} };
+                            return { %{$self->render_hints_for('HTML', $self->form)} };
                        },
     lazy        => 1,
 );
@@ -89,11 +89,18 @@ has 'render_hints' => (
 sub _default_form_template_prefix {
     my $self = shift;
     
-    if (exists($self->form->render_hints->{form_template_prefix})) {
-        return $self->form->render_hints->{form_template_prefix};
+    my $hints = $self->render_hints_for('HTML', $self->form);
+    if (exists($hints->{form_template_prefix})) {
+        return $hints->{form_template_prefix};
     } else {
         return 'form';
     }
+}
+
+sub render_hints_for {
+    my $self = shift;
+    
+    return Form::Sensible::Renderer->render_hints_for(@_);
 }
 
 sub add_status_message {
@@ -194,8 +201,9 @@ sub render_field {
     } else {
         ## allow render_hints to override field type - allowing a number to be rendered
         ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
-        if (exists($field->render_hints->{'field_type'})) {
-            $fieldtype = $field->render_hints->{'field_type'};
+        my $hints = $self->render_hints_for('HTML', $field);
+        if (exists($hints->{'field_type'})) {
+            $fieldtype = $hints->{'field_type'};
         }
 
         ## Order for trying templates should be:
@@ -215,9 +223,10 @@ sub render_field {
         ## if we have field-specific render_hints, we have to add them
         ## ourselves.  First we load any already-set render_hints
         $vars->{'render_hints'} = { %{ $self->render_hints } };
-        if (scalar keys %{$field->render_hints}) {
-            foreach my $key (keys %{$field->render_hints}) {
-                $vars->{'render_hints'}{$key} = $field->render_hints->{$key};
+        my $field_hints = $self->render_hints_for('HTML', $field);
+        if (scalar keys %{$field_hints}) {
+            foreach my $key (keys %{$field_hints}) {
+                $vars->{'render_hints'}{$key} = $field_hints->{$key};
             }
         }
         if (ref($manual_hints) eq 'HASH') {

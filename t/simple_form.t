@@ -24,7 +24,7 @@ $form->add_field($password_field);
 my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
 $form->add_field($submit_button);
 
-my $renderer = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] }});
+my $renderer = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates/default' ] }});
  
 my $output = $renderer->render($form)->complete;
 
@@ -50,7 +50,7 @@ $form = Form::Sensible->create_form( {
                                                       ],
                                         } );
 
-my $renderer2 = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates' ] }});
+my $renderer2 = Form::Sensible->get_renderer('HTML', {tt_config => { INCLUDE_PATH => [ $lib_dir . '/share/templates/default' ] }});
 
 my $output_2 = $renderer2->render($form)->complete;
     

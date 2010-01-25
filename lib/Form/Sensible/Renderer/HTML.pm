@@ -5,6 +5,7 @@ use namespace::autoclean;
 use Template;
 use Data::Dumper;
 use Form::Sensible::Renderer::HTML::RenderedForm;
+extends 'Form::Sensible::Renderer';
 
 has 'include_paths' => (
     is          => 'rw',
@@ -13,13 +14,22 @@ has 'include_paths' => (
     default     => sub { return []; },
 );
 
+has 'base_theme' => (
+    is          => 'rw',
+    isa         => 'Str',
+    required    => 1,
+    default     => 'default'
+);
+
+
 has 'tt_config' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
     default     => sub {
+                              my $self = shift;
                               return {
-                                      INCLUDE_PATH => [ File::ShareDir::dist_dir('Form-Sensible') . '/templates/' ]
+                                      INCLUDE_PATH => [ File::ShareDir::dist_dir('Form-Sensible') . '/templates/' . $self->base_theme . '/' ]
                               }; 
                          },
     lazy        => 1,

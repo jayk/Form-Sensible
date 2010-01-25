@@ -39,7 +39,7 @@ my @dirs = split '/', $dir;
 pop @dirs;
 $dir = join('/', @dirs);
 
-my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $dir . '/share/templates' ] });
+my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $dir . '/share/templates/default' ] });
 
 my $renderedform = $renderer->render($form);
 

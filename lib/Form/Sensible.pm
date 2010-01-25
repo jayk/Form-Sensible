@@ -16,7 +16,7 @@ use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 
 
-our $VERSION = "0.10000";
+our $VERSION = "0.11000";
 
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible
@@ -208,7 +208,11 @@ provides for dynamic creation and processing of forms.
                                                              {
                                                                  field_class => 'Text',
                                                                  name => 'password',
-                                                                 render_hints => { field_type => 'password' }
+                                                                 render_hints => { 
+                                                                        'HTML' => {
+                                                                                    field_type => 'password' 
+                                                                                  }
+                                                                        },
                                                              },
                                                              {
                                                                  field_class => 'Trigger',
@@ -235,7 +239,11 @@ a simple (and all too familiar) login form.
 
     my $password_field = Form::Sensible::Field::Text->new(  
                                                             name=>'password',
-                                                            render_hints => { field_type => 'password' } 
+                                                            render_hints => { 
+                                                                                'HTML' => {
+                                                                                            field_type => 'password' 
+                                                                                          },
+                                                                            },
                                                          );
     $form->add_field($password_field);
 
