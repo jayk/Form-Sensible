@@ -8,13 +8,6 @@ our $VERSION = '0.01';
 
 # ABSTRACT: A simple reflector class for Form::Sensible
 
-=head2 $self->reflect_from($handle, $options)
-
-analagous to L<Form::Sensible>'s C<create_form>, but pulls field information from the datasource provided.
-
-
-=cut
-
 sub reflect_from {
     my ( $self, $handle, $options) = @_;
 
@@ -83,41 +76,81 @@ Form::Sensible::Form::Reflector - A base class for writing Form::Sensible reflec
 
 =head1 SYNOPSIS
 
+    my $reflector = Form::Sensible::Form::Reflector::SomeSubclass->new();
+
+    my $generated_form = $reflector->reflect_from($data_source, $options);
+
+=head1 DESCRIPTION
+
+A Reflector in Form::Sensible is a class that inspects a data 
+source and creates a form based on what it finds there.  In other 
+words it creates a form that 'reflects' the data elements found 
+in the data source.  
+
+A good example of this would be to create forms based on a DBIx::Class 
+result_source (or table definition.)  Using the DBIC reflector, you 
+could create form for editing a user's profile information simply by 
+passing the User result_source into the reflector.  
+
+This module is a base class for writing reflectors, meaning you do not
+use this class directly.  Instead you use one of the subclasses that 
+deal with your data source type.  
+
+=head1 CREATING YOUR OWN REFLECTOR
+
+Creating a new reflector class is extraordinarily simple.  All you need
+to do is create a subclass of Form::Sensible::Reflector and then create
+two subroutines: C<get_fieldnames> and C<get_field_definition>.  
+
+As you might expect, C<get_fieldnames> should return an array containing
+the names of the fields that are to be created. C<get_field_definition> 
+is then called for each field to be created and should return a 
+hashref representing that field suitable for passing to the 
+L<Form::Sensible::Field|Form::Sensible::Field> C<create_from_flattened> method.
+
+Note that in both cases, the contents of C<$datasource> are specific to your 
+reflector subclass and are not inspected in any way by the base class.
+
+=head2 Subclass Boilerplate
+
     package My::Reflector;
     use Moose;
     use namespace::autoclean;
     extends 'Form::Sensible::Form::Reflector';
 
-	sub get_fieldnames { ... }
+    sub get_fieldnames {
+        my ($self, $form, $datasource) = @_;
+        my @fieldnames;
+        
+        foreach my $field ($datasource->the_way_to_get_all_your_fields()) {
+            push @fieldnames, $field->name;
+        }
+        return @fieldnames;
+    }
 
-	sub get_field_definition { ... }
+    sub get_field_definition { 
+        my ($self, $form, $datasource, $fieldname) = @_;
+        
+        my $field_definition = {
+            name => $fieldname
+        };
+        
+        ## inspect $datasource's $fieldname and add things to $field_definition
+        
+        return $field_definition;
+    }
 
-=cut
 
-=head1 DESCRIPTION
+=head2 Author's note 
 
-This is a base class to write reflectors for things like, configuration files, or my favorite, a database
-schema.
+This is a base class to write reflectors for things like, 
+configuration files, or my favorite, a database schema.
 
 The idea is to give you something that creates a form from some other source that already defines form-like
 properties, ie a database schema that already has all the properties and fields a form would need.
 
 I personally hate dealing with forms that are longer than a search field or login form, so this really
 fits into my style.
-
-=cut
-
-=head1 FEATURES
-
-One of the first of its kind to actually reflect a L<DBIx::Class> schema with minimal setup and code.
-
-=cut
-
-=head1 EXAMPLES
-
-See t/01test_reflector for a fairly comprehensive reflector setup.
-
-=cut
 
 =head1 AUTHOR
 
