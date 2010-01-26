@@ -1,4 +1,4 @@
-package Form::Sensible::Form::Reflector;
+package Form::Sensible::Reflector;
 use Moose;
 use namespace::autoclean;
 use Carp;
@@ -68,13 +68,13 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Form::Sensible::Form::Reflector - A base class for writing Form::Sensible reflectors.
+Form::Sensible::Reflector - A base class for writing Form::Sensible reflectors.
 
 =cut
 
 =head1 SYNOPSIS
 
-    my $reflector = Form::Sensible::Form::Reflector::SomeSubclass->new();
+    my $reflector = Form::Sensible::Reflector::SomeSubclass->new();
 
     my $generated_form = $reflector->reflect_from($data_source, $options);
 
