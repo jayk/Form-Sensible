@@ -223,6 +223,8 @@ sub fieldnames {
     return @{$self->field_order};
 }
 
+
+
 ## add an action for the given 
 sub add_action {
     my ($self, $event_name, $action) = @_;
@@ -312,6 +314,16 @@ sub set_values {
             $self->field($fieldname)->value($values->{$fieldname});
         }
     }
+}
+
+sub get_all_values {
+    my $self = shift;
+    
+    my $value_hash = {};
+    foreach my $fieldname ( $self->fieldnames ) {
+        $value_hash->{$fieldname} = $self->field($fieldname)->value();
+    }
+    return $value_hash;
 }
 
 sub flatten {
@@ -478,6 +490,10 @@ need the field names in presentation-order, use C<field_order()> instead.
 Uses the hashref C<$values> to set the value for each field in the form. This
 is a shortcut routine only and is functionally equivalent to calling 
 C<< $field->value( $values->{$fieldname} ) >> for each value in the form.
+
+=item C<get_all_values()>
+
+Retrieves the current values for each field in the form and returns them in a hashref.
 
 =item C< validate() >
 

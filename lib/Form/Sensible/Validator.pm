@@ -41,7 +41,7 @@ sub validate {
             ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
             ## don't bother. 
             if (defined($field->validation->{'code'}) && $validation_result->is_valid()) {
-                my $invalid = $self->validate_field_with_code($field, $field->validation->{'code'});
+                my $invalid = $self->validate_field_with_coderef($field, $field->validation->{'code'});
                 if ($invalid) {
                     $validation_result->add_error($fieldname, $invalid);
                 }

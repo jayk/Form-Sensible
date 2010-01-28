@@ -111,7 +111,7 @@ sub add_status_message {
 
 sub add_error_message {
     my ($self, $fieldname, $message) = @_;
-    print "in add_error_message for $message\n";
+    #print "in add_error_message for $message\n";
     if (!exists($self->error_messages->{$fieldname})) {
         $self->error_messages->{$fieldname} = [];
     }
