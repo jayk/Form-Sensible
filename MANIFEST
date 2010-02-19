@@ -44,7 +44,6 @@ share/templates/default/text.tt
 share/templates/default/toggle.tt
 share/templates/default/trigger.tt
 share/templates/default/unknown.tt
-t/dump_basic.t
 t/simple_form.t
 t/test_output.t
 t/validation_testing.t

@@ -16,7 +16,7 @@ use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 
 
-our $VERSION = "0.11100";
+our $VERSION = "0.11101";
 
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible

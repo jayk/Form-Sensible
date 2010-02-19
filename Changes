@@ -1,5 +1,10 @@
 Revision history for Form::Sensible
 
+0.11101 2010-02-19
+
+    * dropped dump_basic.t as it uses deprecated Renderer::Dump
+    * FS::Renderer::Dump officially dropped due to redundancy with $form->flatten
+
 0.11100 2010-02-17
 
     * Added validation tests
