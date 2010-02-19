@@ -5,7 +5,7 @@ use namespace::autoclean;
 extends 'Form::Sensible::Field::Text';
 
 has '+maximum_length' => (
-    default => 10240,
+    default => 51200,
 );
 
 ## provides a long text field (such as a 'text area' or 'notes' box)

@@ -20,6 +20,8 @@ has 'options' => (
     required    => 1,
     default     => sub { return [] },
     lazy        => 1,
+    writer      => 'set_options',
+    reader      => '_options'
 );
 
 has 'value' => (
@@ -67,7 +69,7 @@ sub add_option {
     my ($self, $value, $display_name) = @_;
     
     push @{$self->options}, { name => $display_name,
-                              value => $value };
+                               value => $value };
 }
 
 sub get_additional_configuration {
@@ -75,10 +77,16 @@ sub get_additional_configuration {
     
     return { 
                 'accepts_multiple' => $self->accepts_multiple,
-                'options' => $self->options,
+                'options' => $self->_options,
                 'display_names' => $self->display_names,
            };
 
+}
+
+sub options {
+    my ($self, $filter) = @_;
+    
+    return [ grep /$filter/,  @{$self->_options} ]; 
 }
 
 sub validate {
@@ -142,12 +150,12 @@ even if only a single option was selected.
 
 =over 8
 
-=item C<'options'> 
+=item C<options> 
 
 An array ref containing the allowed options. Each option is represented as a
 hash containing a C<name> element and a C<value> element for the given option.
 
-=item C<'accepts_multiple'>
+=item C<accepts_multiple>
 
 Does this field allow multiple options to be selected.  Defaults to false.
 

@@ -160,36 +160,92 @@ __END__
 Form::Sensible::Validator::Result - Validation results for a given form.
 
 =head1 SYNOPSIS
-
-    use Form::Sensible::Validator::Result;
     
-    my $object = Form::Sensible::Validator::Result->new();
+    my $result = $form->validate();
 
-    $object->do_stuff();
+    if (!$result->is_valid()) {
+         foreach my $key ( keys %{$result->error_fields()} ) {
+             foreach my $message ( @{ $result->error_fields->{$key} } ) {
+                    print $message;
+             }
+         }
+    }
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
-
-=head1 ATTRIBUTES
-
-=over 8
-
-=item C<'error_fields'> 
-=item C<'missing_fields'> 
-
-=back
+The C<Form::Sensible::Validator::Result|Form::Sensible::Validator::Result>
+class is used to store the results of form validation. It is very simple to
+work with and has some additional methods to make it more familiar to anyone
+who has used L<FormValidator::Simple>.  The additional methods are intended
+to function similar to the L<FormValidator::Simple Results class|FormValidator::Simple::Results>
 
 =head1 METHODS
 
 =over 8
 
-=item C<add_error> 
-=item C<add_missing> 
-=item C<is_valid> 
-=item C<merge_from_result> 
+=item C<is_valid()> 
+
+Returns true if the form passed validation, false otherwise.  
+
+=item C<error_fields>
+
+Returns a hashref containing C<< fieldname => error_array >> pairs.  Each field
+with an error will be present as a key in this hash and the value will be an
+arrayref containing one or more error messages.
+
+=item C<missing_fields>
+
+Works exactly as error_fields, only contains only entries for fields that 
+were required but were not present. 
+
+=item C<add_error($fieldname, $message)> 
+
+Adds $message as an error on the field provided. There can be more than one error message
+for a given field.
+
+=item C<add_missing($fieldname, $message)> 
+
+Adds $message as an missing field error on the field provided. Like errors, there can be
+more than one missing field message for a given field.
+
+=back
+
+The following routines are things that make Form::Sensible::Validator results behave 
+more like C<FormValidator::Simple|FormValidator::Simple>'s Result class.
+
+=item 8
+
+=item C<has_missing>
+
+Returns true if there were missing values in the form;
+
+=item C<has_invalid>
+
+Returns true if any fields in the form were invalid. 
+
+=item C<has_error>
+
+Returns true if there are any invalid or missing fields with the form validation.  
+Essentially the inverse of L<is_valid>
+
+=item C<success>
+
+Synonym for L<is_valid>. Returns true if all fields passed validation.
+
+=item C<missing($fieldname)>
+
+If C<$fieldname> is provided, returns true if the field provided was missing, false otherwise.
+If no fieldname is provided, returns an array of fieldnames that were missing in the form.
+
+=item C<invalid($fieldname)>
+
+If C<$fieldname> is provided, returns true if the field provided was invalid, false otherwise.
+If no fieldname is provided, returns an array of fieldnames that were invalid in the form.
+ 
+=item C<error($fieldname)>
+
+If C<$fieldname> is provided, returns true if the field provided was either missing or invalid, false otherwise.
+If no fieldname is provided, returns an array of fieldnames that were either missing or invalid in the form.
 
 =back
 

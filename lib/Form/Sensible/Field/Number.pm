@@ -172,10 +172,23 @@ drop downs or even ranged-sliders if your renderer supports it.
 
 =over 8
 
-=item C<'integer_only'> has
-=item C<'lower_bound'> has
-=item C<'upper_bound'> has
-=item C<'step'> has
+=item C<integer_only>
+
+True/false value indicating whether this field is able to accept fractional
+values.
+
+=item C<lower_bound>
+
+Lower bound of valid values for the field.
+
+=item C<upper_bound>
+
+Upper bound of valid values for the field.
+
+=item C<step> 
+
+When step is provided, the value provided must be a multiple of C<step> in
+order to be valid.
 
 =back 
 
@@ -183,11 +196,36 @@ drop downs or even ranged-sliders if your renderer supports it.
 
 =over 8
 
-=item C<validate> sub
-=item C<get_potential_values> sub
-=item C<options> sub
-=item C<in_step> sub
-=item C<get_additional_configuration> sub
+=item C<validate>
+
+Validates the field against the numeric constraints set for the field.
+
+=item C<get_potential_values($step, $lower_bound, $upper_bound)>
+
+Returns an array containing all the valid values between the 
+upper and lower bound.  Used internally to the number field.
+
+
+=item C<in_step($value, $step)> 
+
+Returns true if $value lies on a $step boundary. Otherwise returns false.
+
+=back 
+
+The following two methods allow Number fields to be treated like Select 
+Fields for rendering purposes.
+
+=over 8 
+
+=item C<options>
+
+An array ref containing the allowed options. Each option is represented as a
+hash containing a C<name> element and a C<value> element for the given option.
+
+=item C<accepts_multiple>
+
+On a Select field, this defines whether a the field can have multiple values.  For
+a Number field, only one value is allowed, so this always returns false. 
 
 =back
 

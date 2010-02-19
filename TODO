@@ -1,10 +1,7 @@
 TODO:
-- add accessibility methods for all public classes (something like catalyst has with the $c context object?)
-- Reflector::DBIC, "CLUE"
-- DBIC <-> F::S::F type mappings
-- Renderer
-- Docs
-- Examples
-- moar tests
-- Document The HTML Renderer
+- Renderer::HTML - add table based rendering
+- More Examples
+- Test rendering output
+- Simple reflectors
+- Documentation for HTML renderer - proper use of render_hints
 - "Widgets" - jQuery datetime dealy "remote post" options etc

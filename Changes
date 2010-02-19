@@ -1,0 +1,11 @@
+Revision history for Form::Sensible
+
+0.11100 2010-02-17
+
+    * Added validation tests
+    * Corrected warning in coderef processing.
+    * Changed coderef function format to make it easier to handle simple validation - field value passed in first.
+    * Every class now has docs.  Validation docs more significant.
+    
+    
+    

@@ -11,7 +11,8 @@ has 'include_paths' => (
     is          => 'rw',
     isa         => 'ArrayRef[Str]',
     required    => 1,
-    default     => sub { return []; },
+    lazy        => 1,
+    default     => sub { my $self = shift; return [ File::ShareDir::dist_dir('Form-Sensible') . '/templates/' . $self->base_theme . '/' ]; },
 );
 
 has 'base_theme' => (
@@ -29,7 +30,7 @@ has 'tt_config' => (
     default     => sub {
                               my $self = shift;
                               return {
-                                      INCLUDE_PATH => [ File::ShareDir::dist_dir('Form-Sensible') . '/templates/' . $self->base_theme . '/' ]
+                                      INCLUDE_PATH => $self->include_paths()
                               }; 
                          },
     lazy        => 1,
@@ -82,7 +83,12 @@ sub render {
                     form => $form,
                     stash => $form_specific_stash,
                 );
-                
+
+    # load up default options.
+    foreach my $key (keys %{$template_options}) {
+        $args{$key} = $template_options->{$key};
+    }
+    
     if (ref($options) eq 'HASH') {
         foreach my $key (keys %{$options}) {
             $args{$key} = $options->{$key};
@@ -139,18 +145,34 @@ Form::Sensible::Renderer::HTML - an HTML based Form renderer
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+Renders a form as an HTML form.  Returns a 
+L<Form::Sensible::Renderer::HTML::RenderedForm|Form::Sensible::Renderer::HTML::RenderedForm> object.
 
 =head1 ATTRIBUTES
 
 =over 8
 
-=item C<'include_paths'> has
-=item C<'tt_config'> has
-=item C<'template'> has
-=item C<'default_options'> has
+=item C<template>
+
+The L<Template> object used by this renderer.  You can provide your own by setting this attribute.
+If you do not set it, a new Template object is created using the parameter below.
+
+=item C<include_paths>
+
+An arrayref containing the filesystem paths to search for field templates.
+
+=item C<base_theme>
+
+The theme to use for form rendering.  Defaults to C<default>, currently 
+the only theme distributed with Form::Sensible.
+
+=item C<tt_config>
+
+The config used when creating a new Template object.
+
+=item C<default_options>
+
+Default options to pass through to the L<RenderedForm|Form::Sensible::Renderer::HTML::RenderedForm>.
 
 =back
 
@@ -158,8 +180,13 @@ demonstrating how POD works.
 
 =over 8
 
-=item C<render> sub
-=item C<new_template> sub
+=item C<render($form)> 
+
+Returns a L<RenderedForm|Form::Sensible::Renderer::HTML::RenderedForm> for the form provided.
+
+=item C<new_template()>
+
+Returns a new L<Template|Template> object created using the C<tt_config> attribute.
 
 =back
 

@@ -68,19 +68,19 @@ Form::Sensible::Field::SubForm - encapsulate an entire form within another.
 
 =head1 DESCRIPTION
 
-The subform field type allows you to embed one form within another.  The fields
-in the subform are submitted and validated as though they belong to the primary
-form.  Please note that this feature is experimental at best and how it is 
-used is still subject to change.  
+The subform field type allows you to embed one form within another. The fields
+in the subform are submitted and validated as though they belong to the
+primary form, meaning the fieldnames are used 'as is.' Please note that this
+feature is experimental at best and how it is used is still subject to change.
 
 
 =head1 Attributes
 
 =over 8
 
-=item C<'form'>
+=item C<form>
 
-The sub-form to render at this field's position.
+The sub-form to include into this field.
 
 =back
 

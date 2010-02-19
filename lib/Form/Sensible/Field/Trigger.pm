@@ -39,39 +39,36 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::Trigger - 
+Form::Sensible::Field::Trigger - A Trigger for user activity
 
 =head1 SYNOPSIS
 
     use Form::Sensible::Field::Trigger;
     
-    my $object = Form::Sensible::Field::Trigger->new();
-
-    $object->do_stuff();
+    my $textfield = Form::Sensible::Field::Trigger->new(
+                                                    name => 'submit',
+                                                  );
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
+Triggers cause something to happen, most often form validation and processing. Trigger 
+fields are most often rendered as buttons in graphical interfaces, such as Submit and 
+Reset buttons in HTML. 
 
+B<NOTE> We are still investigating ways to handle Triggers in a flexible and 
+render-independant way.  That means aside from simple usage, Trigger fields are
+likely to change.
 
-=head1 ATTRIBUTES
+=head2 HTML based rendering of triggers
 
-=over 8
-
-=item C<'event_to_trigger'> has
-
-=back
-
-=head1 METHODS
-
-=over 8
-
-=item C<_default_event_name> sub
-=item C<get_additional_configuration> sub
-
-=back
+As with all fields, trigger rendering is primarily controlled by render_hints.  
+By default a trigger is rendered as a submit button.  If you provide a 
+C<render_as> element in the render_hints, you can control how a trigger is 
+rendered.  The options are:  C<reset>, C<button> and C<link>.  C<reset> renders
+the trigger as a reset button.  C<button> renders the trigger as a button input element.
+C<link> renders it as a regular HTML link.  If C<render_as => 'link'> is specified
+you must also provide a C<link> element in the C<render_hints> to set the destination
+of the link.
 
 =head1 AUTHOR
 

@@ -83,14 +83,14 @@ Form::Sensible::Field subclass for representing character-string based data.
 
 =over 8
 
-=item C<'maximum_length'>
+=item C<maximum_length>
 
 The maximum length this text field should accept. Note that any size of string
 can be placed in the field, it will simply fail validation if it is too large.
 Alternately if 'should_truncate' is true, the value will be truncated when it
 is set.
 
-=item C<'should_truncate'>
+=item C<should_truncate>
 
 Indicates that if value is set to a string larger than maximum_length, it
 should be automatically truncated to maximum_length. This has to be manually

@@ -1,8 +1,10 @@
 <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
     [% IF render_hints.render_as == 'link' %]
-        <a href="[% field.value %]" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_type %]_link [% css_prefix _ field_name %]_input ">[% field.display_name %]</a>
+        <a href="[% render_hints.link %]" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_type %]_link [% css_prefix _ field_name %]_input ">[% field.display_name %]</a>
     [% ELSIF render_hints.render_as == 'reset' %]
         <input type="reset" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />
+    [% ELSIF render_hints.render_as == 'button' %]
+        <input type="button" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />
     [% ELSE %]
         <input type="submit" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />    
     [% END %]

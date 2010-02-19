@@ -94,11 +94,11 @@ sub validate_field_with_coderef {
         croak('Bad coderef provided to validate_field_with_coderef');
     }
     
-    my $results = $code->($field);
+    my $results = $code->($field->value, $field);
     
     ## if we get $results of 0 or a message, we return it.
     ## if we get $results of simply one, we generate the invalid message
-    if ($results == 1) {
+    if ($results eq "1") {
         if (exists($field->validation->{invalid_message})) {
             return $field->validation->{invalid_message};
         } else {
@@ -124,29 +124,44 @@ Form::Sensible::Validator - Default Validator for Form::Sensible forms
     
     my $object = Form::Sensible::Validator->new();
 
-    $object->do_stuff();
+    $validator_result = $object->validate($form);
 
 =head1 DESCRIPTION
 
-This module does not really exist, it
-was made for the sole purpose of
-demonstrating how POD works.
-
-=head1 ATTRIBUTES 
-
-=over 8
-
-=item C<'config'> 
-
-=back 
+Form::Sensible::Validator performs the grunt work of validating a form.  It 
+understands how to handle regex based field validation as well as 
+coderef based field validation.  It also is responsible for calling 
+field-type specific validation.  Usually this class is not manipulated 
+directly.  Instead, C<< $form->validate() >> is used, which in turn calls
+the validator already associated with the form (or creates one if none is
+already defined).
 
 =head1 METHODS
 
 =over 8
 
-=item C<validate> 
-=item C<validate_field_with_regex> 
-=item C<validate_field_with_coderef> 
+=item C<validate($form)> 
+
+Performs validation of a Form. Returns a
+L<Form::Sensible::Validator::Result|Form::Sensible::Validator::Result> object
+with the results of form validation for the passed form.
+
+=item C<validate_field_with_regex($field, $regex)>
+
+Internal routine to perform regex based validation of a field. 
+
+=item C<validate_field_with_coderef($field, $coderef)>
+
+Internal routine to perform code based validation of a field. When called, the
+C<$coderef> is called with the field's value as the first argument, and the
+field itself as the second:
+    
+    $coderef->($field_value, $field);
+
+The subroutine is expected to return 0 on successful validation, or an
+appropriate error message on failed validation. This may seem somewhat
+confusing, returning 0 on a valid field. It may help to think of the coderef
+as being the equivalent of a C<is_field_invalid()> routine.
 
 =back
 

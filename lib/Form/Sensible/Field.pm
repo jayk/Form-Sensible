@@ -251,20 +251,20 @@ If you feel we've missed something, please drop us a line, or drop by
 =head1 ATTRIBUTES
 
 =over 8
-=item C<'name'> 
+=item C<name> 
 The field name, used to identify this field in your program.
 
-=item C<'display_name'> 
+=item C<display_name> 
 The name used when displaying messages about this field, such as errors, etc.  Defaults to C<uc($field->name)>.
 
-=item C<'field_type'>
+=item C<field_type>
 A string identifying this type of field.  Normally defaults to the last portion of the classname, for example, for a
 Form::Simple::Field::Text the field_type would be 'text'
 
-=item C<'required'> 
+=item C<required> 
 Indicates whether it is an error if this field is left empty.
 
-=item C<'validation'> 
+=item C<validation> 
 Hashref containing information used in validation of this field. The content
 of the hashref depends on the validator being used. If the built-in
 L<Form::Sensible::Validator> is being used, the two keys that may be present
@@ -273,14 +273,14 @@ pattern or a regex reference to be applied to the field. The C<code> element
 should contain an code reference used to validate the field's value. For more
 information, see L<Form::Sensible::Validator>.
 
-=item C<'render_hints'>
+=item C<render_hints>
 Hashref containing hints to help the renderer render this field.  The hints available 
 depend on the renderer being used.  
 
-=item C<'value'> 
+=item C<value> 
 The current value for this field.
 
-=item C<'default_value'> 
+=item C<default_value> 
 The default value to use if none is provided.
 
 =back 
