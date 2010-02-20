@@ -1,5 +1,14 @@
 Revision history for Form::Sensible
 
+0.11103 2010-02-19
+
+    * Added table based templates for HTML rendering.
+    * Switched to <label> in most places for specifying a field label
+
+0.11102 2010-02-19
+
+    * fixed File::ShareDir capitalization in Makefile.PL
+
 0.11101 2010-02-19
 
     * dropped dump_basic.t as it uses deprecated Renderer::Dump

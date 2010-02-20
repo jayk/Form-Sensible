@@ -11,7 +11,7 @@ requires        'Class::MOP';
 requires        'Data::Dumper';
 requires        'Carp';
 requires        'Template';
-requires        'File::Sharedir';
+requires        'File::ShareDir';
 requires        'FindBin';
 test_requires   'Test::More'  => '0.42';
 install_share   'share';
