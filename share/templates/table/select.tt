@@ -5,6 +5,8 @@
     [%- IF render_hints.fields_across -%][% fields_across = render_hints.fields_across %][% END -%]
     [% field_count = 0 %]
     [% total_field_count = 0 %]
+    <tr id="[% css_prefix _ field_name %]_tr" class="[% css_prefix -%]tr [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    <td colspan="2" id="[% css_prefix _ field_name %]_combined_td" class="[% css_prefix -%]combined_td [% css_prefix _ field_type %]_combined_td">
     <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]checkbox_container [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
         <div class="[% css_prefix _ field_type %]_label_div"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label">[% field.display_name %]</label></div>
         <div class="[% css_prefix -%]checkboxes">
@@ -27,11 +29,14 @@
                [% END %]
         </div>
     </div>
+    </td>
+    </tr>
 [% ELSE %]
     [% select_size = '' %]
     [%- IF render_hints.select_size %][% select_size='size="' _ render_hints.select_size _'"' %][% END -%]
-    <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
-    <label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label>
+    <tr id="[% css_prefix _ field_name %]_tr" class="[% css_prefix -%]tr [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    <td id="[% css_prefix _ field_name %]_label_td" class="[% css_prefix -%]label_td [% css_prefix _ field_type %]_label_td"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label></td>
+    <td id="[% css_prefix _ field_name %]_input_td" class="[% css_prefix -%]input_td [% css_prefix _ field_type %]_input_td">
     <select name="[% field_name %]" [%- IF field.accepts_multiple %]multiple[%- END %] [% select_size %] id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
         [% FOREACH item = field.options -%]
         [%- selected = "" -%]
@@ -40,6 +45,7 @@
         [%- END -%]
        <option value="[% item.value %]"[%- selected -%]>[% item.name %]</option>
        [% END %]
-    </select>  
-    </div>
+    </select>
+    </td>
+    </tr>
 [% END %]

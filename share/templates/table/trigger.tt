@@ -1,0 +1,13 @@
+<tr id="[% css_prefix _ field_name %]_tr" class="[% css_prefix -%]tr [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    <td colspan="2" id="[% css_prefix _ field_name %]_combined_td" class="[% css_prefix -%]combined_td [% css_prefix _ field_type %]_combined_td">
+    [% IF render_hints.render_as == 'link' %]
+        <a href="[% render_hints.link %]" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_type %]_link [% css_prefix _ field_name %]_input ">[% field.display_name %]</a>
+    [% ELSIF render_hints.render_as == 'reset' %]
+        <input type="reset" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />
+    [% ELSIF render_hints.render_as == 'button' %]
+        <input type="button" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />
+    [% ELSE %]
+        <input type="submit" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value ? field.value : field.display_name %]" />    
+    [% END %]
+    </td>
+</tr>

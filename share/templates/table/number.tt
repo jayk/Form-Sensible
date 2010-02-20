@@ -1,0 +1,4 @@
+<tr id="[% css_prefix _ field_name %]_tr" class="[% css_prefix -%]tr [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    <td id="[% css_prefix _ field_name %]_label_td" class="[% css_prefix -%]label_td [% css_prefix _ field_type %]_label_td"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label></td>
+    <td id="[% css_prefix _ field_name %]_input_td"class="[% css_prefix -%]input_td [% css_prefix _ field_type %]_input_td"><input type="text" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" value="[% field.value %]" /></td>    
+</tr>

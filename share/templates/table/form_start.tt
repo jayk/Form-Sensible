@@ -1,0 +1,3 @@
+<div id="[% css_prefix _ form.name %]_form" class="[% css_prefix %]form_container [% css_prefix _ form.name %]_form_container">
+    <form action="[% action %]" method="[% method %]" class="[% css_prefix %]form [% css_prefix _ form.name %]_form" accept-charset="utf-8" [% IF form_enctype %]enctype="[% form_enctype %]"[% END %]>
+    <table id="[% css_prefix _ form.name %]_form_table" class="[% css_prefix %]form_container_table [% css_prefix _ form.name %]_form_container_table">

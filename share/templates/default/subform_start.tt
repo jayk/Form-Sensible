@@ -1,3 +1,3 @@
 <div id="[% css_prefix _ form.name %]_div" class="[% css_prefix -%]subform [% css_prefix -%]formfieldline">
-    [% IF form.render_hints.display_name  %]<div class="[% css_prefix %]subform_label_div"><span class="[% css_prefix -%]label [% css_prefix %]subform_label">[% form.render_hints.display_name %]</span></div>[% END %]
+    [% IF form.render_hints.display_name  %]<div class="[% css_prefix %]subform_label_div"><label class="[% css_prefix -%]label [% css_prefix %]subform_label">[% form.render_hints.display_name %]</label></div>[% END %]
     <div class="[% css_prefix -%]subform_container [% css_prefix %]subform_[%- form.name -%]_container">

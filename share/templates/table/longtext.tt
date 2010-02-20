@@ -1,0 +1,8 @@
+[%- textarea_rows = ''-%]
+[%- IF render_hints.rows -%][% textarea_rows = 'rows="' _ render_hints.rows _ '"' -%][% END -%]
+[%- textarea_cols = ''-%]
+[%- IF render_hints.cols -%][% textarea_cols = 'cols="' _ render_hints.cols _ '"' -%][% END %]
+<tr id="[% css_prefix _ field_name %]_tr" class="[% css_prefix -%]tr [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    <td colspan="2" id="[% css_prefix _ field_name %]_combined_td" class="[% css_prefix -%]combined_td [% css_prefix _ field_type %]_combined_td"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label><br/>
+    <textarea type="text" id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input" name="[% field_name %]" [% textarea_rows %] [% textarea_cols %]>[% field.value %]</textarea></td>
+</tr>
