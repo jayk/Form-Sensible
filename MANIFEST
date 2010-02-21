@@ -25,6 +25,7 @@ lib/Form/Sensible/Renderer/HTML.pm
 lib/Form/Sensible/Renderer/HTML/RenderedForm.pm
 lib/Form/Sensible/Validator.pm
 lib/Form/Sensible/Validator/Result.pm
+lib/Form/Sensible/Overview.pod
 Makefile.PL
 MANIFEST
 META.yml
@@ -60,7 +61,6 @@ share/templates/table/text.tt
 share/templates/table/toggle.tt
 share/templates/table/trigger.tt
 share/templates/table/unknown.tt
-
 t/simple_form.t
 t/test_output.t
 t/validation_testing.t

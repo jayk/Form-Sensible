@@ -1,5 +1,13 @@
 Revision history for Form::Sensible
 
+0.11200 2010-02-21
+
+    * Added Overview doc
+    * corrected bug in validation which considered values which evaluated to 'false' to be the same as 'empty'
+    * adjusted Text field rendering to include render_as => 'password' to render a text field as a password
+    * adjusted password rendering to not include the existing value (for security purposes)
+    * moved 'required' flag out of main field object and into validation hashref.
+
 0.11103 2010-02-19
 
     * Added table based templates for HTML rendering.

@@ -32,12 +32,12 @@ has 'field_type' => (
     lazy        => 1
 );
 
-has 'required' => (
-    is          => 'rw',
-    isa         => 'Bool',
-    required    => 1,
-    default     => 0,
-);
+#has 'required' => (
+#    is          => 'rw',
+#    isa         => 'Bool',
+#    required    => 1,
+#    default     => 0,
+#);
 
 ## validation is args to the validator that will be used
 ## by default, the hashref can contain 'regex' - a ref to a 
@@ -50,7 +50,7 @@ has 'validation' => (
     is          => 'rw',
     isa         => 'HashRef',
     required    => 1,
-    default     => sub { return {}; },
+    default     => sub { return { required => 0 }; },
     lazy        => 1,
 );
 
@@ -90,13 +90,21 @@ sub _default_render_hints {
     return {};
 }
 
+sub required {
+    my $self = shift;
+    
+    if ($#_ > -1) {
+        $self->validation->{'required'} = $_[0];
+    }
+    return $self->validation->{'required'} || 0;
+}
+
 sub flatten {
     my ($self, $template_only) = @_;
     
     my %config = (
                     name => $self->name,
                     display_name => $self->display_name,
-                    required => $self->required,
                     default_value => $self->default_value,
                     field_type => $self->field_type,
                     render_hints => $self->render_hints,
@@ -261,14 +269,13 @@ The name used when displaying messages about this field, such as errors, etc.  D
 A string identifying this type of field.  Normally defaults to the last portion of the classname, for example, for a
 Form::Simple::Field::Text the field_type would be 'text'
 
-=item C<required> 
-Indicates whether it is an error if this field is left empty.
-
 =item C<validation> 
 Hashref containing information used in validation of this field. The content
 of the hashref depends on the validator being used. If the built-in
-L<Form::Sensible::Validator> is being used, the two keys that may be present
-are C<regex> and C<code>. The C<regex> element should contain either a regex
+L<Form::Sensible::Validator> is being used, the three keys that may be present
+are C<required>, C<regex> and C<code>. The C<required> element should contain a
+true/false value indicating whether the field must be present for validation to
+pass. The C<regex> element should contain either a regex
 pattern or a regex reference to be applied to the field. The C<code> element
 should contain an code reference used to validate the field's value. For more
 information, see L<Form::Sensible::Validator>.

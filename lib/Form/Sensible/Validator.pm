@@ -28,7 +28,7 @@ sub validate {
     
     foreach my $fieldname ($form->fieldnames) {
         my $field = $form->field($fieldname);
-        if ($field->value) {
+        if ($field->value != undef && $field->value ne '') {
             
             ## field has value, so we run the field validators
             ## first regex. 
@@ -51,7 +51,7 @@ sub validate {
             if ($invalid) {
                 $validation_result->add_error($fieldname, $invalid);
             }
-        } elsif ($field->required) {
+        } elsif ($field->validation->{'required'}) {
             ## field was required but was empty.
             if (exists($field->validation->{'missing_message'})) {
                 $validation_result->add_missing($fieldname, $field->validation->{'missing_message'});

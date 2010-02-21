@@ -140,7 +140,7 @@ sub start {
     my ($self, $action, $method) = @_;
     
     if (!$method) {
-        $method = 'POST';
+        $method = 'post';
     }
     my $vars = {
                     'form'  => $self->form,
@@ -180,11 +180,15 @@ sub fieldnames {
 
 ## render all the form fields in the order provided by the form object.
 sub fields {
-    my ($self) = @_;
+    my ($self, $manual_hints) = @_;
     
     my @rendered_fields;
     foreach my $field (@{$self->form->field_order}) {
-        push @rendered_fields, $self->render_field($field);
+        my $new_hints = {};
+        if ($manual_hints && exists($manual_hints->{$field->name})) {
+            $new_hints = $manual_hints->{$field->name};
+        }
+        push @rendered_fields, $self->render_field($field, $new_hints);
     }
     return join("\n",@rendered_fields);
 }
@@ -197,29 +201,14 @@ sub render_field {
     
     if (exists($self->subform_renderers->{$fieldname})) {
         ## handle fields that are subforms.  
-        return $self->subform_renderers->{$fieldname}->complete();
+        return $self->subform_renderers->{$fieldname}->complete(undef, $manual_hints);
     } else {
-        ## allow render_hints to override field type - allowing a number to be rendered
-        ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
-        my $hints = $self->render_hints_for('HTML', $field);
-        if (exists($hints->{'field_type'})) {
-            $fieldtype = $hints->{'field_type'};
-        }
-
-        ## Order for trying templates should be:
-        ## formname/fieldname
-        ## formname/fieldtype
-        ## fieldname
-        ## fieldtype
-    
-        my $output;
         my $vars =  {
                         'form'  => $self->form,
                         'field' => $field,
-                        'field_type' => $fieldtype,
                         'field_name' => $fieldname
                     };
-                
+        
         ## if we have field-specific render_hints, we have to add them
         ## ourselves.  First we load any already-set render_hints
         $vars->{'render_hints'} = { %{ $self->render_hints } };
@@ -234,6 +223,25 @@ sub render_field {
                 $vars->{'render_hints'}{$key} = $manual_hints->{$key};
             }
         }
+        
+        ## allow render_hints to override field type - allowing a number to be rendered
+        ## as a select with a range, etc.  also allows text to be rendered as 'hidden'  
+        if (exists($vars->{'render_hints'}) && exists($vars->{'render_hints'}{'field_type'})) { 
+            $fieldtype = $vars->{'render_hints'}{'field_type'};
+        }
+        
+        $vars{'field_type'} = $fieldtype;
+        
+        ## Order for trying templates should be:
+        ## formname/fieldname
+        ## formname/fieldtype
+        ## fieldname
+        ## fieldtype
+    
+        my $output;
+
+        
+
     
         ## process the field template we need to load based on the fieldname / field type
         $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
@@ -313,9 +321,9 @@ sub end {
 }
 
 sub complete {
-    my ($self, $action, $method) = @_;
+    my ($self, $action, $method, $manual_hints) = @_;
     
-    return join('', $self->start($action, $method), $self->messages, $self->fields, $self->end);
+    return join('', $self->start($action, $method), $self->messages, $self->fields($manual_hints), $self->end);
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -376,7 +384,7 @@ An array ref containing the error messages to be displayed on the form.
 =item C<form_template_prefix>
 
 Non-field related template names are prefixed with this value.  The three
-templates used for each form are:  C<start,> C<messages,> and C<end.> 
+templates used for each form are:  C<start>, C<messages>, and C<end>, 
 The default value for C<form_template_prefix> is 'form', so by default
 the form templates used are: C<form_start.tt,> 
 C<form_messages.tt,> and C<form_end.tt.>
