@@ -314,7 +314,7 @@ coderef should manipulate the validator result object directly. For example:
 
 =head3 Error Messaging
 
-Finally we need to cover error messaging.  For code based validation of either Fields or the entire form,
+Finally we need to cover error messaging.  With code based validation of either Fields or the entire form,
 you provide the error message to use.  For other types of validation (including regex and field-specific
 validation) you may want to provide custom error messages.  If you want to provide a custom 
 error message for a field you can provide two additional elements to the C<validation> hashref:
@@ -323,7 +323,7 @@ of the generic 'FieldX is invalid' type messaging.  As you might suspect, C<inva
 a field is found to be invalid.  The C<missing_message> is used if the field is required but is not
 set.  An example of custom messaging:
 
-    # rest of field definition
+    # ... rest of field definition 
     validation => {
                     regex => '^\d\d\d-\d\d\d-\d\d\d\d$',
                     invalid_message => "Phone must be formatted as ###-###-####",
@@ -335,12 +335,43 @@ set.  An example of custom messaging:
 
 =head3 render_hints
 
-Render hints are a way to help the renderer decide how to render the field or form you are working with.  Render
-hints can be placed into the form definition itself or can be inserted at various points along the rendering path.
-Generally speaking, the hints that are closest to final rendering take precedence over those at a higher distance.
-That is to say that if you have render_hints provided for the field in the C<render_field()> call, they will override
-any hints set in the fields original definition.
+Render hints are a way to help the renderer decide how to present the field or
+form you are working with. Render hints can be placed into the form definition
+itself or can be inserted at various points along the rendering path.
+Generally speaking, the hints that are closest to final rendering take
+precedence over those at a higher distance.
 
+That is to say that if you have render_hints provided for the field in the
+C<render_field()> call, they will override any hints set in the C<complete()>
+which in turn would override any hints set in the fields original definition.
+Note that the all of the C<render_hints> are merged before processing occurs
+with those closer to the actual rendering taking precedence on conflict.
+
+Render hints are most often applied to fields, though they can be applied to
+Forms as well. How render hints are applied are specific to the renderer being
+used. An example of render hints might be:
+
+    {
+        field_class => 'Number',
+        lower_bound => 1910,
+        upper_bound => 2010,
+        step => 1,
+        render_hints => {
+            HTML => {
+                field_type => 'Select',
+                render_as => 'checkboxes' 
+            }
+        }
+    }
+The C<render_hints> here tells the HTML render that this should be rendered
+the way a Select field is rendered instead of the way a Number is normally
+rendered (a text field.) It also tells the renderer that when it is rendering
+the Select field_type it should render the select as a series of checkboxes
+instead of a dropdown (the default for Select type.)
+
+The 'HTML' in the above example addresses that section to the HTML renderer,
+other renderers would not be affected by the render hints provided.  This
+allows you to provide render_hints for the field that are specific for.
 
 
 

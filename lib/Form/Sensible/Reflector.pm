@@ -12,7 +12,7 @@ sub reflect_from {
    	my $form;
     if (exists($options->{'form'})) {
         if ( ref($options->{'form'}) eq 'HASH' ) {
-    		$form = Form::Sensible::Form->new($form);
+    		$form = Form::Sensible::Form->new($options->{'form'});
         } elsif ( ref($options->{'form'}) && 
                   UNIVERSAL::can($options->{'form'}, 'isa') &&
                   $options->{'form'}->isa('Form::Sensible::Form') ) {
