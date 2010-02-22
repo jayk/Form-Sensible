@@ -28,7 +28,7 @@ sub validate {
     
     foreach my $fieldname ($form->fieldnames) {
         my $field = $form->field($fieldname);
-        if ($field->value != undef && $field->value ne '') {
+        if (defined($field->value) && $field->value ne '') {
             
             ## field has value, so we run the field validators
             ## first regex. 

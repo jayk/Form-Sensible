@@ -230,7 +230,7 @@ sub render_field {
             $fieldtype = $vars->{'render_hints'}{'field_type'};
         }
         
-        $vars{'field_type'} = $fieldtype;
+        $vars->{'field_type'} = $fieldtype;
         
         ## Order for trying templates should be:
         ## formname/fieldname
