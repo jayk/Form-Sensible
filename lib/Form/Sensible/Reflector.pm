@@ -48,7 +48,7 @@ sub reflect_from {
 # is a map entry for every field we know about.  If none was provided, it creates
 # one for the field set to undef - which means do not add the field to the form.
 
-    my $fieldmap = map { $_ => $_ } @fields;
+    my $fieldmap = { map { $_ => $_ } @fields };
     if ( exists( $options->{'fieldname_map'} )
         && ref( $options->{'fieldname_map'} ) eq 'HASH' )
     {

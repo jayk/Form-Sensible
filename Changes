@@ -1,5 +1,9 @@
 Revision history for Form::Sensible
 
+0.11201 2010-02-22
+
+    * fixed bug in Reflector.pm... Need MOAR Tests
+
 0.11200 2010-02-21
 
     * Added Overview doc
