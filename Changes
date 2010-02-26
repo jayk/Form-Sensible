@@ -1,5 +1,9 @@
 Revision history for Form::Sensible
 
+0.11202 2010-02-25
+
+    * fixed leftover warns in Reflector.pm
+
 0.11201 2010-02-22
 
     * fixed bug in Reflector.pm... Need MOAR Tests

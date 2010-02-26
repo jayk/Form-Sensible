@@ -66,14 +66,14 @@ sub reflect_from {
         my $field_def =
           $self->get_field_definition( $form, $handle, $fieldname );
         my $new_fieldname = $fieldmap->{$fieldname};
-        warn "Processing: " . $fieldname . " as " . $new_fieldname;
+        #warn "Processing: " . $fieldname . " as " . $new_fieldname;
 
         if ( defined($new_fieldname) ) {
             $form->add_field( $field_def, $new_fieldname );
         }
     }
 
-    warn "Form in create_form: " . Dumper $form;
+    #warn "Form in create_form: " . Dumper $form;
     return $form;
 }
 
