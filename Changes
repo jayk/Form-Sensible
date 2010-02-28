@@ -1,5 +1,10 @@
 Revision history for Form::Sensible
 
+0.11203 2010-02-28
+
+    * Added minimum_length to Text field (thanks lukes)
+    * Added first per-field-type test in t/fields/ (also thanks lukes)
+
 0.11202 2010-02-25
 
     * fixed leftover warns in Reflector.pm

@@ -13,6 +13,12 @@ has 'maximum_length' => (
     default     => 256,
 );
 
+has 'minimum_length' => (
+    is          => 'rw',
+    isa         => 'Int',
+    required    => 0,
+);
+
 has 'should_truncate' => (
     is          => 'rw',
     isa         => 'Bool',
@@ -52,6 +58,10 @@ sub validate {
     if (length($self->value) > $self->maximum_length) {
         return $self->display_name . " is too long";
     }
+
+    if ($self->minimum_length && (length($self->value) < $self->minimum_length)) {
+        return $self->display_name . " is too short";
+    }
     return 0;
 }
 
@@ -71,6 +81,7 @@ Form::Sensible::Field::Text - Field for representing character-strings
     my $textfield = Form::Sensible::Field::Text->new(
                                                     name => 'username',
                                                     maximum_length => 16,
+                                                    minimum_length => 6,
                                                     should_truncate => 0
                                                   );
 
@@ -89,6 +100,11 @@ The maximum length this text field should accept. Note that any size of string
 can be placed in the field, it will simply fail validation if it is too large.
 Alternately if 'should_truncate' is true, the value will be truncated when it
 is set.
+
+=item C<minimum_length>
+
+The minimum length this text field should accept. If definied, validation will
+fail if the field value is less than this.
 
 =item C<should_truncate>
 

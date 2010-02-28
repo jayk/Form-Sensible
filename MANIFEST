@@ -64,5 +64,6 @@ share/templates/table/unknown.tt
 t/simple_form.t
 t/test_output.t
 t/validation_testing.t
+t/fields/text.t
 TODO
 Changes

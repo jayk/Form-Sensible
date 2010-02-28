@@ -19,4 +19,6 @@ no_index        'directory'   => 'examples';
 # Perhaps we will use this to create command-line based form generators... another day.
 #install_script  'myscript';
 
+tests_recursive();
+
 WriteAll;
