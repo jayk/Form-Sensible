@@ -22,7 +22,7 @@ our $VERSION = "0.11203";
 ## types of modules required when working with Form::Sensible
 
 sub create_form {
-    my ($class, $template) = @_;
+    my ($class, $template, $values) = @_;
     
     my $formhash = { %{$template} };
     delete($formhash->{'fields'});

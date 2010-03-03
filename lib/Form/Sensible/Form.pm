@@ -79,6 +79,7 @@ has 'validator_result' => (
     is          => 'rw',
     isa         => 'Form::Sensible::Validator::Result',
     required    => 0,
+    clearer     => '_clear_validator_result',
 );
 
 ## validation hints - FULL form validation
@@ -326,6 +327,16 @@ sub get_all_values {
     return $value_hash;
 }
 
+sub clear_state {
+    my $self = shift;
+    
+    foreach my $fieldname ( $self->fieldnames ) {
+        $self->field($fieldname)->clear_state();
+    }
+    
+    $self->_clear_validator_result();
+}
+
 sub flatten {
     my ($self, $template_only) = @_;
     
@@ -494,6 +505,11 @@ C<< $field->value( $values->{$fieldname} ) >> for each value in the form.
 =item C<get_all_values()>
 
 Retrieves the current values for each field in the form and returns them in a hashref.
+
+=item C<clear_state()>
+
+Clears all state related data from the form.  Returns form to the state it was in
+prior to having any values set or validation run.
 
 =item C< validate() >
 

@@ -70,6 +70,7 @@ has 'render_hints' => (
 # values are of indeterminate type generally.
 has 'value' => (
     is          => 'rw',
+    clearer     => '_clear_value',
 );
 
 has 'default_value' => (
@@ -173,6 +174,13 @@ sub create_from_flattened {
     delete $config->{'field_class'};
     #print Dumper($config);
     return $class_to_load->new(%{$fieldconfig});
+}
+
+## clears the value for a field.
+sub clear_state {
+    my $self = shift;
+    
+    $self->_clear_value();
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -301,6 +309,13 @@ The default value to use if none is provided.
 Validation specific to the field.  This is usually used to provide validation that only
 applies to the given type of field, for example, ensuring that the value provided 
 matches the available options in a select box.
+
+=item C<clear_state()>
+
+Clears the state for this field.  In most cases simply clears out the value
+field, but may do additional state-cleaning work on complex fields.   Note that 
+if you subclass the Field class and then provide a custom C<value()> routine or
+attribute, you _MUST_ also override C<clear_state> in your subclass. 
 
 =item C<create_from_flattened()> 
 

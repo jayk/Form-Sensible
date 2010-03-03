@@ -19,7 +19,10 @@ $form = Form::Sensible->create_form( {
                                                          { 
                                                             field_class => 'Text',
                                                             name => 'string',
-                                                            validation => {  regex => '^[0-9a-z]*$'  }
+                                                            validation => {  
+                                                                            regex => '^[0-9a-z]*$',
+                                                                            required => 1,
+                                                                          }
                                                          },
                                                          { 
                                                             field_class => 'Number',
@@ -122,16 +125,29 @@ $validation_result = $form->validate();
 
 like( $validation_result->error_fields->{numeric_nostep}[0], qr/We don't/,  "Number field value is invalid: coderef");
 
-## fail on code ref
+## fail on string regex
 $form->set_values({ 
                     string => 'ZZZ0to9',
                     numeric_step => 25,
-                    numeric_nostep => 172
+                    numeric_nostep => 122.7
                   });
 
 $validation_result = $form->validate();
 
 like( $validation_result->error_fields->{string}[0], qr/invalid/,  "String field value is invalid: regex");
 
+$form->clear_state();
+
+ok( !defined($form->validator_result), 'clear_state() clears out validation results');
+
+## fail on string regex
+$form->set_values({ 
+                    numeric_step => 25,
+                    numeric_nostep => 122.7
+                  });
+
+$validation_result = $form->validate();
+
+like( $validation_result->error_fields->{string}[0], qr/not provided/,  "values don't bleed across clear_state()");
 
 done_testing();

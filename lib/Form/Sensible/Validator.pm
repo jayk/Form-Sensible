@@ -28,35 +28,19 @@ sub validate {
     
     foreach my $fieldname ($form->fieldnames) {
         my $field = $form->field($fieldname);
-        if (defined($field->value) && $field->value ne '') {
+        my $results = $self->validate_field($field);
+        
+        if (scalar keys %{$results}) {
+            if (exists($results->{'errors'})) {
+                foreach my $error (@{$results->{'errors'}}) {
+                    $validation_result->add_error($fieldname, $error);
+                }
+            }
             
-            ## field has value, so we run the field validators
-            ## first regex. 
-            if (defined($field->validation->{'regex'})) {
-                my $invalid = $self->validate_field_with_regex($field, $field->validation->{'regex'});
-                if ($invalid) {
-                    $validation_result->add_error($fieldname, $invalid);
+            if (exists($results->{'missing'})) {
+                foreach my $missing (@{$results->{'missing'}}) {
+                    $validation_result->add_error($fieldname, $missing);
                 }
-            }
-            ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
-            ## don't bother. 
-            if (defined($field->validation->{'code'}) && $validation_result->is_valid()) {
-                my $invalid = $self->validate_field_with_coderef($field, $field->validation->{'code'});
-                if ($invalid) {
-                    $validation_result->add_error($fieldname, $invalid);
-                }
-            }
-            ## finally, we run the fields internal validate routine
-            my $invalid = $field->validate($self);
-            if ($invalid) {
-                $validation_result->add_error($fieldname, $invalid);
-            }
-        } elsif ($field->validation->{'required'}) {
-            ## field was required but was empty.
-            if (exists($field->validation->{'missing_message'})) {
-                $validation_result->add_missing($fieldname, $field->validation->{'missing_message'});
-            } else {
-                $validation_result->add_missing($fieldname,  $field->display_name . " is a required field but was not provided.");
             }
         }
     }
@@ -67,6 +51,48 @@ sub validate {
         }
     }
     return $validation_result;
+}
+
+sub validate_field {
+    my ($self, $field) = @_;
+    
+    my $results = {};
+    my @errors;
+    if (defined($field->value) && $field->value ne '') {
+        
+        ## field has value, so we run the field validators
+        ## first regex. 
+        if (defined($field->validation->{'regex'})) {
+            my $invalid = $self->validate_field_with_regex($field, $field->validation->{'regex'});
+            if ($invalid) {
+                push @errors, $invalid;
+            }
+        }
+        ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
+        ## don't bother. 
+        if (defined($field->validation->{'code'}) && $#errors == -1) {
+            my $invalid = $self->validate_field_with_coderef($field, $field->validation->{'code'});
+            if ($invalid) {
+                push @errors, $invalid;
+            }
+        }
+        ## finally, we run the fields internal validate routine
+        my $invalid = $field->validate($self);
+        if ($invalid) {
+            push @errors, $invalid;
+        }
+    } elsif ($field->validation->{'required'}) {
+        ## field was required but was empty.
+        if (exists($field->validation->{'missing_message'})) {
+            $results->{'missing'} = [$field->validation->{'missing_message'}];
+        } else {
+            $results->{'missing'} = [ $field->display_name . " is a required field but was not provided." ];
+        }
+    }
+    if ($#errors > -1) {
+        $results->{'errors'} = [ @errors ];
+    }
+    return $results;
 }
 
 sub validate_field_with_regex {
@@ -145,6 +171,13 @@ already defined).
 Performs validation of a Form. Returns a
 L<Form::Sensible::Validator::Result|Form::Sensible::Validator::Result> object
 with the results of form validation for the passed form.
+
+=item C<validate_field($field)> 
+
+Performs complete validation on the given field.  Returns an array of 
+hashes containing error messaging (or an empty array on success.) Each hash
+returned will contain a key of either C<'error'> or C<'missing'> and 
+a value containing the error message.
 
 =item C<validate_field_with_regex($field, $regex)>
 
