@@ -71,11 +71,19 @@ has 'render_hints' => (
 has 'value' => (
     is          => 'rw',
     clearer     => '_clear_value',
+    builder     => '_default_value',
+    lazy        => 1,
 );
 
 has 'default_value' => (
     is          => 'rw',
 );
+
+sub _default_value {
+    my $self = shift;
+    
+    return $self->default_value();
+}
 
 sub _default_field_type {
     my $self = shift;

@@ -181,14 +181,15 @@ sub fieldnames {
 ## render all the form fields in the order provided by the form object.
 sub fields {
     my ($self, $manual_hints) = @_;
-    
+
     my @rendered_fields;
     foreach my $field (@{$self->form->field_order}) {
-        my $new_hints = {};
-        if ($manual_hints && exists($manual_hints->{$field->name})) {
-            $new_hints = $manual_hints->{$field->name};
+        my $new_hints = { %{$manual_hints || {}} };
+        if ($manual_hints && exists($manual_hints->{$field})) {
+            $new_hints = $manual_hints->{$field};
         }
-        push @rendered_fields, $self->render_field($field, $new_hints);
+        my $rendered_field = $self->render_field($field, $new_hints);
+        push @rendered_fields, $rendered_field;
     }
     return join("\n",@rendered_fields);
 }
@@ -203,10 +204,12 @@ sub render_field {
         ## handle fields that are subforms.  
         return $self->subform_renderers->{$fieldname}->complete(undef, $manual_hints);
     } else {
+        my %custom_vars = %{$manual_hints->{stash_vars} || {}};
         my $vars =  {
                         'form'  => $self->form,
                         'field' => $field,
-                        'field_name' => $fieldname
+                        'field_name' => $fieldname,
+                        %custom_vars,
                     };
         
         ## if we have field-specific render_hints, we have to add them
@@ -233,7 +236,7 @@ sub render_field {
         $vars->{'field_type'} = $fieldtype;
         
         ## Order for trying templates should be:
-        ## formname/fieldname
+        ## formname/fieldname_field
         ## formname/fieldtype
         ## fieldname
         ## fieldtype
@@ -244,8 +247,13 @@ sub render_field {
 
     
         ## process the field template we need to load based on the fieldname / field type
-        $self->process_first_template($vars, \$output, $fieldname, $fieldtype );
-    
+        $self->process_first_template($vars, \$output, $fieldname . "_field", $fieldtype );
+        if (my $wrapper = $vars->{'render_hints'}->{wrap_fields_with}) {
+          my $wrapper_output;
+          my %wrapper_vars = ( %{$vars}, field_output => $output );
+          $self->process_first_template(\%wrapper_vars, \$wrapper_output, $wrapper );
+          return $wrapper_output;
+        }
         return $output;
     }
 }
@@ -254,15 +262,13 @@ sub render_field {
 ## of templates from most specific to least specific.  
 
 sub process_first_template {
-    ## I know.... splice is unusual there, but I want to pass templates and this looks better
-    ## than a ton of shifts;
     my $self = shift;
     my $vars = shift;
     my $output = shift;
     my @template_names = @_;
     
     ## prefill anything provided already into the stash
-    my $stash_vars = { %{$self->stash } }; 
+    my $stash_vars = { %{$self->stash } };
     
     if (!exists($stash_vars->{'render_hints'})) {
         $stash_vars->{'render_hints'} = $self->render_hints;
@@ -370,8 +376,41 @@ css_prefix is set to C<fs_>
 
 Render hints provide information on how to render certain aspects of the form
 or field. The usage depends upon the field type in question. The information
-is passed through to the feild-specific templates as 'render_hints' during
+is passed through to the field-specific templates as 'render_hints' during
 processing.
+
+A hint that is specific to the HTML renderer is C<stash_vars>, this should be
+a hash and will be passed to the templates as they are rendered.
+
+    {
+        stash_vars => {
+            user_prefs => $user_prefs
+        }
+    }
+
+For example in the this case, C<$user_prefs> could be accessed in any
+of the templates (form_start.tt, text.tt etc) as C<[% user_prefs %]>.
+
+Another is C<wrap_fields_with> which should be the name of a template to act
+as a wrapper for each individual field template. This can be useful if each
+field has common HTML and only the actual field element changes. For example
+in this case:
+
+    {
+        wrap_fields_with => 'field_wrapper'
+    }
+
+A template called C<field_wrapper.tt> will be used. The individual form field
+template (text.tt etc) will first be rendered, then field_wrapper.tt will be
+rendered as the output of the field template is passed as the stash variable
+C<field_output>. So your wrapper template might end up looking like:
+
+    <tr class="form-row">
+      <td>[% field.display_name %]</td>
+      <td>[% field_output %]</td>
+    </tr>
+
+For more information on render_hints, see L<Form::Sensible::Overview>.
 
 =item C<status_messages>
 
@@ -454,7 +493,7 @@ field.  If the C<$render_hints> hashref is provided, it will be merged into
 any previously set render hints for the field.  When a key conflict occurs the
 passed C<$render_hints> will override any existing configuration.
 
-=item C<fields()>
+=item C<fields($manual_hints)>
 
 A shortcut routine that renders all the fields in the form.  Returns all of the fields
 rendered as a single string.
@@ -467,7 +506,7 @@ Renders the end of the form. Returns the rendered html as a string.
 
 Returns an array containing the fieldnames in the form (in their render order)
 
-=item C<complete($action, $method)>
+=item C<complete($action, $method, $manual_hints)>
 
 Renders the entire form and returns the rendered results.  Calling 
 C<<$form->complete($action, $method) >> routine is functionally 

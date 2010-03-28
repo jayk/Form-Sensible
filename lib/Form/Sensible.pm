@@ -16,13 +16,13 @@ use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 
 
-our $VERSION = "0.11203";
+our $VERSION = "0.11211";
 
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible
 
 sub create_form {
-    my ($class, $template, $values) = @_;
+    my ($class, $template) = @_;
     
     my $formhash = { %{$template} };
     delete($formhash->{'fields'});

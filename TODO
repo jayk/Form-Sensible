@@ -1,7 +1,15 @@
 TODO:
-- Renderer::HTML - add table based rendering
-- More Examples
-- Test rendering output
-- Simple reflectors
-- Documentation for HTML renderer - proper use of render_hints
-- "Widgets" - jQuery datetime dealy "remote post" options etc
+
+  * New Test for HTML rendering using fieldname_field templates.
+  * See about a better way to delegate option filtering / retrieval
+  * See about a better way to delegate values to external objects
+  * Date field
+  * More Examples
+  * Test rendering output
+  * Simple reflectors
+  * Documentation for HTML renderer - proper use of render_hints
+  * "Widgets" - jQuery datetime dealy "remote post" options etc
+
+DONE:
+
+2010-02-19 - Renderer::HTML - add table based rendering

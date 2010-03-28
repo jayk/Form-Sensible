@@ -1,6 +1,13 @@
 Revision history for Form::Sensible
 
-0.11203 2010-02-28
+0.11211 2010-03-28
+
+    * Added ability to wrap all fields with a common wrapper (thanks lukes)
+    * Change fieldname-based templates in HTML renderer to be 
+      suffixed with _field (username_field, etc.)
+    * Added ability to pass stash variables to field rendering (also thanks lukes)
+
+0.11210 2010-03-03
 
     * Added minimum_length to Text field (thanks lukes)
     * Added first per-field-type test in t/fields/ (also thanks lukes)
