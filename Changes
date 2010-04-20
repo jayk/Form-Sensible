@@ -1,5 +1,16 @@
 Revision history for Form::Sensible
 
+0.11213 2010-04-17
+
+    * Moved 'accepts_multiple' into the base field class along with
+      adjustment to ignore multiple values when accept_multiple is false.
+     
+
+0.11212 2010-03-29
+
+    * Added message_for() call to Validator::Results to easily retrieve 
+      all the error messages for the given field
+
 0.11211 2010-03-28
 
     * Added ability to wrap all fields with a common wrapper (thanks lukes)

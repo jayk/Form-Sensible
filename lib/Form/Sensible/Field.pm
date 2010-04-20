@@ -75,6 +75,13 @@ has 'value' => (
     lazy        => 1,
 );
 
+has 'accepts_multiple' => (
+    is          => 'rw',
+    isa         => 'Bool',
+    required    => 1,
+    default     => 0,
+);
+
 has 'default_value' => (
     is          => 'rw',
 );
@@ -130,6 +137,10 @@ sub flatten {
         $config{'value'} = $self->value;
     }
     
+    if ($self->accepts_multiple) {
+        $config{'accepts_multiple'} =$self->accepts_multiple;
+    }
+    
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {
         if (ref($self->validation->{$key})) {
@@ -160,6 +171,26 @@ sub validate {
     
     return 0;
 }
+
+## deals with an arrayref being passed to a field that only accepts
+## a single value
+around 'value' => sub {
+    my $orig = shift;
+    my $self = shift;
+
+    return $self->$orig()
+        unless @_;
+    
+    my $provided_value = shift;
+    
+    ## if we got an array, but our field is not an 'accepts_multiple' field
+    ## we ignore all but the first value.  
+    if (ref($provided_value) eq 'ARRAY' && !($self->accepts_multiple)) {
+        return $self->$orig($provided_value->[0]);
+    } else {
+        return $self->$orig($provided_value);
+    }
+};
 
 ## restores a flattened field structure.
 sub create_from_flattened {
@@ -302,6 +333,11 @@ depend on the renderer being used.
 
 =item C<value> 
 The current value for this field.
+
+=item C<accepts_multiple>
+Can the field support multiple values.  Defaults to false.  If an array of values is 
+passed as the value on a field that doesn't accept multiple values, only the first
+value will be used, the remainder will be ignored. 
 
 =item C<default_value> 
 The default value to use if none is provided.

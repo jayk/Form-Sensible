@@ -56,12 +56,17 @@ my $output_2 = $renderer2->render($form)->complete;
     
 ok( $output eq $output_2, "flat creation and programmatic creation produce the same results");
 
+## Checking that fields that don't accept multiple behave properly
+$form->set_values({ username => ['test','foo'], password => 'test' });
+
+## here we should check these fields
+is_deeply ({ username => 'test', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value }, 'Additional values on single-value fields are ignored');
+
 ## here we should add some field values
 $form->set_values({ username => 'test', password => 'test' });
 
-
 ## here we should check these fields
-is_deeply ({ username => 'test', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value });
+is_deeply ({ username => 'test', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value }, 'Setting Values behaves properly');
 
 ## here we should make sure proper validation passes
 my $validation_result = $form->validate();

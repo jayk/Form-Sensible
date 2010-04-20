@@ -2,17 +2,14 @@ package Form::Sensible::Field::Select;
 
 use Moose; 
 use namespace::autoclean;
+use Form::Sensible::DelegateConnection;
+
 extends 'Form::Sensible::Field';
 
 ## provides a select field - potentially with multiple selections
 ## this could be a dropdown box or a radio-select group
 
-has 'accepts_multiple' => (
-    is          => 'rw',
-    isa         => 'Bool',
-    required    => 1,
-    default     => 0,
-);
+
 
 has 'options' => (
     is          => 'rw',
@@ -32,26 +29,20 @@ has 'value' => (
     lazy        => 1,
 );
 
-
-# overcomplicated.
-#around 'value' => sub {
-#    my ($self, $orig) = @_;
-#    
-#    return $self->$orig() unless @_;
-#    
-#    if ($#_ > 0) {
-#        $self->$orig([ @_ ]);
-#    } else {
-#        my $val = shift;
-#        my $original_value = $self->$orig();
-#        if (ref($val) eq 'ARRAY') {
-#            $self->$orig($val);
-#        } else {
-#            push @{$self->$orig()}, $val;
-#        }
-#    }
-#};
-
+has 'options_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            my $self = shift;
+                            my $obj = $self;
+                            
+                            Form::Sensible::DelegateConnection->new( delegate_function => sub { return $obj->get_options(@_); } );
+                   },
+    lazy        => 1,
+    #coerce      => 1,
+    # additional options
+);
 
 
 sub set_selection {
@@ -68,7 +59,7 @@ sub set_selection {
 sub add_option {
     my ($self, $value, $display_name) = @_;
     
-    push @{$self->options}, { name => $display_name,
+    push @{$self->_options}, { name => $display_name,
                                value => $value };
 }
 
@@ -76,17 +67,21 @@ sub get_additional_configuration {
     my $self = shift;
     
     return { 
-                'accepts_multiple' => $self->accepts_multiple,
-                'options' => $self->_options,
-                'display_names' => $self->display_names,
+#                'options' => $self->_options,
+#                'display_names' => $self->display_names,
            };
+}
 
+sub get_options {
+    my ($self, $caller, $filter) = @_;
+    
+    return $self->_options; 
 }
 
 sub options {
     my ($self, $filter) = @_;
     
-    return [ grep /$filter/,  @{$self->_options} ]; 
+    $self->options_delegate->call($self, $filter);
 }
 
 sub validate {

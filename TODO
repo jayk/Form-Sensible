@@ -1,5 +1,6 @@
 TODO:
 
+  * Think about 'read only' or 'disabled editing' on fields
   * New Test for HTML rendering using fieldname_field templates.
   * See about a better way to delegate option filtering / retrieval
   * See about a better way to delegate values to external objects
