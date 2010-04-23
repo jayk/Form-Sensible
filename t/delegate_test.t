@@ -68,13 +68,13 @@ my $form = Form::Sensible->create_form( {
 
 my $select_field = $form->field('choices');
 
-ok( grep({ $_->{value} eq 'foo_very'} @{$select_field->options}), "Loaded options via function delegate");
+ok( grep({ $_->{value} eq 'foo_very'} @{$select_field->get_options}), "Loaded options via function delegate");
 
 $select_field->add_option('wheat', 'Wheat Bread');
 $select_field->add_option('white', 'White Bread');
 $select_field->add_option('sour', 'Sourdough Bread');
 
-ok( !(grep { $_->{value} eq 'white' } @{$select_field->options}), "Options added on select are ignored when delegate defined");
+ok( !(grep { $_->{value} eq 'white' } @{$select_field->get_options}), "Options added on select are ignored when delegate defined");
 
 
 #print Dumper($select_field->options());
@@ -83,7 +83,7 @@ my $delegate_object = Foo->new( minimum => 5, maximum => 9 );
 
 $select_field->options_delegate(FS_target($delegate_object, 'my_numbers', "testpre"));
 
-ok( (grep { $_->{name} =~ 'testpre value 7'} @{$select_field->options}), "Loaded options via object delegate");
+ok( (grep { $_->{name} =~ 'testpre value 7'} @{$select_field->get_options}), "Loaded options via object delegate");
 
 #print Dumper($select_field->options());
 
@@ -105,7 +105,7 @@ $select_field2->add_option('sour', 'Sourdough Bread');
 
 #print Dumper($select_field2->options());
 
-ok( (grep { $_->{value} eq 'white' } @{$select_field2->options}), "Select acting as it's own delegate works");
+ok( (grep { $_->{value} eq 'white' } @{$select_field2->get_options}), "Select acting as it's own delegate works");
 
 
 done_testing();

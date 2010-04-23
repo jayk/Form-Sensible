@@ -8,7 +8,7 @@
     <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]checkbox_container [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
         <div class="[% css_prefix _ field_type %]_label_div"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label">[% field.display_name %]</label></div>
         <div class="[% css_prefix -%]checkboxes">
-             [% FOREACH item = field.options -%]
+             [% FOREACH item = field.get_options -%]
                 [% IF field_count == 0 %]<div class="[% css_prefix -%]checkbox_row" >[% END %]
                 [% field_count = field_count + 1 %]
                 [% total_field_count = total_field_count + 1 %]
@@ -23,7 +23,7 @@
                     <label class="[% css_prefix -%]name [% css_prefix _ field_type %]_name"><input type="[% box_type %]" name="[% field.name %]" value="[% item.value %]"[%- selected -%]> [% item.name %]</label>    
                 [% END %]
                 </div>
-                [% IF field_count >= fields_across || (total_field_count == field.options.size ) %][% field_count = 0 %]</div>[% END %]
+                [% IF field_count >= fields_across || (total_field_count == field.get_options.size ) %][% field_count = 0 %]</div>[% END %]
                [% END %]
         </div>
     </div>
@@ -33,7 +33,7 @@
     <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
     <label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label>
     <select name="[% field_name %]" [%- IF field.accepts_multiple %]multiple[%- END %] [% select_size %] id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input">
-        [% FOREACH item = field.options -%]
+        [% FOREACH item = field.get_options -%]
         [%- selected = "" -%]
         [%- FOREACH val = field.value -%]
             [%- IF item.value == val %][% selected = " selected" %][% END -%]

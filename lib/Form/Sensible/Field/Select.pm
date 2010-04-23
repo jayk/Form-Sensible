@@ -17,8 +17,6 @@ has 'options' => (
     required    => 1,
     default     => sub { return [] },
     lazy        => 1,
-    writer      => 'set_options',
-    reader      => '_options'
 );
 
 has 'options_delegate' => (
@@ -29,13 +27,20 @@ has 'options_delegate' => (
                             my $self = shift;
                             my $obj = $self;
                             
-                            Form::Sensible::DelegateConnection->new( delegate_function => sub { return $obj->get_options(@_); } );
+                            return FS_target( sub { return $obj->options } );
                    },
     lazy        => 1,
     #coerce      => 1,
     # additional options
 );
 
+sub get_additional_configuration {
+    my ($self) = @_;
+    
+    return { 
+                'options' => $self->options,
+           };    
+}
 
 sub set_selection {
     my ($self) = shift;
@@ -51,26 +56,11 @@ sub set_selection {
 sub add_option {
     my ($self, $value, $display_name) = @_;
     
-    push @{$self->_options}, { name => $display_name,
+    push @{$self->options}, { name => $display_name,
                                value => $value };
 }
 
-sub get_additional_configuration {
-    my $self = shift;
-    
-    return { 
-#                'options' => $self->_options,
-#                'display_names' => $self->display_names,
-           };
-}
-
 sub get_options {
-    my ($self, $caller) = @_;
-    
-    return $self->_options; 
-}
-
-sub options {
     my ($self) = shift;
     
     $self->options_delegate->call($self, @_);
@@ -88,7 +78,7 @@ sub validate {
 
     foreach my $value (@{$values}) {
         my $valid = 0;
-        foreach my $option (@{$self->options}) {
+        foreach my $option (@{$self->get_options}) {
             if ($value eq $option->{'value'}) {
                 $valid = 1;
                 last;

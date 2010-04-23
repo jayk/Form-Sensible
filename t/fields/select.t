@@ -41,14 +41,14 @@ my $form = Form::Sensible->create_form( {
 
 my $select_field = $form->field('choices');
 
-ok(has_option($select_field->options, 'foo_five'), "Has options we expect from field creation");
-ok(!has_option($select_field->options, 'white'), "Doesn't have option we haven't added yet.");
+ok(has_option($select_field->get_options, 'foo_five'), "Has options we expect from field creation");
+ok(!has_option($select_field->get_options, 'white'), "Doesn't have option we haven't added yet.");
 
 $select_field->add_option('wheat', 'Wheat Bread');
 $select_field->add_option('white', 'White Bread');
 $select_field->add_option('sour', 'Sourdough Bread');
 
-ok(has_option($select_field->options, 'white'), "Has options we added programmatically");
+ok(has_option($select_field->get_options, 'white'), "Has options we added programmatically");
 
 $select_field->value('white');
 
