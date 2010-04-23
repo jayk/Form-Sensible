@@ -1,10 +1,12 @@
 Revision history for Form::Sensible
 
-0.11213 2010-04-17
+0.11220 2010-04-21
 
     * Moved 'accepts_multiple' into the base field class along with
       adjustment to ignore multiple values when accept_multiple is false.
-     
+    * Corrected a number of bugs in the select field that were introduced
+      who knows when.
+    * Added basic Select test     
 
 0.11212 2010-03-29
 

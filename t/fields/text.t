@@ -6,7 +6,7 @@ use Form::Sensible;
 
 use Form::Sensible::Form;
 
-$form = Form::Sensible->create_form( {
+my $form = Form::Sensible->create_form( {
     name => 'test',
     fields => [
         { 

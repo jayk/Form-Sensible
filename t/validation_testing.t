@@ -13,7 +13,7 @@ $lib_dir = join('/', @dirs);
 
 
 
-$form = Form::Sensible->create_form( {
+my $form = Form::Sensible->create_form( {
                                             name => 'test',
                                             fields => [
                                                          { 

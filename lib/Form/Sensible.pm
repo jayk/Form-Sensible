@@ -16,7 +16,11 @@ use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 use Form::Sensible::DelegateConnection;
 
-our $VERSION = "0.11213";
+our $VERSION = "0.12000";
+
+Moose::Exporter->setup_import_methods(
+      also     => [ 'Form::Sensible::DelegateConnection' ]  
+);
 
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible

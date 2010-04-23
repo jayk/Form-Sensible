@@ -9,6 +9,7 @@ inc/Module/Install/Share.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/Form/Sensible.pm
+lib/Form/Sensible/DelegateConnection.pm
 lib/Form/Sensible/Field.pm
 lib/Form/Sensible/Field/FileSelector.pm
 lib/Form/Sensible/Field/LongText.pm
@@ -65,5 +66,7 @@ t/simple_form.t
 t/test_output.t
 t/validation_testing.t
 t/fields/text.t
+t/fields/select.t
+t/delegate_test.t
 TODO
 Changes

@@ -21,14 +21,6 @@ has 'options' => (
     reader      => '_options'
 );
 
-has 'value' => (
-    is          => 'rw',
-    isa         => 'ArrayRef',
-    required    => 1,
-    default     => sub { return []; },
-    lazy        => 1,
-);
-
 has 'options_delegate' => (
     is          => 'rw',
     isa         => 'Form::Sensible::DelegateConnection',
@@ -73,22 +65,28 @@ sub get_additional_configuration {
 }
 
 sub get_options {
-    my ($self, $caller, $filter) = @_;
+    my ($self, $caller) = @_;
     
     return $self->_options; 
 }
 
 sub options {
-    my ($self, $filter) = @_;
+    my ($self) = shift;
     
-    $self->options_delegate->call($self, $filter);
+    $self->options_delegate->call($self, @_);
 }
 
 sub validate {
     my ($self) = @_;
     
+    my $values;
+    if (ref($self->value) eq 'ARRAY') {
+        $values = $self->value;
+    } else {
+        $values = [ $self->value ];
+    }
 
-    foreach my $value (@{$self->value}) {
+    foreach my $value (@{$values}) {
         my $valid = 0;
         foreach my $option (@{$self->options}) {
             if ($value eq $option->{'value'}) {

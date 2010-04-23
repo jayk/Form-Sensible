@@ -3,7 +3,11 @@ package Form::Sensible::DelegateConnection;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
+Moose::Exporter->setup_import_methods(
+      as_is     => [ 'FS_target', \&Form::Sensible::DelegateConnection::FS_target ]  
+);
+
+#coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
 
 
 ## set up the delegate_function by default to call $target->$target_method;
@@ -11,25 +15,6 @@ has 'delegate_function' => (
     is          => 'rw',
     isa         => 'CodeRef',
     required    => 1,
-    default     => sub { 
-                         my $self = shift;
-                         my $target = $self->target;  
-                         my $target_method = $self->target_method;
-                         return sub { return $target->$target_method(@_); }
-                    },
-    lazy        => 1,
-);
-
-has 'target' => (
-    is          => 'rw',
-    isa         => 'Object',
-    weak_ref    => 1,
-    # additional options
-);
-
-has 'target_method' => (
-    is          => 'rw',
-    isa         => 'Str',
 );
 
 
@@ -37,11 +22,25 @@ sub call {
     my $self = shift;
     my $callingobject = shift;
     #die "asplode!";
-    print STDERR "Delegate Being Called\n";
+    #print STDERR "Delegate Being Called\n";
 
     return $self->delegate_function->($callingobject,  @_);
 }
 
+sub FS_target {
+    my $function = shift;
+    if (ref($function) eq 'CODE') {
+        return Form::Sensible::DelegateConnection->new( delegate_function => $function );
+    } else {
+        my $object = $function;
+        my $method_name = shift;
+
+        my $args = [ @_ ];
+        return Form::Sensible::DelegateConnection->new( delegate_function => sub { 
+                                                                                    return $object->$method_name(@_, @{$args}); 
+                                                                                 });
+    }
+}
 
 __PACKAGE__->meta->make_immutable;
 
