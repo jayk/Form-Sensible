@@ -61,7 +61,8 @@ my $form = Form::Sensible->create_form( {
                                                          { 
                                                             field_class => 'Select',
                                                             name => 'choices',
-                                                            options_delegate => FS_target( \&the_options )
+#                                                            options_delegate => FS_target( \&the_options )
+                                                            options_delegate => \&the_options
                                                          },
                                                       ],
                                         } );
@@ -73,6 +74,8 @@ ok( grep({ $_->{value} eq 'foo_very'} @{$select_field->get_options}), "Loaded op
 $select_field->add_option('wheat', 'Wheat Bread');
 $select_field->add_option('white', 'White Bread');
 $select_field->add_option('sour', 'Sourdough Bread');
+
+print Dumper($select_field->get_options);
 
 ok( !(grep { $_->{value} eq 'white' } @{$select_field->get_options}), "Options added on select are ignored when delegate defined");
 

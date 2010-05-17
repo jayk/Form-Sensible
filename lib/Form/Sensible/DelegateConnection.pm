@@ -2,13 +2,15 @@ package Form::Sensible::DelegateConnection;
 
 use Moose;
 use Moose::Util::TypeConstraints;
+use Data::Dumper;
 
 Moose::Exporter->setup_import_methods(
-      as_is     => [ 'FS_target', \&Form::Sensible::DelegateConnection::FS_target ]  
+      as_is     => [ 'FSConnector', \&Form::Sensible::DelegateConnection::FSConnector ]  
 );
 
-#coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
-
+coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
+coerce 'Form::Sensible::DelegateConnection' => from 'ArrayRef' => via { return FSConnector( @{$_} ); };
+coerce 'Form::Sensible::DelegateConnection' => from 'CodeRef' => via { warn 'foo'; return FSConnector( $_ ); };
 
 ## set up the delegate_function by default to call $target->$target_method;
 has 'delegate_function' => (
@@ -23,14 +25,19 @@ sub call {
     my $callingobject = shift;
     #die "asplode!";
     #print STDERR "Delegate Being Called\n";
-
+    
     return $self->delegate_function->($callingobject,  @_);
 }
 
-sub FS_target {
+sub FSConnector {
     my $function = shift;
     if (ref($function) eq 'CODE') {
-        return Form::Sensible::DelegateConnection->new( delegate_function => $function );
+        if ($#_ > -1) {
+            my $args = [ @_ ];
+            return Form::Sensible::DelegateConnection->new( delegate_function => sub { return $function->(@_, @{$args}) } );
+        } else {
+            return Form::Sensible::DelegateConnection->new( delegate_function => $function );
+        }
     } else {
         my $object = $function;
         my $method_name = shift;

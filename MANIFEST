@@ -68,5 +68,6 @@ t/validation_testing.t
 t/fields/text.t
 t/fields/select.t
 t/delegate_test.t
+t/test_value_delegate.t
 TODO
 Changes

@@ -27,10 +27,10 @@ has 'options_delegate' => (
                             my $self = shift;
                             my $obj = $self;
                             
-                            return FS_target( sub { return $obj->options } );
+                            return FSConnector( sub { return $obj->options } );
                    },
     lazy        => 1,
-    #coerce      => 1,
+    coerce      => 1,
     # additional options
 );
 

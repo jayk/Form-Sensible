@@ -1,7 +1,7 @@
-[%- IF messages.size -%]
+[%- IF status_messages.size -%]
 <div class="[% css_prefix -%]messageblock [% css_prefix _ form.name %]_messageblock">
-    [%- FOREACH message IN messages -%]
-    <span class="[% css_prefix -%]message [% css_prefix _ form.name %]_message">[% message.value %]</span><br/>
+    [%- FOREACH message IN status_messages -%]
+    <span class="[% css_prefix -%]message [% css_prefix _ form.name %]_message">[% message %]</span><br/>
     [%- END -%]
 </div>
 [%- END -%]

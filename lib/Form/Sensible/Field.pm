@@ -1,10 +1,12 @@
 package Form::Sensible::Field;
 
-use Moose; 
+use Moose;
 use namespace::autoclean;
 use Carp;
 use Data::Dumper;
 use Class::MOP;
+use Form::Sensible::DelegateConnection;
+
 
 has 'name' => (
     is          => 'rw',
@@ -68,11 +70,38 @@ has 'render_hints' => (
 );
 
 # values are of indeterminate type generally.
-has 'value' => (
+has '_value' => (
     is          => 'rw',
     clearer     => '_clear_value',
     builder     => '_default_value',
     lazy        => 1,
+);
+
+has 'value_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            my $self = shift;
+                            my $value = $self->default_value;
+                            my $obj = $self;
+                            my $sub =  sub { 
+                                                      my $caller = shift;
+                                                    
+                                                      if ($#_ > -1) {   
+                                                          if (ref($_[0]) eq 'ARRAY' && !($obj->accepts_multiple)) {
+                                                              $value = $_[0]->[0];
+                                                          } else {
+                                                              $value = $_[0];
+                                                          }
+                                                      }
+                                                      return $value; 
+                                                  };
+                            return FSConnector($sub);
+                   },
+    lazy        => 1,
+    coerce      => 1,
+    # additional options
 );
 
 has 'accepts_multiple' => (
@@ -172,25 +201,11 @@ sub validate {
     return 0;
 }
 
-## deals with an arrayref being passed to a field that only accepts
-## a single value
-around 'value' => sub {
-    my $orig = shift;
+sub value {
     my $self = shift;
-
-    return $self->$orig()
-        unless @_;
     
-    my $provided_value = shift;
-    
-    ## if we got an array, but our field is not an 'accepts_multiple' field
-    ## we ignore all but the first value.  
-    if (ref($provided_value) eq 'ARRAY' && !($self->accepts_multiple)) {
-        return $self->$orig($provided_value->[0]);
-    } else {
-        return $self->$orig($provided_value);
-    }
-};
+    return $self->value_delegate->call($self,@_);
+}
 
 ## restores a flattened field structure.
 sub create_from_flattened {
@@ -219,7 +234,7 @@ sub create_from_flattened {
 sub clear_state {
     my $self = shift;
     
-    $self->_clear_value();
+    $self->value(undef);
 }
 
 __PACKAGE__->meta->make_immutable;

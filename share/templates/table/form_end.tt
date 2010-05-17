@@ -1,3 +1,4 @@
-</table>
-</form>
+        </table>
+        [% IF render_hints.legend %]</fieldset>[% END %]
+    </form>
 </div>
