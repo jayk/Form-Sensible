@@ -10,7 +10,7 @@ Moose::Exporter->setup_import_methods(
 
 coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
 coerce 'Form::Sensible::DelegateConnection' => from 'ArrayRef' => via { return FSConnector( @{$_} ); };
-coerce 'Form::Sensible::DelegateConnection' => from 'CodeRef' => via { warn 'foo'; return FSConnector( $_ ); };
+coerce 'Form::Sensible::DelegateConnection' => from 'CodeRef' => via { return FSConnector( $_ ); };
 
 ## set up the delegate_function by default to call $target->$target_method;
 has 'delegate_function' => (

@@ -61,7 +61,7 @@ my $form = Form::Sensible->create_form( {
                                                          { 
                                                             field_class => 'Select',
                                                             name => 'choices',
-#                                                            options_delegate => FS_target( \&the_options )
+#                                                            options_delegate => FSConnector( \&the_options )
                                                             options_delegate => \&the_options
                                                          },
                                                       ],
@@ -84,7 +84,7 @@ ok( !(grep { $_->{value} eq 'white' } @{$select_field->get_options}), "Options a
 
 my $delegate_object = Foo->new( minimum => 5, maximum => 9 );
 
-$select_field->options_delegate(FS_target($delegate_object, 'my_numbers', "testpre"));
+$select_field->options_delegate(FSConnector($delegate_object, 'my_numbers', "testpre"));
 
 ok( (grep { $_->{name} =~ 'testpre value 7'} @{$select_field->get_options}), "Loaded options via object delegate");
 

@@ -3,6 +3,7 @@ package Form::Sensible::Validator;
 use Moose; 
 use namespace::autoclean;
 use Form::Sensible::Validator::Result;
+use Form::Sensible::DelegateConnection;
 use Carp qw/croak/;
 
 ## this module provides the basics for validation of a Form.
@@ -13,6 +14,26 @@ has 'config' => (
     required    => 1,
     default     => sub { return { }; },
     lazy        => 1,
+);
+
+has 'message_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            return FSConnector( sub { 
+                                                my $caller = shift;
+                                                my $field = shift;
+                                                my $message = shift;
+                                                
+                                                $message =~ s/_FIELDNAME_/$field->display_name/g;
+                                                      
+                                                return $message;
+                                   });
+                   },
+    lazy        => 1,
+    coerce      => 1,
+    # additional options
 );
 
 # returns a Form::Sensible::Validator::Result
@@ -33,13 +54,13 @@ sub validate {
         if (scalar keys %{$results}) {
             if (exists($results->{'errors'})) {
                 foreach my $error (@{$results->{'errors'}}) {
-                    $validation_result->add_error($fieldname, $error);
+                    $validation_result->add_error($fieldname, $self->message_delegate->call($self, $field, $error));
                 }
             }
             
             if (exists($results->{'missing'})) {
                 foreach my $missing (@{$results->{'missing'}}) {
-                    $validation_result->add_error($fieldname, $missing);
+                    $validation_result->add_error($fieldname, $self->message_delegate->call($self, $field, $missing));
                 }
             }
         }
@@ -84,9 +105,9 @@ sub validate_field {
     } elsif ($field->validation->{'required'}) {
         ## field was required but was empty.
         if (exists($field->validation->{'missing_message'})) {
-            $results->{'missing'} = [$field->validation->{'missing_message'}];
+            $results->{'missing'} = [ $field->validation->{'missing_message'} ];
         } else {
-            $results->{'missing'} = [ $field->display_name . " is a required field but was not provided." ];
+            $results->{'missing'} = [ '_FIELDNAME_ is a required field but was not provided.' ];
         }
     }
     if ($#errors > -1) {
@@ -106,7 +127,7 @@ sub validate_field_with_regex {
         if (exists($field->validation->{'invalid_message'})) {
             return $field->validation->{'invalid_message'};
         } else {
-            return $field->display_name . " is invalid.";
+            return "_FIELDNAME_ is invalid.";
         }
     } else {
         return 0;
@@ -128,12 +149,13 @@ sub validate_field_with_coderef {
         if (exists($field->validation->{invalid_message})) {
             return $field->validation->{invalid_message};
         } else {
-            return $field->display_name . " is invalid.";
+            return "_FIELDNAME_ is invalid.";
         }
     } else {
         return $results;
     }
 }
+
 
 __PACKAGE__->meta->make_immutable;
 1;
@@ -197,6 +219,17 @@ confusing, returning 0 on a valid field. It may help to think of the coderef
 as being the equivalent of a C<is_field_invalid()> routine.
 
 =back
+
+=head2 DELEGATE CONNECTIONS
+
+=item message_delegate: ($caller, $field, $message)
+
+The message_delegate is used to assemble error and other validation related
+messages. By default the message_delegate simply loads $message and replaces
+any occurance of _FIELDNAME_ with the field's name. Should return the processed
+message.  This is an ideal place to handle localization of messages or other 
+customization.
+
 
 =head1 AUTHOR
 

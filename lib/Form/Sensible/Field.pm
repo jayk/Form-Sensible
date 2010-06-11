@@ -69,14 +69,6 @@ has 'render_hints' => (
     lazy        => 1,
 );
 
-# values are of indeterminate type generally.
-has '_value' => (
-    is          => 'rw',
-    clearer     => '_clear_value',
-    builder     => '_default_value',
-    lazy        => 1,
-);
-
 has 'value_delegate' => (
     is          => 'rw',
     isa         => 'Form::Sensible::DelegateConnection',
@@ -84,12 +76,11 @@ has 'value_delegate' => (
     default     => sub {
                             my $self = shift;
                             my $value = $self->default_value;
-                            my $obj = $self;
                             my $sub =  sub { 
                                                       my $caller = shift;
                                                     
                                                       if ($#_ > -1) {   
-                                                          if (ref($_[0]) eq 'ARRAY' && !($obj->accepts_multiple)) {
+                                                          if (ref($_[0]) eq 'ARRAY' && !($caller->accepts_multiple)) {
                                                               $value = $_[0]->[0];
                                                           } else {
                                                               $value = $_[0];
@@ -161,7 +152,9 @@ sub flatten {
     } else {
         $class = '+' . $class;
     }
+    
     $config{'field_class'} = $class;
+    
     if (!$template_only) {
         $config{'value'} = $self->value;
     }

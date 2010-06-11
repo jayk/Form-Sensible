@@ -1,5 +1,24 @@
 Revision history for Form::Sensible
 
+0.12000 2010-06-10
+
+    * Major release including  DelegateConnection features including
+    * field value delegation
+    * select field option delegation
+    * error message preparation delegation in validation (for localization, etc.)
+    
+0.11222 2010-05-15
+
+    * Corrected an error in the message templates of HTML renderer that
+      prevented status messages from showing up.
+
+0.11221 2010-05-07
+
+    * Corrected an error in select field rendering that would cause 
+      selects rendered as checkboxes to not render existing values 
+      properly
+
+
 0.11220 2010-04-21
 
     * Moved 'accepts_multiple' into the base field class along with
