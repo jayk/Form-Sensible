@@ -63,11 +63,12 @@ sub add_option {
 sub get_options {
     my ($self) = shift;
     
-    $self->options_delegate->call($self, @_);
+    $self->options_delegate->($self, @_);
 }
 
-sub validate {
-    my ($self) = @_;
+around 'validate' => sub {
+    my $orig = shift;
+    my $self = shift;
     
     my $values;
     if (ref($self->value) eq 'ARRAY') {
@@ -75,7 +76,8 @@ sub validate {
     } else {
         $values = [ $self->value ];
     }
-
+    my @errors;
+    
     foreach my $value (@{$values}) {
         my $valid = 0;
         foreach my $option (@{$self->get_options}) {
@@ -86,14 +88,14 @@ sub validate {
         }
         if (!$valid) {
             if (exists($self->validation->{'invalid_message'})) {
-                return $self->validation->{'invalid_message'};
+                push @errors, $self->validation->{'invalid_message'};
             } else {
-                return $self->display_name . " was set to an invalid value";            
+                push @errors, "_FIELDNAME was set to an invalid value";            
             }
         }
     }
-    return 0;
-}
+    return @errors;
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

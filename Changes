@@ -6,6 +6,11 @@ Revision history for Form::Sensible
     * field value delegation
     * select field option delegation
     * error message preparation delegation in validation (for localization, etc.)
+    * BEHAVIOR CHANGE: Field validate() routines are expected to return an array containing errors 
+      or undef on 'passing validation' 
+    * DEPRECATION NOTICE: Form::Sensible::Form's 'fields' method Deprecated.  
+      use 'get_fields' instead
+    
     
 0.11222 2010-05-15
 

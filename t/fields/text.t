@@ -40,6 +40,7 @@ my $form = Form::Sensible->create_form( {
     });
     my $validation_result = $form->validate();
 
+    #print STDERR Dumper($validation_result->{error_fields});
     ok( !$validation_result->is_valid(), "form with field shorter than min length failed");
     is( scalar(keys %{$validation_result->{error_fields}}), 2, "correct number of incorrect fields" );
     is( $validation_result->{error_fields}->{string}->[0], "String is too short", "correct field is invalid with correct text");

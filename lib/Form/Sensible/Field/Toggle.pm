@@ -2,7 +2,7 @@ package Form::Sensible::Field::Toggle;
 
 use Moose; 
 use namespace::autoclean;
-extends 'Form::Sensible::Field';
+extends 'Form::Sensible::Field::Select';
 
 ## provides a simple on/off field
 
@@ -60,20 +60,20 @@ sub accepts_multiple {
     return 0;
 }
 
-sub validate {
-    my $self = shift;
-    
-    if ($self->value ne $self->on_value && $self->value ne $self->off_value) {
-    
-        if (exists($self->validation->{'invalid_message'})) {
-            return $self->validation->{'invalid_message'};
-        } else {
-            return $self->display_name . " was set to an invalid value";            
-        }        
-    } else {
-        return 0;
-    }
-}
+#sub validate {
+#    my $self = shift;
+#    
+#    if ($self->value ne $self->on_value && $self->value ne $self->off_value) {
+#    
+#        if (exists($self->validation->{'invalid_message'})) {
+#            return $self->validation->{'invalid_message'};
+#        } else {
+#            return $self->display_name . " was set to an invalid value";            
+#        }        
+#    } else {
+#        return 0;
+#    }
+#}
 
 __PACKAGE__->meta->make_immutable;
 1;

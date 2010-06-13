@@ -56,6 +56,7 @@ ok($select_field->validate() eq 0, "Valid option passes validation.");
 
 $select_field->value('junk');
 
-ok($select_field->validate() =~ /invalid/, "Invalid option fails validation.");
+
+ok(grep(/invalid/, $select_field->validate()), "Invalid option fails validation.");
 
 done_testing();

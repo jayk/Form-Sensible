@@ -33,6 +33,21 @@ sub BUILD {
     } 
 }
 
+around 'value_delegate' => sub {
+    my $orig = shift;
+    my $self = shift;
+    
+    return $self->$orig()
+              unless @_;
+    
+    my $delegate = shift;
+              
+    foreach my $field ($self->form->get_fields()) {
+        $field->value_delegate( $delegate );
+    }
+    return $self->$orig($delegate);
+};
+
 sub get_additional_configuration {
     my ($self, $template_only) = @_;
     
@@ -42,11 +57,12 @@ sub get_additional_configuration {
 
 }
 
-sub validate {
-    my ($self) = shift;
+around 'validate' => sub {
+    my $orig = shift;
+    my $self = shift;
 
-    return $self->form->validate();    
-}
+    return ($self->form->validate(), $self->$orig());    
+};
 
 __PACKAGE__->meta->make_immutable;
 

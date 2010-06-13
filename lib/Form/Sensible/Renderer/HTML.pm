@@ -98,8 +98,8 @@ sub render {
     ## take care of any subforms we have in this form.
     my $subform_init_hash = { %args };
     $args{'subform_renderers'} = {};
-    foreach my $fieldname (@{$form->field_order}) {
-        my $field = $form->field($fieldname);
+    foreach my $field ($form->get_fields()) {
+        my $fieldname = $field->name();
         if ($field->isa('Form::Sensible::Field::SubForm')) {
             $subform_init_hash->{'form'} = $field->form;
             #print "FOO!! $fieldname\n";

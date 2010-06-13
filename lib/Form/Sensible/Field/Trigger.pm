@@ -62,7 +62,7 @@ likely to change.
 =head2 HTML based rendering of triggers
 
 As with all fields, trigger rendering is primarily controlled by render_hints.  
-By default a trigger is rendered as a submit button.  If you provide a 
+By default a trigger is rendered as a 'submit' button.  If you provide a 
 C<render_as> element in the render_hints, you can control how a trigger is 
 rendered.  The options are:  C<reset>, C<button> and C<link>.  C<reset> renders
 the trigger as a reset button.  C<button> renders the trigger as a button input element.

@@ -2,6 +2,7 @@ package Form::Sensible::Form;
 
 use Moose; 
 use namespace::autoclean;
+use Form::Sensible::DelegateConnection;
 use Carp qw/croak/;
 use Class::MOP;    ## I don't believe this is required
 
@@ -46,7 +47,6 @@ has 'field_order' => (
     lazy        => 1,
 );
 
-
 has 'renderer' => (
     is          => 'rw',
     isa         => 'Form::Sensible::Renderer',
@@ -82,6 +82,20 @@ has 'validator_result' => (
     clearer     => '_clear_validator_result',
 );
 
+## calling format:  ($form, $fieldname) returns true/false whether the field should be processed.
+has 'should_process_field_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            return FSConnector(sub { return 1; });
+                   },
+    lazy        => 1,
+    coerce      => 1,
+    # additional options
+);
+
+
 ## validation hints - FULL form validation
 ## runs _after_ field validation.
 has 'validation' => (
@@ -92,38 +106,6 @@ has 'validation' => (
     lazy        => 1,
 );
 
-
-
-## actions provide a simple event model - actions can
-## be created on a form that cause certain things to happen
-## action names are free-form and the values associated with them
-## are arrayrefs of code refs.  The internally used triggers are:
-##
-## form_completed   - defaults to calling validation routines
-## form_cancelled   - defaults to doing nothing
-## validation_passed - validation succeeded
-## validation_failed - validation failed
-
-has 'actions' => (
-    is          => 'rw',
-    isa         => 'HashRef',
-    required    => 1,
-    default     => sub { return {}; },
-    lazy        => 1,
-);
-
-
-sub BUILD {
-    my ($self) = @_;
-    
-    # set up default behavior for actions - 
-    # currently only 'form_completed' has a default action - 
-    # that is to call validate.
-    $self->add_action('form_completed', sub { 
-                                                my $object = shift; 
-                                                $object->validate();
-                                            });
-}
 
 ## adds a field to the form.  If position is specified, places it at the
 ## given position, otherwise places it at the end of the form.  
@@ -210,51 +192,34 @@ sub field {
     return $self->_fields->{$fieldname};
 }
 
-## returns a hash containing all the fields in the current form
+## returns a hash containing all the fields in the current form 
+## fields is DEPRECATED.  DO NOT USE IT.
 sub fields {
     my $self = shift;
     
     return { %{$self->_fields} };
 }
 
+## Returns an array of all the fields in the form in field_order 
+## obeying should_process_field_delegate.
+sub get_fields {
+    my $self = shift;
+    
+    my @active_fields;
+    foreach my $fieldname (@{$self->field_order}) {
+        if ($self->should_process_field_delegate->($self, $fieldname)) {
+            push @active_fields, $self->field($fieldname);
+        }
+    }
+    return @active_fields;   
+}
+
+
 ## returns the fieldnames in the current form in their presentation order
 sub fieldnames {
     my $self = shift;
     
     return @{$self->field_order};
-}
-
-
-
-## add an action for the given 
-sub add_action {
-    my ($self, $event_name, $action) = @_;
-    
-    if (ref($action) ne 'CODE') {
-        croak "add action called but action is not a CODE ref";
-    }
-    if (!exists($self->actions->{$event_name})) {
-        $self->actions->{$event_name} = [];
-    }
-    push @{$self->actions->{$event_name}}, $action;
-}
-
-sub remove_action {
-    my ($self, $event_name, $action_to_remove) = @_;
-    
-    my @new_actions;
-    foreach my $action (@{$self->actions->{$event_name}}) {
-        if ($action ne $action_to_remove) {
-            push @new_actions, $action;
-        }
-    }
-    $self->actions->{$event_name} = \@new_actions;
-}
-
-sub clear_actions {
-    my ($self, $event_name) = @_;
-    
-    $self->actions->{$event_name} = [];
 }
 
 sub _create_validator {
@@ -335,6 +300,31 @@ sub clear_state {
     }
     
     $self->_clear_validator_result();
+}
+
+sub delegate_all_field_values_to_hashref {
+    my $self = shift;
+    my $hashref = shift;
+    
+    # We only need one value delegate object because it gets the name from the field's name.
+    # So we save a bit of memory by not creating a separate delegate object for each field
+    my $value_delegate = FSConnector( sub { 
+                              my $caller = shift;
+                              my $fieldname = $caller->name();
+
+                              if ($#_ > -1) {   
+                                  if (ref($_[0]) eq 'ARRAY' && !($caller->accepts_multiple)) {
+                                      $hashref->{$fieldname} = $_[0]->[0];
+                                  } else {
+                                      $hashref->{$fieldname} = $_[0];
+                                  }
+                              }
+                              return $hashref->{$fieldname}; 
+                          });
+    
+    foreach my $field ($self->get_fields()) {
+        $field->value_delegate( $value_delegate );
+    }
 }
 
 sub flatten {
@@ -454,6 +444,21 @@ it's C<validate()> method called.
 
 =back
 
+=head1 Delegates
+
+Delegates are objects that help determine certain behaviors.  These delegates
+allow control over form behavior without subclassing.  See L<Form::Sensible::DelegateConnection> for
+more information.
+
+=over 8
+
+=item should_process_field_delegate ($form, $fieldname)  
+
+Returns true/false on whether the field should be included in general form processing.  Default
+behavior is to always return true. This is used when C<<$form->get_fields()>> is called.  
+
+=back
+
 =head1 METHODS
 
 =over 8
@@ -485,11 +490,13 @@ other fields positions are adjusted accordingly.
 
 =item C<field( $fieldname )>
 
-Returns the field object identified by $fieldname.
+Returns the field object identified by $fieldname. 
 
-=item C<fields()>
+=item C<get_fields()>
 
-Returns a hash containing all the fields in the current form.  
+Returns an array containing all the fields in the current form in field order.  
+Affected by C<should_process_field_delegate>. If C<should_process_field_delegate> returns
+false for a given field, it will be excluded from the results of C<get_fields()>.
 
 =item C<fieldnames()>
 
@@ -536,6 +543,19 @@ then only the structure of the form is saved and no values or other state will
 be included in the returned hashref.
 
 =back
+
+=head2 DEPRECATED
+
+These method calls have been deprecated and will be removed.  They
+exist here only to help make sense of existing code.
+
+=over 8
+
+=item C<fields()>  (DEPRECATED 2010-06-13 - To be removed 2010-07-13)
+
+Returns an hashref containing all the fields in the current form
+
+=back 
 
 =head1 AUTHOR
 

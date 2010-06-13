@@ -30,25 +30,28 @@ has 'step' => (
 );
 
 
-sub validate {
-    my ($self) = @_;
+around 'validate' => sub {
+    my $orig = shift;
+    my $self = shift;
     
+    my @errors;
     if (defined($self->lower_bound) && $self->value < $self->lower_bound) {
-        return $self->display_name . " is lower than the minimum allowed value";
+        push @errors, "_FIELDNAME_ is lower than the minimum allowed value";
     }
     if (defined($self->upper_bound) && $self->value > $self->upper_bound) {
-        return $self->display_name . " is higher than the maximum allowed value";
+        push @errors, "_FIELDNAME_ is higher than the maximum allowed value";
     }
     if ($self->integer_only && $self->value != int($self->value)) {
-        return $self->display_name . " must be an integer.";
+        push @errors, "_FIELDNAME_ must be an integer.";
     }
-    
     ## we ran the gauntlet last check is to see if value is in step.
     if (defined($self->step) && !$self->in_step()) {
 
-        return $self->display_name . " must be a multiple of " . $self->step;
+        push @errors, "_FIELDNAME_ must be a multiple of " . $self->step;
     }
-}
+    push @errors, $self->$orig();
+    return @errors;
+};
 
 
 ## this is used when generating a slider or select of valid values.
@@ -92,7 +95,7 @@ sub get_potential_values {
 }
 
 ## this allows a number to behave like a Select if used that way.
-sub options {
+sub get_options {
     my ($self) = @_;
     
     return [ map { { name => $_, value => $_ } } $self->get_potential_values() ];

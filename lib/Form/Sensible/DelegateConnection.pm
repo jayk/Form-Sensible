@@ -4,6 +4,9 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Data::Dumper;
 
+## This overloads our object to be treated as a method call to 'call' if accessed directly as a sub ref.
+use overload q/&{}/ => sub { my $self = shift; return sub { $self->call(@_) } };
+
 Moose::Exporter->setup_import_methods(
       as_is     => [ 'FSConnector', \&Form::Sensible::DelegateConnection::FSConnector ]  
 );
@@ -12,13 +15,11 @@ coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sen
 coerce 'Form::Sensible::DelegateConnection' => from 'ArrayRef' => via { return FSConnector( @{$_} ); };
 coerce 'Form::Sensible::DelegateConnection' => from 'CodeRef' => via { return FSConnector( $_ ); };
 
-## set up the delegate_function by default to call $target->$target_method;
 has 'delegate_function' => (
     is          => 'rw',
     isa         => 'CodeRef',
     required    => 1,
 );
-
 
 sub call {
     my $self = shift;
@@ -29,6 +30,7 @@ sub call {
     return $self->delegate_function->($callingobject,  @_);
 }
 
+# creates a delegate connection 
 sub FSConnector {
     my $function = shift;
     if (ref($function) eq 'CODE') {

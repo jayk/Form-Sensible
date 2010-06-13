@@ -41,7 +41,7 @@ has 'field_type' => (
 #    default     => 0,
 #);
 
-## validation is args to the validator that will be used
+## validation contains args to the validator that will be used
 ## by default, the hashref can contain 'regex' - a ref to a 
 ## regex.  or 'code' - a code ref.  If both are present, 
 ## the regex will be checked first, then if that succeeds
@@ -102,9 +102,42 @@ has 'accepts_multiple' => (
     default     => 0,
 );
 
+has 'editable' => (
+    is          => 'rw',
+    isa         => 'Bool',
+    required    => 1,
+    default     => 1,
+);
+
+## calling format:  ($field, $value) return an arrayref containing error messages if invalid or false (scalar) if valid
+## it may be help to think of it as asking the delegate 'is this invalid' 
+has 'validation_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            return FSConnector(sub { return 0; });
+                   },
+    lazy        => 1,
+    coerce      => 1,
+    # additional options
+);
+
 has 'default_value' => (
     is          => 'rw',
 );
+
+sub BUILD {
+      my $self = shift;
+      my $args = shift;
+      
+      # this deals with the 'value' placed in the constructor, which doesn't work anymore
+      # because a Field's value is not an attribute, it is delegated.
+
+      if (defined($args->{'value'})) {
+          $self->value($args->{'value'});
+      }
+}
 
 sub _default_value {
     my $self = shift;
@@ -188,16 +221,17 @@ sub get_additional_configuration {
 }
 
 ## built-in field specific validation.  Regex and code validation run first.
+## by default just calls the validation_delegate.
 sub validate {
     my ($self) = @_;
     
-    return 0;
+    return $self->validation_delegate->($self, $self->value);
 }
 
 sub value {
     my $self = shift;
     
-    return $self->value_delegate->call($self,@_);
+    return $self->value_delegate->($self,@_);
 }
 
 ## restores a flattened field structure.

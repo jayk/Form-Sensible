@@ -53,29 +53,36 @@ sub get_additional_configuration {
            };    
 }
 
-sub validate {
-    my ($self) = @_;
+around 'validate' => sub {
+    my $orig = shift;
+    my $self = shift;
     
-    if ($#{$self->valid_extensions} != -1) {
-        my $extensions = "." . join('|.', @{$self->valid_extensions});
-        if ($self->value !~ /($extensions)$/) {
-            return $self->display_name . " is not a valid file type";
-        }
-    }
+    my @errors;
     # file must exist.
-    if ($self->must_exist && ! -e $self->value) {
-        return $self->display_name . " does not exist.";
-    }
-    if ($self->must_be_readable && ! -r $self->value ) {
-        return $self->display_name . " is not readable";
-    }
-    if ($self->maximum_size) {
-        my $filesize = -s $self->value;
-        if ($filesize > $self->maximum_size) {
-            return $self->display_name . " is too large";
+
+    if (defined($self->value)) {
+        if ($self->must_exist && ! -e $self->value) {
+            push @errors, "_FIELDNAME_ does not exist.";
+        }
+        if ($#{$self->valid_extensions} != -1) {
+            my $extensions = "." . join('|.', @{$self->valid_extensions});
+            if ($self->value !~ /($extensions)$/) {
+                push @errors, "_FIELDNAME_ is not a valid file type";
+            }
+        }
+    
+        if ($self->must_be_readable && ! -r $self->value ) {
+            push @errors, "_FIELDNAME_ is not readable";
+        }
+        if ($self->maximum_size) {
+            my $filesize = -s $self->value;
+            if ($filesize > $self->maximum_size) {
+                push @errors, "_FIELDNAME_ is too large";
+            }
         }
     }
-    return 0;
+    push @errors, $self->$orig();
+    return @errors;
 }
 
 __PACKAGE__->meta->make_immutable;

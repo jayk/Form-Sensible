@@ -52,18 +52,19 @@ sub get_additional_configuration {
            };    
 }
 
-sub validate {
-    my ($self) = @_;
+around 'validate' => sub {
+    my $orig = shift;
+    my $self = shift;
     
+    my @errors;
     if (length($self->value) > $self->maximum_length) {
-        return $self->display_name . " is too long";
+        push @errors, "_FIELDNAME_ is too long";
     }
-
     if ($self->minimum_length && (length($self->value) < $self->minimum_length)) {
-        return $self->display_name . " is too short";
+        push @errors, "_FIELDNAME_ is too short";
     }
-    return 0;
-}
+    return @errors;
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

@@ -65,21 +65,23 @@ $form->clear_state();
 ## simulate catalyst params;
 my $c_req_params = {};
 
-foreach my $field (values %{$form->fields()}) {
-    $field->value_delegate( FSConnector( sub { 
-                              my $caller = shift;
-                              
-                              if ($#_ > -1) {   
-                                  if (ref($_[0]) eq 'ARRAY' && !($caller->accepts_multiple)) {
-                                      $c_req_params->{$caller->name} = $_[0]->[0];
-                                  } else {
-                                      $c_req_params->{$caller->name} = $_[0];
-                                  }
-                              }
-                              return $c_req_params->{$caller->name}; 
-                          }
-                          ) );
-}
+$form->delegate_all_field_values_to_hashref($c_req_params);
+
+#foreach my $field (values %{$form->fields()}) {
+#    $field->value_delegate( FSConnector( sub { 
+#                              my $caller = shift;
+#                              
+#                              if ($#_ > -1) {   
+#                                  if (ref($_[0]) eq 'ARRAY' && !($caller->accepts_multiple)) {
+#                                      $c_req_params->{$caller->name} = $_[0]->[0];
+#                                  } else {
+#                                      $c_req_params->{$caller->name} = $_[0];
+#                                  }
+#                              }
+#                              return $c_req_params->{$caller->name}; 
+#                          }
+#                          ) );
+#}
 
 ## checking externally stored value processing
 

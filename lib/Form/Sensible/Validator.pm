@@ -26,7 +26,8 @@ has 'message_delegate' => (
                                                 my $field = shift;
                                                 my $message = shift;
                                                 
-                                                $message =~ s/_FIELDNAME_/$field->display_name/g;
+                                                my $fieldname = $field->display_name;
+                                                $message =~ s/_FIELDNAME_/$fieldname/g;
                                                       
                                                 return $message;
                                    });
@@ -47,20 +48,21 @@ sub validate {
     ## Prepare our validation result - it will be 'valid' unless we fail something.
     my $validation_result = Form::Sensible::Validator::Result->new();
     
-    foreach my $fieldname ($form->fieldnames) {
-        my $field = $form->field($fieldname);
+    foreach my $field ($form->get_fields()) {
+                
+        my $fieldname = $field->name;
         my $results = $self->validate_field($field);
         
         if (scalar keys %{$results}) {
             if (exists($results->{'errors'})) {
                 foreach my $error (@{$results->{'errors'}}) {
-                    $validation_result->add_error($fieldname, $self->message_delegate->call($self, $field, $error));
+                    $validation_result->add_error($fieldname, $self->message_delegate->($self, $field, $error));
                 }
             }
             
             if (exists($results->{'missing'})) {
                 foreach my $missing (@{$results->{'missing'}}) {
-                    $validation_result->add_error($fieldname, $self->message_delegate->call($self, $field, $missing));
+                    $validation_result->add_error($fieldname, $self->message_delegate->($self, $field, $missing));
                 }
             }
         }
@@ -98,9 +100,11 @@ sub validate_field {
             }
         }
         ## finally, we run the fields internal validate routine
-        my $invalid = $field->validate($self);
-        if ($invalid) {
-            push @errors, $invalid;
+        my @results = $field->validate($self);
+        foreach my $error (@results) {
+            if (defined($error) && $error ne '0') {
+                push @errors, $error;
+            }
         }
     } elsif ($field->validation->{'required'}) {
         ## field was required but was empty.
@@ -145,7 +149,7 @@ sub validate_field_with_coderef {
     
     ## if we get $results of 0 or a message, we return it.
     ## if we get $results of simply one, we generate the invalid message
-    if ($results eq "1") {
+    if ($results && $results eq "1") {
         if (exists($field->validation->{invalid_message})) {
             return $field->validation->{invalid_message};
         } else {
