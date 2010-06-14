@@ -215,16 +215,13 @@ object.  The result object can then be used to indicate what exactly went wrong,
     } else {
         my $renderer = Form::Sensible->get_renderer('HTML');
         my $renderedform = $renderer->render($form);
+        $renderedform->add_errors_from_validator_result($result);
         print $renderedform->complete('/login','post');
     }
 
 If C<< $result->is_valid() >> is true, we can proceed to doing what we need to
 do with the form data. An interesting thing to note here is that if the form
-is invalid, we simply redisplay the form. If you are particularly astute, you
-may be wondering why we didn't loop through our error fields and generate
-error messages. The answer is simple: we don't have to. Our renderer is smart
-enough to recognize that validation has already been run and it inspects the
-results and generates appropriate messaging on it's own.
+is invalid, we simply redisplay the form. 
 
 You've now gone through the entire lifecycle of a C<Form::Sensible> form. We
 have used the HTML renderer because it is most familiar (and it is the only
