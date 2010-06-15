@@ -10,8 +10,9 @@
 [%- IF error_messages.size -%]
 <tr id="[% css_prefix _ form.name %]_errorblock_tr" class="[% css_prefix -%]errorblock_tr">
 <td colspan="2" id="[% css_prefix _ form.name %]_errorblock_td" class="[% css_prefix -%]errorblock_td">
-    [%- FOREACH error IN error_messages -%]
-    [%- FOREACH message IN error.value -%]
+    [%- FOREACH field IN form.field_order -%]
+    [%- errors = error_messages.$field %]
+    [%- FOREACH message IN errors -%]
     <span class="[% css_prefix -%]error [% css_prefix _ form.name %]_error">[% message %]</span><br/>
     [%- END -%]
     [%- END -%]
