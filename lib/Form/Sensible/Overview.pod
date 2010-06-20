@@ -58,7 +58,7 @@ When comparing Form::Sensible to HTML forms, there are a few big differences
 from what you are probably used to. First off, you are probably used to
 defining fields in terms of how they will eventually be shown. You create text
 fields, password fields, radio buttons, etc. in a template of some kind. Then
-you collect the information in it's raw form and boil it down to something
+you collect the information in its raw form and boil it down to something
 that you can use in your code. Then, you write code to perform validation of
 your data and then set up a mechanism for reporting any errors to the user. A
 number of modules and libraries have been created to make portions of this
@@ -245,7 +245,7 @@ validation: C<required>, C<regex>, and C<code>. The C<required> element is
 simply a true/false flag indicating whether it is an error if the field is
 empty. The C<regex> element is exactly what it sounds like. The value for the
 field is checked against the regex provided, if it does not match, the field
-is marked invalid. The last element, C<code> is the most interesting. It's
+is marked invalid. The last element, C<code> is the most interesting. Its
 value is a coderef for a subroutine that checks the field's value. The
 subroutine provided is called with two arguments, first the field's value,
 then the field itself. The subroutine is expected to return either a zero
@@ -371,6 +371,11 @@ other renderers would not be affected by the render hints provided.  This
 allows you to provide render_hints for the field that are specific for.
 
 ... More to come.
+
+
+
+# JK - pick up here.
+
 
 =head1 AUTHORS
 

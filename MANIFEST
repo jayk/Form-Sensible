@@ -27,6 +27,7 @@ lib/Form/Sensible/Renderer/HTML/RenderedForm.pm
 lib/Form/Sensible/Validator.pm
 lib/Form/Sensible/Validator/Result.pm
 lib/Form/Sensible/Overview.pod
+lib/Form/Sensible/Delegation.pod
 Makefile.PL
 MANIFEST
 META.yml

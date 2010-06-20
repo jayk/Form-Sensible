@@ -329,6 +329,15 @@ sub clear_state {
     $self->_clear_validator_result();
 }
 
+sub delegate_all_field_values {
+    my $self = shift;
+    my $value_delegate = shift;
+
+    foreach my $field ($self->get_fields()) {
+        $field->value_delegate( $value_delegate );
+    }
+}
+
 sub delegate_all_field_values_to_hashref {
     my $self = shift;
     my $hashref = shift;
@@ -349,10 +358,10 @@ sub delegate_all_field_values_to_hashref {
                               return $hashref->{$fieldname}; 
                           });
     
-    foreach my $field ($self->get_fields()) {
-        $field->value_delegate( $value_delegate );
-    }
+    $self->delegate_all_field_values($value_delegate);
 }
+
+
 
 sub flatten {
     my ($self, $template_only) = @_;
