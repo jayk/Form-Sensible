@@ -43,7 +43,7 @@ around 'validate' => sub {
     }
 
     if ( $self->integer_only ){
-        if( $self->value !~ /^(\d).+$/ ){
+        if( $self->value !~ /^(\d.+)$/ ){
             push @errors, "_FIELDNAME_ must be a nubmer";
         } elsif ( $self->value != int($self->value)) {
             push @errors, "_FIELDNAME_ must be an integer.";
