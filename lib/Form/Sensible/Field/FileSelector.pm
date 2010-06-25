@@ -83,7 +83,7 @@ around 'validate' => sub {
     }
     push @errors, $self->$orig();
     return @errors;
-}
+};
 
 __PACKAGE__->meta->make_immutable;
 1;
