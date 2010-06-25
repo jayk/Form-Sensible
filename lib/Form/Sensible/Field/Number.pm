@@ -41,8 +41,13 @@ around 'validate' => sub {
     if (defined($self->upper_bound) && $self->value > $self->upper_bound) {
         push @errors, "_FIELDNAME_ is higher than the maximum allowed value";
     }
-    if ($self->integer_only && $self->value != int($self->value)) {
-        push @errors, "_FIELDNAME_ must be an integer.";
+
+    if ( $self->integer_only ){
+        if( $self->value !~ /^(\d).+$/ ){
+            push @errors, "_FIELDNAME_ must be a nubmer";
+        } elsif ( $self->value != int($self->value)) {
+            push @errors, "_FIELDNAME_ must be an integer.";
+        }
     }
     ## we ran the gauntlet last check is to see if value is in step.
     if (defined($self->step) && !$self->in_step()) {
