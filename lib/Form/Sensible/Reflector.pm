@@ -4,6 +4,9 @@ use namespace::autoclean;
 use Carp;
 use Data::Dumper;
 
+
+our $VERSION = "0.12001";
+eval $VERSION;
 # ABSTRACT: A simple reflector class for Form::Sensible
 
 sub reflect_from {

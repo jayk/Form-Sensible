@@ -1,5 +1,8 @@
 Revision history for Form::Sensible
 
+0.12001 2010-07-01
+    * slight addition to Reflector to add a submit button automatically
+
 0.12000 2010-06-10
 
     * Major release including  DelegateConnection features including
