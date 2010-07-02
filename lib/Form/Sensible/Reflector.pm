@@ -72,7 +72,10 @@ sub reflect_from {
             $form->add_field( $field_def, $new_fieldname );
         }
     }
-
+    
+    ## convenience - add a submit button
+    my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
+    $form->add_field($submit_button);
     #warn "Form in create_form: " . Dumper $form;
     return $form;
 }
