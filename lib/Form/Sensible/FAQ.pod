@@ -1,0 +1,47 @@
+=head1 NAME
+
+Form::Sensible::FAQ - Answers to questions about how to use Form::Sensible
+
+=head1 Fields
+
+=over 4
+
+=item How do I link multiple Field's values to the same hash?
+
+You often want to do this to link a form's fields to a single source of data, for example,
+L<Catalyst::Request|Catalyst>'s C<<$c->req->params>> hashref.  This can be done easily using
+the C<Form::Sensible::Form|Form::Sensible::Form>'s C<delegate_all_field_values_to_hashref()> routine:
+
+ $form->delegate_all_field_values_to_hashref($c->req->params);
+ 
+After that, all fields will get and set their values via the C<<$c->req->params>> hashref.
+
+=head1 Validation
+
+=over 4
+
+=item How do I create validation that involves multiple fields (like password and confirmation fields)?
+
+Individual field based validation is handled via the individual field's C<validation> hash.  If you want
+to check multiple fields together you need to do whole-form level validation.  This can be accomplished 
+easily via the form's C<validation> hash as follows:
+
+    $form->validation({
+                        code => sub {
+                                my ($form, $result) = @_;
+                                
+                                if ($form->field('password')->value() ne $form->field('password2')->value()) {
+                                    $result->add_error('password2', 'Passwords do not match');
+                                }
+                        }
+    });
+
+=back
+
+=head1 HTML Rendering
+
+=head2 CSS tagging
+
+=head2 HTML changes
+
+=head1 Delegates
