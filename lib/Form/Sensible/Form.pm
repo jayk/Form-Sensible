@@ -570,28 +570,28 @@ they are being removed.
 
 =over 8
 
-=item C<fields()>  (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<fields()>  (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 Returns an hashref containing all the fields in the current form
 
-=item C<validator> (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<validator> (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 The validator object associated with this form, if any. 
 
-=item C<validator_result> (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<validator_result> (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 Contains a C<Form::Sensible::Validator::Result> object if this form has had
 it's C<validate()> method called. 
 
-=item C<validator_args> (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<validator_args> (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 Hashref containing arguments to the validator class to be used when a validator object is created 'on demand'.
 
-=item C<renderer> (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<renderer> (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 The renderer object associated with this form, if any.  
 
-=item C<render( @options )> (DEPRECATED 2010-06-13 - To be removed 2010-07-30)
+=item C<render( @options )> (DEPRECATED 2010-06-13 - To be removed 2010-08-30)
 
 Renders the current form using the C<renderer> object set for this form.
 

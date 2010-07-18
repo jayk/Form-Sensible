@@ -2,25 +2,11 @@
 
 Form::Sensible::FAQ - Answers to questions about how to use Form::Sensible
 
-=head1 Fields
-
-=over 4
-
-=item How do I link multiple Field's values to the same hash?
-
-You often want to do this to link a form's fields to a single source of data, for example,
-L<Catalyst::Request|Catalyst>'s C<<$c->req->params>> hashref.  This can be done easily using
-the C<Form::Sensible::Form|Form::Sensible::Form>'s C<delegate_all_field_values_to_hashref()> routine:
-
- $form->delegate_all_field_values_to_hashref($c->req->params);
- 
-After that, all fields will get and set their values via the C<<$c->req->params>> hashref.
-
 =head1 Validation
 
 =over 4
 
-=item How do I create validation that involves multiple fields (like password and confirmation fields)?
+=item How do I create validation that involves multiple fields (like password and confirmation fields)
 
 Individual field based validation is handled via the individual field's C<validation> hash.  If you want
 to check multiple fields together you need to do whole-form level validation.  This can be accomplished 
@@ -40,8 +26,45 @@ easily via the form's C<validation> hash as follows:
 
 =head1 HTML Rendering
 
+=over 4
+
+=item More to come...
+
+=back
+
 =head2 CSS tagging
+
+=over 4
+
+=item More to come...
+
+=back
 
 =head2 HTML changes
 
+=over 4
+
+=item More to come...
+
+=back
+
+
 =head1 Delegates
+
+=over 4
+
+=item More to come, see L<Form::Sensible::Delegation> for more information.
+
+=back
+
+=head1 AUTHORS
+
+Jay Kuri, C<jayk@cpan.org>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright (c) 2010 the aforementioned authors. All rights
+reserved. This program is free software; you can redistribute
+it and/or modify it under the same terms as Perl itself.
+
+=cut

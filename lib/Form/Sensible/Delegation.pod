@@ -23,7 +23,7 @@ form of attributes, then we prod it to perform certain actions. This works
 well for has-a type object relationships, where one object essentially owns
 another. As our object-oriented programming tasks become more complex, we
 often want to customize behavior of an existing class. We can do this in a
-number of ways,the most common being subclassing.  Delegation is another
+number of ways, the most common being subclassing.  Delegation is another
 mechanism for accomplishing this customization.
 
 Basically, delegation is a way for one object to let another object have
@@ -100,9 +100,9 @@ the L<DelegateConnection|Form::Sensible::DelegateConnection> class. The
 easiest way to do this is to use the C<FSConnector> utility function:
 
     $selectfieldobject->options_delegate( FSConnector( $delegate_object, 'get_options_from_db') );
-    
+
 The C<FSConnector> function will create a C<DelegateConnection> object that
-will call C<<$delegate_object->get_options_from_db($selectfieldobject)>> when the
+will call C<< $delegate_object->get_options_from_db($selectfieldobject) >> when the
 options_delegate is used. Care should be taken here, as a reference to
 C<$object> will become part of a closure, and thus will not be released by
 Perl until the DelegateConnection is destroyed.) Note that every delegate
@@ -138,14 +138,14 @@ works this way, you would do something like this:
                         my $caller = shift;
                         
                         my @data = $datasource->get_data_with_category( $caller->category_name );
-                        return { map { $_->name => $_ } @data };
+                        return [ map { $_->name => $_ } @data ];
                      });
     $object->data_delegate($connection);
 
 The power here lies in the fact that I<using this method you can connect your
 existing objects directly to your delegate objects without modification>. It's
 easy to see how this flexibility can dramatically reduce the amount of custom
-code and subclasses required to accomplish your job.
+code and subclasses required to accomplish your task.
 
 =head2 Using A DelegateConnection
 

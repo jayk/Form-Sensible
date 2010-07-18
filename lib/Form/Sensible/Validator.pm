@@ -230,7 +230,7 @@ as being the equivalent of a C<is_field_invalid()> routine.
 
 The message_delegate is used to assemble error and other validation related
 messages. By default the message_delegate simply loads $message and replaces
-any occurance of _FIELDNAME_ with the field's name. Should return the processed
+any occurance of C<_FIELDNAME_> with the field's name. Should return the processed
 message.  This is an ideal place to handle localization of messages or other 
 customization.
 

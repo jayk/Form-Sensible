@@ -179,12 +179,12 @@ false, only the first item will be set as selected.
 
 =item C<add_option($option_value, $option_display_name)>
 
-If no options_delegate is provided - Adds the provided value and display name to the set of options that can
+If no C<options_delegate> was provided - Adds the provided value and display name to the set of options that can
 be selected for this field.  If an options_delegate I<IS> provided, has no effect whatsoever.
 
 =back
 
-=head1 DelegateConnections
+=head1 DELEGATES
 
 =over 8
 
@@ -192,9 +192,9 @@ be selected for this field.  If an options_delegate I<IS> provided, has no effec
 
 The C<options_delegate> is called to obtain the valid options for this field.
 Is expected to return an array ref of options. Each option should be a hash
-entry with a C<name> key and a C<value> key. If no options_delegate is
+entry with a C<name> key and a C<value> key. If no C<options_delegate> is
 provided, defaults to delegating to itself, using internal storage of options
-(using the add_option mechanism outlined above)
+(using the C<add_option> mechanism outlined above)
 
 =item values_ok_delegate->($self, $values_arrayref)
 

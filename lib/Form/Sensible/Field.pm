@@ -424,6 +424,31 @@ into the flattened field hash.
 
 =back
 
+=head1 DELEGATES
+
+=over 8
+
+=item value_delegate->($self, [optional value])
+
+The C<value_delegate> is called to get or set the value for this field.  
+The first argument is the Field object itself, which will be the only
+parameter if it is called as a getter.  If called as a setter, an 
+additional value argument will be passed.  In both scenarios, the 
+delegate should return the field's (new) value.  
+
+=item validation_delegate->($self, $value)
+
+The C<validation_delegate> is called to validate the value given for the field.
+As with all delegates, the first argument is the field itself, the second argument
+is the value to be validated.  The delegate is expected to return an arrayref containing
+error messages if invalid, or false (scalar) if valid.  It may be help to think of 
+it as the field asking the delegate 'is this invalid.'  
+
+Note that each field type may have it's own validation rules which will be performed 
+before the C<validation_delegate> is called.  
+
+=back
+
 =head1 AUTHOR
 
 Jay Kuri - E<lt>jayk@cpan.orgE<gt>

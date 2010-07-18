@@ -1,7 +1,9 @@
 TODO:
 
   * New Test for HTML rendering using fieldname_field templates.
-
+  * Adjust HTML field templates so that the actual input element can be used directly. 
+    (needed for combination-field)
+  * Combination-field (contains several other fields)
   * Date field
   * More Examples
   * Test rendering output
