@@ -1,0 +1,5 @@
+[% DEFAULT FS_fieldcontainerclass = css_prefix _ 'formfieldline' -%]
+<div id="[% css_prefix _ field_name %]_div" class="[% FS_fieldcontainerclass %] [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
+    [% IF FS_showlabel != 0 %]<label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label [% IF !field.editable %] noteditable[% END %]" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label>[% END %]
+    [% field_output %]
+</div>
