@@ -1,13 +1,12 @@
 Revision history for Form::Sensible
 
-0.12001 2010-07-01
-    * slight addition to Reflector to add a submit button automatically
-
 0.12000 2010-06-10
 
+    * Revamping HTML templates to wrap fields to reduce redundancy in templates
     * Major release including  DelegateConnection features including
     * field value delegation
     * select field option delegation
+    * slight addition to Reflector to add a submit button automatically
     * error message preparation delegation in validation (for localization, etc.)
     * BEHAVIOR CHANGE: Field validate() routines are expected to return an array containing errors 
       or undef on 'passing validation' 

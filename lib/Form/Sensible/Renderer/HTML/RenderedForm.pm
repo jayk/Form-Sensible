@@ -238,23 +238,36 @@ sub render_field {
         ## Order for trying templates should be:
         ## formname/fieldname_field
         ## formname/fieldtype
-        ## fieldname
+        ## fieldname_field
         ## fieldtype
-    
+
         my $output;
-
         
-
-    
-        ## process the field template we need to load based on the fieldname / field type
-        $self->process_first_template($vars, \$output, $fieldname . "_field", $fieldtype );
-        if (my $wrapper = $vars->{'render_hints'}->{wrap_fields_with}) {
-          my $wrapper_output;
-          my %wrapper_vars = ( %{$vars}, field_output => $output );
-          $self->process_first_template(\%wrapper_vars, \$wrapper_output, $wrapper );
-          return $wrapper_output;
+        my $wrapper = "field_wrapper.tt";
+        if (exists($vars->{'render_hints'}->{'field_wrapper'})) {
+            $wrapper = $vars->{'render_hints'}->{'field_wrapper'};
         }
+        if ($wrapper) {
+            $vars->{'FS_wrapper'} = $wrapper;
+        }
+        
+        $self->process_first_template($vars, \$output, $fieldname . "_field", $fieldtype );
+        
+        # this code exists to retain compatibility with the old 'wrap_fields_with' field wrapping.
+        # The old 'wrap_fields_with' wrapped the entire rendered field with label.  This is inappropriate
+        # in most cases and thus it has been replaced with real Template::Toolkit WRAPPER functionality.
+        # This code exists ONLY for backwards compatibility and will be removed.
+        if (exists($vars->{'render_hints'}->{'wrap_fields_with'})) {
+           # Have to prevent re-wrapping of the wrapper provided.
+           $vars->{'FS_wrapper'} = undef;
+           my $wrapper_output;
+           my %wrapper_vars = ( %{$vars}, field_output => $output );
+           $self->process_first_template(\%wrapper_vars, \$wrapper_output, $vars->{'render_hints'}->{'wrap_fields_with'} );
+           return $wrapper_output;
+        } 
+        
         return $output;
+        
     }
 }
 
@@ -296,7 +309,10 @@ sub process_first_template {
     
     my $template_found = 0;
     foreach my $template_name (@templates_to_try) {
-        my $res = $self->template->process($template_name . ".tt", $stash_vars, $output);
+        if ($template_name !~ /.tt$/) {
+            $template_name .= '.tt';
+        }
+        my $res = $self->template->process($template_name, $stash_vars, $output);
         if ($res) {
             $template_found = 1;
             last;
@@ -391,26 +407,31 @@ a hash and will be passed to the templates as they are rendered.
 For example in the this case, C<$user_prefs> could be accessed in any
 of the templates (form_start.tt, text.tt etc) as C<[% user_prefs %]>.
 
-Another is C<wrap_fields_with> which should be the name of a template to act
+Another is C<field_wrapper> which should be the name of a template to act
 as a wrapper for each individual field template. This can be useful if each
 field has common HTML and only the actual field element changes. For example
 in this case:
 
     {
-        wrap_fields_with => 'field_wrapper'
+        field_wrapper => 'field_wrapper_file'
     }
 
-A template called C<field_wrapper.tt> will be used. The individual form field
-template (text.tt etc) will first be rendered, then field_wrapper.tt will be
-rendered as the output of the field template is passed as the stash variable
-C<field_output>. So your wrapper template might end up looking like:
+A template called C<field_wrapper_file.tt> will be used. The C<field_wrapper>
+hint overrides the built-in wrapper, so only the actual input field will be available
+and you will need to provide any enclosing elements or labels.  Note also that it 
+uses the standard L<Template|Template::Toolkit> C<WRAPPER> mechanism.  Thus the field wrapper
+template will be rendered, and the actual input elements will be available as C<< [% content %] within
+your wrapper template. So your wrapper template might end up looking like:
 
     <tr class="form-row">
       <td>[% field.display_name %]</td>
-      <td>[% field_output %]</td>
+      <td>[% content %]</td>
     </tr>
 
 For more information on render_hints, see L<Form::Sensible::Overview>.
+
+Note that 'wrap_fields_with' has been deprecated and will be removed in a 
+future release.
 
 =item C<status_messages>
 

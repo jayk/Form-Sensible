@@ -30,7 +30,8 @@ has 'tt_config' => (
     default     => sub {
                               my $self = shift;
                               return {
-                                      INCLUDE_PATH => $self->include_paths()
+                                      INCLUDE_PATH => $self->include_paths(),
+                                      WRAPPER => 'pre_process.tt'
                               }; 
                          },
     lazy        => 1,
@@ -163,8 +164,8 @@ An arrayref containing the filesystem paths to search for field templates.
 
 =item C<base_theme>
 
-The theme to use for form rendering.  Defaults to C<default>, currently 
-the only theme distributed with Form::Sensible.
+The theme to use for form rendering.  Defaults to C<default>, default uses C<< <div> >>'s for layout.  There is
+also 'table' which uses HTML tables for form layout.
 
 =item C<tt_config>
 

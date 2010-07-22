@@ -1,1 +1,0 @@
-[% IF FS_wrapper %][% field_output = BLOCK %][% content %][% END %][% PROCESS $FS_wrapper %][% ELSE %][% content %][% END %]

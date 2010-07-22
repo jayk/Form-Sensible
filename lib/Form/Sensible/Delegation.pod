@@ -177,6 +177,10 @@ for how to make this information more clear, please get in touch!
 
 Jay Kuri, C<jayk@cpan.org>
 
+=head1 SPONSORED BY
+
+Ionzero LLC. L<http://ionzero.com/>
+
 =head1 COPYRIGHT & LICENSE
 
 Copyright (c) 2010 the aforementioned authors. All rights

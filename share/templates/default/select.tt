@@ -1,12 +1,11 @@
-[% IF render_hints.render_as && (render_hints.render_as == 'checkboxes' ) %]
+[% IF render_hints.render_as && (render_hints.render_as == 'checkboxes' ) -%]
     [%- box_type = 'radio' -%]
     [%- IF field.accepts_multiple %][%- box_type='checkbox' -%][% END -%]
     [%- fields_across = 3 -%]
     [%- IF render_hints.fields_across -%][% fields_across = render_hints.fields_across %][% END -%]
-    [% field_count = 0 %]
-    [% total_field_count = 0 %]
-    <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]checkbox_container [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
-        <div class="[% css_prefix _ field_type %]_label_div"><label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label [% IF !field.editable %] noteditable[% END %]">[% field.display_name %]</label></div>
+    [%- field_count = 0 -%]
+    [%- total_field_count = 0 -%]
+    [%- FS_fieldcontainerclass = css_prefix _ 'checkbox_container' -%]
         <div class="[% css_prefix -%]checkboxes">
              [% FOREACH item = field.get_options -%]
                 [% IF field_count == 0 %]<div class="[% css_prefix -%]checkbox_row" >[% END %]
@@ -31,12 +30,9 @@
                    [%- END -%]
                [% END -%]
         </div>
-    </div>
 [% ELSE %]
     [% select_size = '' %]
     [%- IF render_hints.select_size %][% select_size='size="' _ render_hints.select_size _'"' %][% END -%]
-    <div id="[% css_prefix _ field_name %]_div" class="[% css_prefix -%]formfieldline [% css_prefix _ field_type %] [% css_prefix _ field_name %]">
-    <label class="[% css_prefix -%]label [% css_prefix _ field_type %]_label [% IF !field.editable %] noteditable[% END %]" for="[% css_prefix _ form.name %]_[% field_name %]_input">[% field.display_name %]</label>
     <select name="[% field_name %]" [%- IF field.accepts_multiple %]multiple[%- END %] [% select_size %] id="[% css_prefix _ form.name %]_[% field_name %]_input" class="[% css_prefix %]input [% css_prefix _ field_type %]_input [% css_prefix _ field_name %]_input  [% IF !field.editable %] noteditable" disabled="disabled[% END %]">
         [% FOREACH item = field.get_options -%]
         [%- selected = "" -%]
@@ -50,6 +46,5 @@
         [%- FOREACH val = field.value -%]
             <input type="hidden" name="[% field_name %]" value="[% val %]" />
         [%- END -%]
-    [% END -%]  
-    </div>
+    [% END -%]
 [% END %]
