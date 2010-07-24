@@ -37,23 +37,23 @@ $form->field('another_number')->value(60);
 my $dir = $FindBin::Bin;
 my @dirs = split '/', $dir;
 pop @dirs;
-$dir = join('/', @dirs);
+my $lib_dir = join('/', @dirs);
 
-my $renderer = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $dir . '/share/templates/default' ] });
+my $renderer = Form::Sensible::Renderer::HTML->new({ fs_template_dir => $lib_dir . '/share/templates' });
 
 my $renderedform = $renderer->render($form);
 
 my $firstformoutput = join("\n", $renderedform->start('/do_stuff'), $renderedform->messages, $renderedform->fields, $renderedform->end) . "\n";
 
 my $flattenned_form = $form->flatten();
-print Dumper($flattenned_form);
+#print Dumper($flattenned_form);
 
 ## now we create the new form from the flattened version... let's see how it goes.
 my $newform = Form::Sensible->create_form($flattenned_form);
 $newform->field('a_number')->value(17);
 $newform->field('another_number')->value(60);
 
-my $renderer2 = Form::Sensible::Renderer::HTML->new(tt_config => { INCLUDE_PATH => [ $dir . '/share/templates' ] });
+my $renderer2 = Form::Sensible::Renderer::HTML->new({ fs_template_dir => $lib_dir . '/share/templates' });
 my $rendered2form = $renderer->render($newform);
 
 my $secondformoutput = join("\n", $rendered2form->start('/do_stuff'), $rendered2form->messages, $rendered2form->fields, $rendered2form->end) . "\n";

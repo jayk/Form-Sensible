@@ -44,6 +44,14 @@ easily via the form's C<validation> hash as follows:
 
 =head2 HTML changes
 
+=over 4
+
+=item How do I override a field's template or change the field wrapper?
+
+Overriding a field's template is easy 
+
+=back
+
 =head1 Delegates
 
 =head1 AUTHORS

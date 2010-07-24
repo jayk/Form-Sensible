@@ -12,7 +12,7 @@ has 'include_paths' => (
     isa         => 'ArrayRef[Str]',
     required    => 1,
     lazy        => 1,
-    default     => sub { my $self = shift; return [ File::ShareDir::dist_dir('Form-Sensible') . '/templates/' . $self->base_theme . '/' ]; },
+    builder     => '_build_include_path',
 );
 
 has 'base_theme' => (
@@ -36,6 +36,15 @@ has 'tt_config' => (
                          },
     lazy        => 1,
 );
+
+has 'fs_template_dir' => (
+    is          => 'rw',
+    isa         => 'Str',
+    required    => 1,
+    default     => sub { File::ShareDir::dist_dir('Form-Sensible') . '/template' },
+    lazy        => 1,
+);
+
 
 ## if template is provided, it will be re-used.  
 ## otherwise, a new one is generated for each form render.
@@ -120,6 +129,27 @@ sub render {
     return $rendered_form;
 }
 
+sub _build_include_path {
+    my ($self) = shift;
+    
+    my $path = [];
+    if ($self->base_theme ne 'default') {
+        push @{$path}, $self->path_to_theme();
+    }
+    push @{$path}, $self->path_to_theme('default');
+    return $path;
+}
+
+sub path_to_theme {
+    my ($self, $theme) = @_;
+    
+    if (!$theme) {
+        $theme = $self->base_theme;
+    }
+    
+    return $self->fs_template_dir . '/' . $theme;
+}
+
 # create a new Template instance with the provided options. 
 sub new_template {
     my ($self) = @_;
@@ -160,7 +190,20 @@ If you do not set it, a new Template object is created using the parameter below
 
 =item C<include_paths>
 
-An arrayref containing the filesystem paths to search for field templates.
+An arrayref containing the filesystem paths to search for field templates.  This defaults to 
+including your base theme (if provided) and then the default theme:
+
+    $self->include_paths([ 
+                            $self->path_to_theme($self->base_theme),
+                            $self->path_to_theme('default');
+                        ]);
+
+This allows you to override just the elements you need to in your own theme,
+with all others being sourced from elsewhere in the search path ( provided
+theme and default theme ) Note that unless configured otherwise, if a template
+not found in the theme you selected, the C<default> theme will be searched as
+well. Note also that care should be taken overriding C<include_paths> because
+this fallback behavior is based only on the include path order.
 
 =item C<base_theme>
 
@@ -188,6 +231,11 @@ Returns a L<RenderedForm|Form::Sensible::Renderer::HTML::RenderedForm> for the f
 =item C<new_template()>
 
 Returns a new L<Template|Template> object created using the C<tt_config> attribute.
+
+=item C<path_to_theme($theme)>
+
+Returns the filesystem path to the theme provided.  If no C<$theme> is passed, it will
+provide the path to the C<base_theme> for the renderer object.  
 
 =back
 

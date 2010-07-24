@@ -1,8 +1,9 @@
 Revision history for Form::Sensible
 
-0.12000 2010-06-10
+0.20000 2010-07-24
 
     * Revamping HTML templates to wrap fields to reduce redundancy in templates
+    * Set HTML template fallback order so that missing files in the current theme fall-back to default theme
     * Major release including  DelegateConnection features including
     * field value delegation
     * select field option delegation
