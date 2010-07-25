@@ -490,6 +490,19 @@ object will be created.
 
 Creates a new Form object with the provided options.  All the attributes above may be passed.
 
+=item C<delegate_all_field_values( $delegate_connection )>
+
+Loops over all fields in the form and delegates their values to the provided C<$delegate_connection>
+
+=item C<delegate_all_field_values_to_hashref( $hashref )>
+
+Loops over all fields in the form and delegates their values to the given hashref using the
+field's name as the key. Note that this will capture the hashref provided within a closure. If your 
+form / field objects are likely to outlive your hashref, such as in the case of a persistent form object
+used within a Catalyst Request it is recommended that you instead delegate the values to an 
+intermediate object that can obtain the values for the current request
+
+
 =item C<add_field( $field, $fieldname, $position )>
 
 Adds the provided field to the form with the given fieldname and position. If

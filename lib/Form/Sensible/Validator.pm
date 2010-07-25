@@ -226,14 +226,19 @@ as being the equivalent of a C<is_field_invalid()> routine.
 
 =head2 DELEGATE CONNECTIONS
 
+=over 4
+
 =item message_delegate: ($caller, $field, $message)
 
 The message_delegate is used to assemble error and other validation related
 messages. By default the message_delegate simply loads $message and replaces
 any occurance of C<_FIELDNAME_> with the field's name. Should return the processed
 message.  This is an ideal place to handle localization of messages or other 
-customization.
+customization.  If no translation can be found, you are strongly encouraged
+to return the message as is (with C<_FIELDNAME_> converted to the actual field
+name, of course.)
 
+=back
 
 =head1 AUTHOR
 

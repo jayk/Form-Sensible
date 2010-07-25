@@ -248,7 +248,7 @@ field is checked against the regex provided, if it does not match, the field
 is marked invalid. The last element, C<code> is the most interesting. Its
 value is a coderef for a subroutine that checks the field's value. The
 subroutine provided is called with two arguments, first the field's value,
-then the field itself. The subroutine is expected to return either a zero
+then the field object itself. The subroutine is expected to return either a zero (0)
 value - indicating the field is OK, or a message indicating why the field is
 invalid. This is someone non-intuitive as you return 0, or a false value, to
 indicate the field is ok. It may help to think about the C<code> coderef as a
@@ -259,7 +259,7 @@ question, 'is this value invalid.'  An example of a C<code> validator is:
         code => sub {
                         my ($value, $field) = @_;
                         if ($value ne $field->name) {
-                            return $field->name . " is a bizarre field that can only contain its own name.  Field is invalid.";
+                            return "_FIELDNAME_ is a bizarre field that can only contain its own name.  Field is invalid.";
                         } else {
                             ## I contain my own name, that means this validation should pass.  return 0.
                             return 0;
@@ -267,6 +267,9 @@ question, 'is this value invalid.'  An example of a C<code> validator is:
                     }
     }
 
+Note in the example above the string '_FIELDNAME_' is used in place of the 
+actual field name.  This works this way to allow for easy localization of strings.
+This will be translated to the field's name later.
 Validation is not an either-or, you can have both a regex and a coderef for 
 validation and if you do, both must be successful for the value to be considered
 valid.  When you provide both, the regex is tested first and if the value passes
@@ -371,7 +374,6 @@ other renderers would not be affected by the render hints provided.  This
 allows you to provide render_hints for the field that are specific for.
 
 ... More to come.
-
 
 
 # JK - pick up here.

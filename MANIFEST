@@ -59,6 +59,7 @@ share/templates/table/subform_start.tt
 share/templates/table/field_wrapper.tt
 t/simple_form.t
 t/test_output.t
+t/test_output_wrappers.t
 t/validation_testing.t
 t/fields/text.t
 t/fields/select.t

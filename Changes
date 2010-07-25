@@ -1,14 +1,18 @@
 Revision history for Form::Sensible
 
-0.20001 2010-07-24
+0.20001 2010-07-25
 
     * Reduce redundancy in templates by revamping HTML templates to include just field input elements and a wrapper 
-    * Set HTML template fallback order so that missing files in the current theme fall-back to default theme 
+    * Set HTML template fallback order so that missing files in the current theme fall-back to default theme
     * Major release mainly related to the addition of delegation to Form::Sensible
     * Add delegation of field values
     * Add delegation of select field options
+    * Added ability to set fields as not editable
+    * TONS of documentation
     * slight addition to Reflector to add a submit button automatically
     * error message preparation delegation in validation (for localization, etc.)
+    * BEHAVIOR CHANGE: HTML Renderer now sets the CSS id of the form element to 'fs_' + formname + '_form' this was 
+      previously used on the enclosing div.  Now the CSS id of the enclosing div is now 'fs_' + formname + '_form_div'  
     * BEHAVIOR CHANGE: Field validate() routines are expected to return an array containing errors 
       or undef on 'passing validation' 
     * DEPRECATION NOTICE: Form::Sensible::Form's 'fields' method Deprecated.  

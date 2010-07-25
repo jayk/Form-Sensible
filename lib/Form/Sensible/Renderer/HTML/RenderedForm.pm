@@ -3,6 +3,7 @@ package Form::Sensible::Renderer::HTML::RenderedForm;
 use Moose; 
 use namespace::autoclean;
 use Data::Dumper;
+use Form::Sensible::DelegateConnection;
 use Carp qw/croak/;
 use File::ShareDir;
 
@@ -86,6 +87,24 @@ has 'render_hints' => (
     lazy        => 1,
 );
 
+has 'display_name_delegate' => (
+    is          => 'rw',
+    isa         => 'Form::Sensible::DelegateConnection',
+    required    => 1,
+    default     => sub {
+                            return FSConnector( sub { 
+                                                my $caller = shift;
+                                                my $display_name = shift;
+                                                my $origin_object = shift;
+                                                
+                                                ## by default we simply return what we were given
+                                                return $display_name;
+                                   });
+                   },
+    lazy        => 1,
+    coerce      => 1,
+);
+
 sub _default_form_template_prefix {
     my $self = shift;
     
@@ -148,7 +167,9 @@ sub start {
                     'action' => $action,
                };
 
-    
+    if ($self->form->render_hints->{'display_name'}) {
+        $vars->{'form_display_name'} = $self->display_name_delegate->($self, $self->form->render_hints->{'display_name'}, $self->form);
+    }
     my $output;
     $self->process_first_template($vars, \$output, $self->form_template_prefix . '_start');
 
@@ -209,6 +230,7 @@ sub render_field {
                         'form'  => $self->form,
                         'field' => $field,
                         'field_name' => $fieldname,
+                        'field_display_name' => $self->display_name_delegate->($self, $field->display_name, $field),
                         %custom_vars,
                     };
         
@@ -536,6 +558,20 @@ equivalent to calling:
  $form->start($action, $method) . $form->messages() . $form->fields() . $form->end();
 
 =back
+
+=head2 DELEGATE CONNECTIONS
+
+=over 4
+
+=item display_name_delegate: ($caller, $display_name, $field_or_form_object)
+
+The C<display_name_delegate> provides a hook to allow for localization of form and 
+field names.  It is passed the field or form name as well as the field or form object
+and is expected to return the translated name.  It is important to return a value.  If 
+you are unable to translate the name, returning the passed name unchanged is encouraged.
+
+=back
+
 
 =head1 AUTHOR
 
