@@ -6,15 +6,23 @@ Form::Sensible::FAQ - Answers to questions about how to use Form::Sensible
 
 =over 4
 
-=item How do I link multiple Field's values to the same hash?
+=item I have a hash that contains the field values, what's the best way to get those into a Form::Sensible form?
 
-You often want to do this to link a form's fields to a single source of data, for example,
-L<Catalyst::Request|Catalyst>'s C<<$c->req->params>> hashref.  This can be done easily using
-the C<Form::Sensible::Form|Form::Sensible::Form>'s C<delegate_all_field_values_to_hashref()> routine:
+There are two ways to do this. The preferred way is usually to delegate
+your form's field values to your hash. You often want to do this to link a
+form's fields to a single source of data, for example,
+L<Catalyst::Request|Catalyst>'s C<<$c->req->params>> hashref. This can be done
+easily using the C<Form::Sensible::Form|Form::Sensible::Form>'s
+C<delegate_all_field_values_to_hashref()> routine:
 
  $form->delegate_all_field_values_to_hashref($c->req->params);
  
 After that, all fields will get and set their values via the C<<$c->req->params>> hashref.
+
+If you have not delegated your field's values to something else (as indicated above), the form itself 
+will store the values.  In this case, you must push the values into the form object instead.  You can
+accomplish this by calling << $form->set_values($your_hashref); >> 
+
 
 =head1 Validation
 
@@ -48,11 +56,23 @@ easily via the form's C<validation> hash as follows:
 
 =item How do I override a field's template or change the field wrapper?
 
-Overriding a field's template is easy 
+Overriding a field's template is easy
 
 =back
 
 =head1 Delegates
+
+
+=head1 Miscelleneous Questions
+
+=over 4
+
+=item I keep seeing messages like "Can't locate method 'set_values' on package Form::Sensible", What's up?"
+
+This can happen if you are passing a C<< Form::Sensible->create_form(...) >>
+hash to C<< Form::Sensible->new() >>. The C<< Form::Sensible->new() >> call is
+for creating forms programmatically and expects only
+L<Form::Sensible::Form|Form::Sensible::Form> attributes as parameters.  
 
 =head1 AUTHORS
 

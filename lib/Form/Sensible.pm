@@ -16,11 +16,25 @@ use Form::Sensible::Validator;
 use Form::Sensible::Validator::Result;
 use Form::Sensible::DelegateConnection;
 
-our $VERSION = "0.12000";
+our $VERSION = "0.20001";
 
 Moose::Exporter->setup_import_methods(
       also     => [ 'Form::Sensible::DelegateConnection' ]  
 );
+
+around BUILDARGS => sub {
+    my $orig = shift;
+    my $class = shift;
+        
+    ## this is somewhat odd, but it's a lot easier to track down with this error 
+    ## than getting back an empty Form::Sensible object.  
+    
+    if ($#_ == 0 && ref($_[0]) && exists($_[0]->{'fields'})) {
+        die "Invalid call to Form::Sensible->new() !! Form::Sensible is not meant to be instantiated.  You probably meant to call create_form()";
+    } else {
+        return $class->$orig(@_);
+    }
+};
 
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible
@@ -90,6 +104,8 @@ sub get_validator {
     
     return $class_to_load->new($options);   
 }
+
+
 
 __PACKAGE__->meta->make_immutable;
 1;

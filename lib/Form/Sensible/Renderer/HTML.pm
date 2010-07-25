@@ -41,7 +41,7 @@ has 'fs_template_dir' => (
     is          => 'rw',
     isa         => 'Str',
     required    => 1,
-    default     => sub { File::ShareDir::dist_dir('Form-Sensible') . '/template' },
+    default     => sub { File::ShareDir::dist_dir('Form-Sensible') . '/templates' },
     lazy        => 1,
 );
 

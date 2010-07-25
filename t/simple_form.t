@@ -75,11 +75,38 @@ is($validation_result->is_valid, 1, "Validates okay");
 ## here we should make sure improper validation is handled properly, aka fail for
 ## non-passing data
 $form->set_values({ username => '*&#*&@)(*&)', password => 'test' });
-is_deeply ({ username => '*&#*&@)(*&)', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value });
+is_deeply ({ username => '*&#*&@)(*&)', password => 'test' } , { username => $form->field('username')->value, password => $form->field('password')->value }, "set_values() behaves properly");
 
 $validation_result = $form->validate();
 isnt($validation_result->is_valid, 1, "Validation fails");
 
-## here we should render the form, and make sure stuff lines up properly
+
+
+# try to create a form the wrong way.
+eval {
+  my $formseven = Form::Sensible->new( {
+                                            name => 'testseven',
+                                            fields => [
+                                                         { 
+                                                            field_class => 'Text',
+                                                            name => 'username',
+                                                            validation => {  regex => '^[0-9a-z]*$'  }
+                                                         },
+                                                         {
+                                                             field_class => 'Text',
+                                                             name => 'password',
+                                                             render_hints => {  field_type => 'password' }
+                                                         },
+                                                         {
+                                                             field_class => 'Trigger',
+                                                             name => 'submit'
+                                                         }
+                                                      ],
+                                        } );
+};
+
+ok( $@ =~ /Invalid call to Form::Sensible/, "Calling Form::Sensible->new() with create_form parameters asplodes");
+
+
 
 done_testing();

@@ -5,6 +5,7 @@ use namespace::autoclean;
 use Form::Sensible::DelegateConnection;
 use Form::Sensible::Validator;
 use Carp qw/croak/;
+use Data::Dumper;
 use Class::MOP;    ## I don't believe this is required
 
 ## a form is a collection of fields. Different form types will work differently.
@@ -72,7 +73,7 @@ has 'validation' => (
 );
 
 ## DEPRECATION WARNING.  validator_args is deprecated, as is validator_result and validator
-## all of these are replaced via the validation_delegate. DUE FOR REMOVAL 2010-07-30
+## all of these are replaced via the validation_delegate. DUE FOR REMOVAL 2010-08-30
 has 'validator_args' => (
     is          => 'rw',
     isa         => 'ArrayRef',
@@ -131,9 +132,6 @@ has 'validation_delegate' => (
     coerce      => 1,
     # additional options
 );
-
-
-
 
 ## adds a field to the form.  If position is specified, places it at the
 ## given position, otherwise places it at the end of the form.  

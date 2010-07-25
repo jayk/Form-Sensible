@@ -326,7 +326,7 @@ sub process_first_template {
     
     if (!$template_found) {
         ## crap.  throw an error or something, we couldn't find ANY matching template.
-        croak "Unable to find any template for processing, tried: " . join(", ", @templates_to_try);
+#        croak "Unable to find any template for processing, tried: " . join(", ", @templates_to_try) . " in " . join(':',@{$self->template});
     }
     return $output;
 }
