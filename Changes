@@ -1,5 +1,24 @@
 Revision history for Form::Sensible
 
+0.20010 2010-11-28
+    * Add 'additional_fields' handling to Reflector base class
+    * Enhance FileSelector to be able to cope with a different 'full path' than 
+      its 'user supplied filename' Catalyst users rejoice
+    * BEHAVIOR CHANGE: Reflector base class no longer adds a submit button by default.
+      If you want this behavior, you need to use 'additional_fields' going forward, or 
+      add the trigger yourself.
+    * BUGFIX - When setting select value when accepts_multiple is turned on, first set_selection
+      call fails due to no array to push into.  FIXED.  Thanks Lee.
+    * BUGFIX - Integer check regex was broken.  FIXED.  Thanks Lee.
+    * BEHAVIOR CHANGE: Regex and coderef validations now takes place in the field's 
+      validate() routine rather than in validator module.  This makes $field->validate() 
+      behave more predictably by performing all general field validation.
+
+0.20002 2010-08-06
+    * Correct typo in Select that causes generic error messages to appear wrong.
+    * Add some things to the FAQ
+
+
 0.20001 2010-07-25
 
     * Reduce redundancy in templates by revamping HTML templates to include just field input elements and a wrapper 

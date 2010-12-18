@@ -116,7 +116,7 @@ has 'validation_delegate' => (
     isa         => 'Form::Sensible::DelegateConnection',
     required    => 1,
     default     => sub {
-                            return FSConnector(sub { return 0; });
+                            return FSConnector(sub { return; });
                    },
     lazy        => 1,
     coerce      => 1,
@@ -225,8 +225,70 @@ sub get_additional_configuration {
 sub validate {
     my ($self) = @_;
     
-    return $self->validation_delegate->($self, $self->value);
+    my @errors;
+    
+    if (defined($self->validation->{'regex'})) {
+        my $invalid = $self->validate_with_regex($self->validation->{'regex'});
+        if ($invalid) {
+            push @errors, $invalid;
+        }
+    }
+    ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
+    ## don't bother. 
+    if (defined($self->validation->{'code'}) && $#errors == -1) {
+        my $invalid = $self->validate_with_coderef($self->validation->{'code'});
+        if ($invalid) {
+            push @errors, $invalid;
+        }
+    }
+    if (defined($self->validation_delegate)) {
+        push @errors, $self->validation_delegate->($self, $self->value);
+    }
+    
+    return @errors;
+
 }
+
+
+sub validate_with_regex {
+    my ($self, $regex) = @_;
+    
+    if (ref($regex) ne 'Regexp') {
+        $regex = qr/$regex/;
+    }
+    if ($self->value() !~ $regex) {
+        if (exists($self->validation->{'invalid_message'})) {
+            return $self->validation->{'invalid_message'};
+        } else {
+            return "_FIELDNAME_ is invalid.";
+        }
+    } else {
+        return;
+    }
+}
+
+sub validate_with_coderef {
+    my ($self, $code) = @_;
+
+    if (ref($code) ne 'CODE') {
+        croak('Bad coderef provided to validate_field_with_coderef');
+    }
+    
+    my $results = $code->($self->value(), $self);
+    
+    ## if we get $results of 0 or a message, we return it.
+    ## if we get $results of simply one, we generate the invalid message
+    if ($results && $results eq "1") {
+        if (exists($self->validation->{invalid_message})) {
+            return $self->validation->{invalid_message};
+        } else {
+            return "_FIELDNAME_ is invalid.";
+        }
+    } else {
+        return $results;
+    }
+}
+
 
 sub value {
     my $self = shift;

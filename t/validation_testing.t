@@ -24,6 +24,11 @@ my $form = Form::Sensible->create_form( {
                                                                             required => 1,
                                                                           }
                                                          },
+                                                         {
+                                                             field_class => 'Number',
+                                                             name => 'numeric_integer',
+                                                             integer_only => 1,
+                                                         },
                                                          { 
                                                             field_class => 'Number',
                                                             name => 'numeric_step',
@@ -59,6 +64,7 @@ my $form = Form::Sensible->create_form( {
 ## first, success     
 $form->set_values({ 
                     string => 'a2z0to9',
+                    numeric_integer => -10,
                     numeric_step => 25,
                     numeric_nostep => 122.7
                   });
@@ -70,6 +76,7 @@ ok( $validation_result->is_valid(), "valid forms values are considered valid");
 ## fail on numeric_step
 $form->set_values({ 
                     string => 'a2z0to9',
+                    numeric_integer => 1,
                     numeric_step => 26,
                     numeric_nostep => 122.7
                   });
@@ -83,18 +90,20 @@ like( $validation_result->error_fields->{numeric_step}[0], qr/multiple of/, "Num
 ## fail on fraction
 $form->set_values({ 
                     string => 'a2z0to9',
+                    numeric_integer => 1.6,
                     numeric_step => 25.7,
                     numeric_nostep => 122.7
                   });
 
 $validation_result = $form->validate();
 
-like( $validation_result->error_fields->{numeric_step}[0], qr/an integer/,  "Number field value is invalid: fraction in integer only field");
+like( $validation_result->error_fields->{numeric_integer}[0], qr/a number/,  "Number field value is invalid: fraction in integer only field");
 
 
 ## fail on too high
 $form->set_values({ 
                     string => 'a2z0to9',
+                    numeric_integer => 1,
                     numeric_step => 126,
                     numeric_nostep => 122.7
                   });
@@ -107,6 +116,7 @@ like( $validation_result->error_fields->{numeric_step}[0], qr/maximum allowed va
 $form->set_values({ 
                     string => 'a2z0to9',
                     numeric_step => 6,
+                    numeric_integer => 1,
                     numeric_nostep => 122.7
                   });
 
@@ -117,6 +127,7 @@ like( $validation_result->error_fields->{numeric_step}[0], qr/minimum allowed va
 ## fail on code ref
 $form->set_values({ 
                     string => 'a2z0to9',
+                    numeric_integer => 1,
                     numeric_step => 25,
                     numeric_nostep => 172
                   });
@@ -128,6 +139,7 @@ like( $validation_result->error_fields->{numeric_nostep}[0], qr/We don't/,  "Num
 ## fail on string regex
 $form->set_values({ 
                     string => 'ZZZ0to9',
+                    numeric_integer => 1,
                     numeric_step => 25,
                     numeric_nostep => 122.7
                   });
@@ -142,6 +154,7 @@ ok( !defined($form->validator_result), 'clear_state() clears out validation resu
 
 ## fail on string regex
 $form->set_values({ 
+                    numeric_integer => 1,
                     numeric_step => 25,
                     numeric_nostep => 122.7
                   });

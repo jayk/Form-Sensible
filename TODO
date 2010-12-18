@@ -1,8 +1,7 @@
 TODO:
 
   * New Test for HTML rendering using fieldname_field templates.
-  * Adjust HTML field templates so that the actual input element can be used directly. 
-    (needed for combination-field)
+
   * Combination-field (contains several other fields)
   * Date field
   * More Examples
@@ -17,3 +16,4 @@ DONE:
 2010-06-11 - Add 'editable' flag used for disabling fields
 2010-06-11 - added DelegateConnection - a better way to delegate values to external objects
 2010-06-11 - Option retrieval now uses DelegateConnections
+2010-07-25 - Adjust HTML field templates so that the actual input element can be used directly. 

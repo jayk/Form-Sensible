@@ -50,9 +50,10 @@ $select_field->add_option('sour', 'Sourdough Bread');
 
 ok(has_option($select_field->get_options, 'white'), "Has options we added programmatically");
 
-$select_field->value('white');
+$select_field->set_selection('white');
 
-ok($select_field->validate() eq 0, "Valid option passes validation.");
+my @results = $select_field->validate();
+ok($#results == -1, "Valid option passes validation.");
 
 $select_field->value('junk');
 

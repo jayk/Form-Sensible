@@ -57,12 +57,14 @@ around 'validate' => sub {
     my $self = shift;
     
     my @errors;
+    push @errors, $self->$orig(@_);
     if (length($self->value) > $self->maximum_length) {
         push @errors, "_FIELDNAME_ is too long";
     }
     if ($self->minimum_length && (length($self->value) < $self->minimum_length)) {
         push @errors, "_FIELDNAME_ is too short";
     }
+
     return @errors;
 };
 

@@ -58,7 +58,7 @@ has 'values_ok_delegate' => (
                                         if (exists($caller->validation->{'invalid_message'})) {
                                             push @errors, $caller->validation->{'invalid_message'};
                                         } else {
-                                            push @errors, "_FIELDNAME was set to an invalid value";            
+                                            push @errors, "_FIELDNAME_ was set to an invalid value";            
                                         }
                                     }
                                 }
@@ -83,7 +83,7 @@ sub set_selection {
     my ($self) = shift;
     
     
-    if (!$self->accepts_multiple) {
+    if (!$self->accepts_multiple || !defined($self->value())) {
         $self->value([ $_[0] ]);
     } else {
         push @{$self->value}, @_;
@@ -113,7 +113,15 @@ around 'validate' => sub {
     } else {
         $values = [ $self->value ];
     }
-    my @errors = $self->values_ok_delegate->($self, $values);
+    my @errors;
+    use Data::Dumper;
+    #warn Dumper($values);
+    #warn Dumper($self->options);
+    
+    push @errors, $self->$orig(@_);
+    
+    push @errors, $self->values_ok_delegate->($self, $values);
+    
     return @errors;
 };
 
@@ -132,12 +140,13 @@ Form::Sensible::Field::Select - A multiple-choice option field
     
     my $select_field = Form::Sensible::Field::Select->new( 
                                                          name => 'bread_type'
-                                                         accepts_multiple => 0
+                                                         accepts_multiple => 1
                                                     );
 
     $select_field->add_option('wheat', 'Wheat Bread');
     $select_field->add_option('white', 'White Bread');
     $select_field->add_option('sour', 'Sourdough Bread');
+    $select_field->set_selection('sour');
 
 
 

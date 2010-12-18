@@ -1,15 +1,27 @@
 package Form::Sensible::Field::FileSelector;
 
-use Moose; 
+use File::Basename;
+use Moose;
 use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
-## provides a plain text field
 
-has 'file_ref' => (
+has 'filename' => (
     is          => 'rw',
+    isa         => 'Str',
+    lazy        => 1,
+    default     => sub {
+                        return fileparse(shift->full_path)[0];
+                   }
 );
 
+has 'full_path' => (
+    is          => 'rw',
+    isa         => 'Str',
+    default     => sub {
+                        return shift->value();
+                   }
+);
 
 has 'valid_extensions' => (
     is          => 'rw',
@@ -58,30 +70,31 @@ around 'validate' => sub {
     my $self = shift;
     
     my @errors;
+    
+    push @errors, $self->$orig(@_);
+    
     # file must exist.
-
-    if (defined($self->value)) {
-        if ($self->must_exist && ! -e $self->value) {
+    if (defined($self->filename)) {
+        if ($self->must_exist && ! -e $self->full_path) {
             push @errors, "_FIELDNAME_ does not exist.";
         }
         if ($#{$self->valid_extensions} != -1) {
             my $extensions = "." . join('|.', @{$self->valid_extensions});
-            if ($self->value !~ /($extensions)$/) {
+            if ($self->filename !~ /($extensions)$/) {
                 push @errors, "_FIELDNAME_ is not a valid file type";
             }
         }
     
-        if ($self->must_be_readable && ! -r $self->value ) {
+        if ($self->must_be_readable && ! -r $self->full_path ) {
             push @errors, "_FIELDNAME_ is not readable";
         }
         if ($self->maximum_size) {
-            my $filesize = -s $self->value;
+            my $filesize = -s $self->full_path;
             if ($filesize > $self->maximum_size) {
                 push @errors, "_FIELDNAME_ is too large";
             }
         }
     }
-    push @errors, $self->$orig();
     return @errors;
 };
 
@@ -116,7 +129,18 @@ interface, it may be prompting for a local file or a file upload.
 =over 8
 
 =item C<value>
-The local filename of the file selected.  
+The local filename of the file selected.
+
+=item C<full_path>
+
+The full local path to the file selected.  B<NOTE> that in the case that the filename provided 
+by the user is different from the actual file on the local filesystem (such as when using 
+Catalyst file upload) the filename portion of C<full_path> may be different than the result 
+of C<filename>.  File based validation (such as file size, etc.) is performed on C<full_path>. 
+
+=item C<filename>
+The filename of the file as provided by the user.  By default, this is the filename 
+only portion L</full_path>. Extension based validation is performed on C<filename>.
 
 =item C<maximum_size>
 The maximum file size allowed for the file.

@@ -20,8 +20,8 @@ routine:
 After that, all fields will get and set their values via the C<< $c->req->params >> hashref.  
 
 B<NOTE that this is actually a very bad idea if your forms are persistent from one request to the next, as the C<< $c->req->params >> 
-from the initial request will be captured within a closure.  If you are using persistent forms, you must use an intermediate object
-instead that can obtain the current request's parameters.>
+from the initial request will be captured within a closure.  If you are using persistent forms, you must re-set the delegate 
+during each request or use an intermediate object instead that can obtain the current request's parameters.>
 
 If you have not delegated your field's values to something else (as indicated above), the form itself 
 will store the values.  In this case, you must push the values into the form object instead.  You can
@@ -34,6 +34,42 @@ not editable by the end user.  Note that when a field is disabled in HTML, the b
 value when the form is submitted.  C<Form::Sensible>'s HTML renderer takes this into account and if a value
 exists on a field that is marked as not editable, a hidden field will be added to transport the value back
 to the form processor.
+
+=item Can I set the options for my Select field directly from a DBIx::Class resultset?
+
+Yes.  This is actually quite easy.  You define an C<options_delegate> on the Select field and use a 
+subroutine similar to the following:
+
+ ## defined as a named subroutine so that it can be reused as often as needed.
+ sub get_options_from_rs {
+     my $caller = shift;
+     my $option_details = shift;
+
+     $option_details->{rs}->reset;
+     return [ 
+               map { 
+                    name => $_->get_column($option_details->{name_column}), 
+                    value => $_->get_column($option_details->{value_column})
+                  } $option_details->{rs}->all() 
+            ];
+ }
+
+Then set the C<options_delegate> to use that function and pass the appropriate
+information:
+
+ $field->options_delegate( FSConnector( \&get_options_from_rs, 
+     { 
+        rs => $your_resultset->search({ ... }),
+        name_column => 'name',
+        value_column => 'id',
+     }
+     ));
+
+The FSConnector will pass your C<option_details> hash to the get_options_from_rs function,
+and your options will be pulled from the database when they are needed (whether for validation
+or for display)
+
+    
 
 =back
 
@@ -201,6 +237,52 @@ By providing a C<DelegateConnection|Form::Sensible::DelegateConnection> to L<For
 translate the error or status messages as necessary.
 
 You can translate field names in the form in the same way by providing a C<DelegateConnection|Form::Sensible::DelegateConnection> to L<Form::Sensible::Renderer::HTML::RenderedForm's display_name_delegate|Form::Sensible::Renderer::HTML::RenderedForm/"DELEGATE CONNECTIONS">
+
+=item I'm using Catalyst and I would like my form objects to be persistent from one request to the next, how do I do that?
+
+B<BEWARE: Here lie Monsters and really freaky problems> 
+
+Generally speaking, it is a bad idea to persist forms from one request to the
+next within Catalyst. The main reason is that you can not reliably delegate in
+many cases because many of Catalyst's objects (such as Model's and
+Controllers) can be created and destroyed within the request lifecycle in
+certain scenarios. This can be very difficult to predict and is prone to
+accidental breakage and bleedover.
+
+If you feel you must try to do this, you have two options:  
+
+1) Ensure that none of your delegation is tied to Controllers or Models (or
+any other Component) that might use the context C<< $c >> to do it's job.
+
+2) Create and persist 'skeleton forms' that contain no delegation information,
+clone them per request and initialize the delegate connections on the newly
+created clone form.
+
+If you do not take care to use one of these approaches, you are going to
+experience problems ranging from weird data consistency problems to full scale
+bleed over of form data between users. Considering the problems inherent to
+doing this, how to accomplish it is left as an exercise to the reader.
+
+B<NOTE:> Persisting the basic form definition hash (as passed to
+Form::Sensible's create_form routine) is not similarly problematic, though
+care should be taken to ensure that you don't accidentally capture C<< $c >>
+when creating your delegates. If, after reading the above you still want to
+know how to do this properly, drop by the #form-sensible irc channel and we
+may be able to help.
+
+=item Where can I go for help using Form::Sensible
+
+You can join the google discussion group:
+
+L<http://groups.google.com/group/formsensible>
+
+OR look at the wiki:
+
+L<http://wiki.catalyzed.org/cpan-modules/form-sensible>
+
+OR drop by the irc channel:
+
+irc.perl.org#form-sensible L<Join #form-sensible via your web browser|http://mibbit.com/#form-sensible@irc.perl.org>
 
 =back
 

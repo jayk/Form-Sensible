@@ -85,20 +85,20 @@ sub validate_field {
         
         ## field has value, so we run the field validators
         ## first regex. 
-        if (defined($field->validation->{'regex'})) {
-            my $invalid = $self->validate_field_with_regex($field, $field->validation->{'regex'});
-            if ($invalid) {
-                push @errors, $invalid;
-            }
-        }
+#        if (defined($field->validation->{'regex'})) {
+#            my $invalid = $self->validate_field_with_regex($field, $field->validation->{'regex'});
+#            if ($invalid) {
+#                push @errors, $invalid;
+#            }
+#        }
         ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
         ## don't bother. 
-        if (defined($field->validation->{'code'}) && $#errors == -1) {
-            my $invalid = $self->validate_field_with_coderef($field, $field->validation->{'code'});
-            if ($invalid) {
-                push @errors, $invalid;
-            }
-        }
+#        if (defined($field->validation->{'code'}) && $#errors == -1) {
+#            my $invalid = $self->validate_field_with_coderef($field, $field->validation->{'code'});
+#            if ($invalid) {
+#                push @errors, $invalid;
+#            }
+#        }
         ## finally, we run the fields internal validate routine
         my @results = $field->validate($self);
         foreach my $error (@results) {
@@ -123,41 +123,44 @@ sub validate_field {
 sub validate_field_with_regex {
     my ($self, $field, $regex) = @_;
     
-    if (ref($regex) ne 'Regexp') {
-        $regex = qr/$regex/;
-    }
+    return $field->validate_with_regex($regex);
+#    if (ref($regex) ne 'Regexp') {
+#        $regex = qr/$regex/;
+#    }
     
-    if ($field->value !~ $regex) {
-        if (exists($field->validation->{'invalid_message'})) {
-            return $field->validation->{'invalid_message'};
-        } else {
-            return "_FIELDNAME_ is invalid.";
-        }
-    } else {
-        return 0;
-    }
+#    if ($field->value !~ $regex) {
+#        if (exists($field->validation->{'invalid_message'})) {
+#            return $field->validation->{'invalid_message'};
+#        } else {
+#            return "_FIELDNAME_ is invalid.";
+#        }
+#    } else {
+#        return 0;
+#    }
 }
 
 sub validate_field_with_coderef {
     my ($self, $field, $code) = @_;
 
-    if (ref($code) ne 'CODE') {
-        croak('Bad coderef provided to validate_field_with_coderef');
-    }
+    return $field->validate_with_coderef($code);
+
+#    if (ref($code) ne 'CODE') {
+#        croak('Bad coderef provided to validate_field_with_coderef');
+#    }
     
-    my $results = $code->($field->value, $field);
-    
+#    my $results = $code->($field->value, $field);
+#    
     ## if we get $results of 0 or a message, we return it.
     ## if we get $results of simply one, we generate the invalid message
-    if ($results && $results eq "1") {
-        if (exists($field->validation->{invalid_message})) {
-            return $field->validation->{invalid_message};
-        } else {
-            return "_FIELDNAME_ is invalid.";
-        }
-    } else {
-        return $results;
-    }
+#    if ($results && $results eq "1") {
+#        if (exists($field->validation->{invalid_message})) {
+#            return $field->validation->{invalid_message};
+#        } else {
+#            return "_FIELDNAME_ is invalid.";
+#        }
+#    } else {
+#        return $results;
+#    }
 }
 
 

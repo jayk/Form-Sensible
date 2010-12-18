@@ -11,7 +11,7 @@ sub reflect_from {
    	my $form;
     if (exists($options->{'form'})) {
         if ( ref($options->{'form'}) eq 'HASH' ) {
-    		$form = Form::Sensible::Form->new($options->{'form'});
+    		$form = $self->create_form_object($handle, $options->{'form'});
         } elsif ( ref($options->{'form'}) && 
                   UNIVERSAL::can($options->{'form'}, 'isa') &&
                   $options->{'form'}->isa('Form::Sensible::Form') ) {
@@ -19,18 +19,13 @@ sub reflect_from {
             $form = $options->{'form'};
         }
         else {
-            croak
-"form element provided in options, but it's not a form or a hash.  What am I supposed to do with it?";
+            croak "form element provided in options, but it's not a form or a hash.  What am I supposed to do with it?";
         }
-    }
-    else {
+    } else {
         if ( exists( $options->{'form_name'} ) ) {
-            $form =
-              Form::Sensible::Form->new( name => $options->{'form_name'} );
-        }
-        else {
-            croak
-"No form provided, and no form name provided.  Give me something to work with?";
+            $form = $self->create_form_object($handle, { name => $options->{'form_name'} });
+        } else {
+            $form = $self->create_form_object($handle, undef);
         }
     }
 
@@ -54,28 +49,66 @@ sub reflect_from {
         foreach my $field (@fields) {
             if ( exists( $options->{'fieldname_map'}{$field} ) ) {
                 $fieldmap->{$field} = $options->{'fieldname_map'}{$field};
-            }
-            else {
+            } else {
                 $fieldmap->{$field} = undef;
             }
         }
     }
 
+    my $additionalfields = {};
+    
+    ## copy any additional_fields provided so that we can process them later.
+    ## we have to do this because we modify our $additionalfields hash as we work on it, so we don't want
+    ## just a ref to what was provided.  Deleting other people's data is unkind.
+    
+    if (exists($options->{'additional_fields'}) && ref($options->{'additional_fields'}) eq 'ARRAY') {
+        foreach my $additional_field (@{$options->{'additional_fields'}}) {
+            $additionalfields->{$additional_field->{'name'}} = $additional_field;
+            push @fields, $additional_field->{'name'};
+        }
+    }
+
     foreach my $fieldname (@fields) {
-        my $field_def =
-          $self->get_field_definition( $form, $handle, $fieldname );
-        my $new_fieldname = $fieldmap->{$fieldname};
+        my $new_fieldname = $fieldname;
+        if (exists($fieldmap->{$fieldname})) {
+            $new_fieldname = $fieldmap->{$fieldname};
+        }
         #warn "Processing: " . $fieldname . " as " . $new_fieldname;
 
-        if ( defined($new_fieldname) ) {
+        if (defined($new_fieldname) || exists($additionalfields->{$new_fieldname} )) {    
+            my $field_def;
+            if (exists($additional_fields->{$new_fieldname})) {
+                $field_def = $additional_fields->{$new_fieldname};
+                delete($additional_fields->{$new_fieldname});
+            } else {
+                $field_def = $self->get_field_definition( $form, $handle, $fieldname );
+            }
+
             $form->add_field( $field_def, $new_fieldname );
         }
     }
     
+    
+    
     ## convenience - add a submit button
-    my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
-    $form->add_field($submit_button);
+    ##my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
+    ##$form->add_field($submit_button);
     #warn "Form in create_form: " . Dumper $form;
+    return $self->finalize_form($form, $handle);
+}
+
+sub create_form_object {
+    my ($self, $handle, $form_options) = @_;
+    
+    if (!defined($form_options)) {
+        croak "No form provided, and no form name provided.  Give me something to work with?";
+    }
+    return Form::Sensible::Form->new($form_options);
+}
+
+sub finalize_form {
+    my ($self, $form, $handle) = @_;
+    
     return $form;
 }
 
@@ -147,6 +180,37 @@ If you do not want to create a new form, but instead want the fields appended
 to an existing form, you can provide an existing form object in the options
 hash ( C<< $options->{form} >> )
 
+=head3 Adding additional fields
+
+    $reflector->reflect_from($data_source, 
+                            {
+                                additional_fields => [
+                                                {
+                                                    field_class => 'Text',
+                                                    name => 'process_token',
+                                                    render_hints => {
+                                                        field_type => 'hidden',
+                                                    }
+                                                },
+                                                {
+                                                    field_class => 'Trigger',
+                                                    name => 'submit'
+                                                }
+                                            ]
+                            }
+ 
+
+This allows you to add fields to your form in addition to the ones provided by
+your data source.  It also allows you to override your data source, as any 
+additional field with the same name as a reflected field will take precedence
+over the reflected field.  This is also a good way to automatically add triggers
+to your form, such as a 'submit' or 'save' button.
+
+B<NOTE:> The reflector base class used to add a submit button automatically. The
+additional_fields mechanism replaces that functionality.  This means your reflector
+call needs to add the submit button, as shown above, or it needs to be added 
+programmatically later.
+
 =head3 Changing field order
 
     $reflector->reflect_from($data_source, 
@@ -214,7 +278,7 @@ reflector subclass and are not inspected in any way by the base class.
     package My::Reflector;
     use Moose;
     use namespace::autoclean;
-    extends 'Form::Sensible::Form::Reflector';
+    extends 'Form::Sensible::Reflector';
 
     sub get_fieldnames {
         my ($self, $form, $datasource) = @_;
@@ -239,6 +303,43 @@ reflector subclass and are not inspected in any way by the base class.
     }
 
 
+=head2 Customizing the forms your reflector creates
+
+If you need to customize the form object that your reflector will return,
+there are two methods that Form::Sensible::Reflector will look for. You only
+need to provide these in your subclass if you need to modify the form object
+itself.  If not, the default behaviors will work fine. The first is
+C<create_form_object> which Form::Sensible::Reflector calls in order to
+instantiate a form object. It should return an instantiated
+Form::Sensible::Form object. The default C<create_form_object> method simply
+passes the provided arguments to the L<Form::Sensible::Form>'s C<new> call:
+
+ sub create_form_object {
+     my ($self, $handle, $form_options) = @_;
+
+     return Form::Sensible::Form->new($form_options);
+ }
+
+Note that this will NOT be called if the user provides a form object, so if
+special adjustments are absolutely required, you should consider making
+those changes using the C<finalize_form> method described below.
+
+The second method is C<finalize_form>.  This method is called after the 
+form has been created and all the fields have been added to the form.  This
+allows you to do any final form customization prior to the form actually
+being used.  This is a good way to add whole-form 
+validation, for example:
+
+ sub finalize_form {
+     my ($self, $form, $handle) = @_;
+
+     return $form;
+ }
+
+Note that the C<finalize_form> call must return a form object.  Most of the 
+time this will be the form object passed to the method call.  The return 
+value of C<finalize_form> is what is returned to the user calling C<reflect_from>.
+
 =head2 Author's note 
 
 This is a base class to write reflectors for things like, configuration files,
@@ -251,9 +352,10 @@ has all the properties and fields a form would need.
 I personally hate dealing with forms that are longer than a search field or
 login form, so this really fits into my style.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Devin Austin <dhoss@cpan.org>
+Jay Kuri <jayk@cpan.org>
 
 =cut
 

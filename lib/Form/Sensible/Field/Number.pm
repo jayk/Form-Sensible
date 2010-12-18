@@ -35,6 +35,7 @@ around 'validate' => sub {
     my $self = shift;
     
     my @errors;
+    push @errors, $self->$orig(@_);
     if (defined($self->lower_bound) && $self->value < $self->lower_bound) {
         push @errors, "_FIELDNAME_ is lower than the minimum allowed value";
     }
@@ -43,18 +44,16 @@ around 'validate' => sub {
     }
 
     if ( $self->integer_only ){
-        if( $self->value !~ /^(\d.+)$/ ){
-            push @errors, "_FIELDNAME_ must be a nubmer";
+        if( $self->value !~ /^[-]?\d+$/ ){
+            push @errors, "_FIELDNAME_ must be a number";
         } elsif ( $self->value != int($self->value)) {
             push @errors, "_FIELDNAME_ must be an integer.";
         }
     }
     ## we ran the gauntlet last check is to see if value is in step.
     if (defined($self->step) && !$self->in_step()) {
-
         push @errors, "_FIELDNAME_ must be a multiple of " . $self->step;
     }
-    push @errors, $self->$orig();
     return @errors;
 };
 

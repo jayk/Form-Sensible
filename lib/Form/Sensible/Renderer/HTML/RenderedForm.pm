@@ -62,9 +62,9 @@ has 'subform_renderers' => (
 
 has 'status_messages' => (
     is          => 'rw',
-    isa         => 'ArrayRef[Str]',
+    isa         => 'HashRef[ArrayRef]',
     required    => 1,
-    default     => sub { return []; },
+    default     => sub { return {}; },
     lazy        => 1,
 );
 
@@ -247,6 +247,18 @@ sub render_field {
             foreach my $key (keys %{$manual_hints}) {
                 $vars->{'render_hints'}{$key} = $manual_hints->{$key};
             }
+        }
+        
+        if (exists($self->error_messages->{$fieldname}) && 
+            ref($self->error_messages->{$fieldname}) eq 'ARRAY' &&
+            $#{$self->error_messages->{$fieldname}} > -1) {
+                $vars->{has_errors} = 1;
+        }
+        
+        if (exists($self->status_messages->{$fieldname}) && 
+            ref($self->status_messages->{$fieldname}) eq 'ARRAY' &&
+            $#{$self->status_messages->{$fieldname}} > -1) {
+                $vars->{has_status_messages} = 1;
         }
         
         ## allow render_hints to override field type - allowing a number to be rendered

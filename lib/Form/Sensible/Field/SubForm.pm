@@ -61,7 +61,7 @@ around 'validate' => sub {
     my $orig = shift;
     my $self = shift;
 
-    return ($self->form->validate(), $self->$orig());    
+    return ($self->form->validate(), $self->$orig(@_));    
 };
 
 __PACKAGE__->meta->make_immutable;
