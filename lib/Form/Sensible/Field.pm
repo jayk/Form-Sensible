@@ -69,6 +69,9 @@ has 'render_hints' => (
     lazy        => 1,
 );
 
+## note the default behavior is to squash arrays if accepts_multiple is not set.
+## if you need different behavior in your subclass, you have to override the default
+## value delegate.
 has 'value_delegate' => (
     is          => 'rw',
     isa         => 'Form::Sensible::DelegateConnection',

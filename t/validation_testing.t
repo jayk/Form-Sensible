@@ -73,57 +73,6 @@ my $validation_result = $form->validate();
 
 ok( $validation_result->is_valid(), "valid forms values are considered valid");
 
-## fail on numeric_step
-$form->set_values({ 
-                    string => 'a2z0to9',
-                    numeric_integer => 1,
-                    numeric_step => 26,
-                    numeric_nostep => 122.7
-                  });
-
-$validation_result = $form->validate();
-
-ok( !$validation_result->is_valid(), "Form is invalid with invalid field");
-
-like( $validation_result->error_fields->{numeric_step}[0], qr/multiple of/, "Number field value is invalid based on step");
-
-## fail on fraction
-$form->set_values({ 
-                    string => 'a2z0to9',
-                    numeric_integer => 1.6,
-                    numeric_step => 25.7,
-                    numeric_nostep => 122.7
-                  });
-
-$validation_result = $form->validate();
-
-like( $validation_result->error_fields->{numeric_integer}[0], qr/a number/,  "Number field value is invalid: fraction in integer only field");
-
-
-## fail on too high
-$form->set_values({ 
-                    string => 'a2z0to9',
-                    numeric_integer => 1,
-                    numeric_step => 126,
-                    numeric_nostep => 122.7
-                  });
-
-$validation_result = $form->validate();
-
-like( $validation_result->error_fields->{numeric_step}[0], qr/maximum allowed value/,  "Number field value is invalid: over maximum value");
-
-## fail on too low 
-$form->set_values({ 
-                    string => 'a2z0to9',
-                    numeric_step => 6,
-                    numeric_integer => 1,
-                    numeric_nostep => 122.7
-                  });
-
-$validation_result = $form->validate();
-
-like( $validation_result->error_fields->{numeric_step}[0], qr/minimum allowed value/,  "Number field value is invalid: under minimum value");
-
 ## fail on code ref
 $form->set_values({ 
                     string => 'a2z0to9',

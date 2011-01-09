@@ -29,6 +29,24 @@ sub reflect_from {
         }
     }
 
+
+    my @allfields = $self->get_all_field_definitions($handle, $options, $form);
+    
+    foreach my $field_def (@allfields) {
+        $form->add_field( $field_def );
+    }
+    
+    ## convenience - add a submit button
+    ##my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
+    ##$form->add_field($submit_button);
+    #warn "Form in create_form: " . Dumper $form;
+    return $self->finalize_form($form, $handle);
+}
+
+sub get_all_field_definitions {
+    my ($self, $handle, $options, $form) = @_;
+    
+    my @allfields;
     my @fields = $self->get_fieldnames( $form, $handle );
 
     #my @definitions;
@@ -56,11 +74,11 @@ sub reflect_from {
     }
 
     my $additionalfields = {};
-    
+
     ## copy any additional_fields provided so that we can process them later.
     ## we have to do this because we modify our $additionalfields hash as we work on it, so we don't want
     ## just a ref to what was provided.  Deleting other people's data is unkind.
-    
+
     if (exists($options->{'additional_fields'}) && ref($options->{'additional_fields'}) eq 'ARRAY') {
         foreach my $additional_field (@{$options->{'additional_fields'}}) {
             $additionalfields->{$additional_field->{'name'}} = $additional_field;
@@ -83,18 +101,12 @@ sub reflect_from {
             } else {
                 $field_def = $self->get_field_definition( $form, $handle, $fieldname );
             }
-
-            $form->add_field( $field_def, $new_fieldname );
+            $field_def->{name} = $new_fieldname;
+            push @allfields, $field_def;
         }
     }
     
-    
-    
-    ## convenience - add a submit button
-    ##my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
-    ##$form->add_field($submit_button);
-    #warn "Form in create_form: " . Dumper $form;
-    return $self->finalize_form($form, $handle);
+    return @allfields;
 }
 
 sub create_form_object {
@@ -302,6 +314,11 @@ reflector subclass and are not inspected in any way by the base class.
         return $field_definition;
     }
 
+Note that while the C<$form> that your field will likely be added to is available for inspection, your 
+reflector should NOT make changes to the passed form.  It is present for inspection purposes only.  If your
+module DOES have a reason to look at C<$form>, be aware that in some cases, such as when only the field 
+definitions are requested, C<$form> will be null.  Your reflector should do the sensible thing in this 
+case, namely, not crash.
 
 =head2 Customizing the forms your reflector creates
 

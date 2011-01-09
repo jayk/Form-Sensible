@@ -70,6 +70,10 @@ has 'values_ok_delegate' => (
     # additional options
 );
 
+## Select has special handling, it's value is ALWAYS returned as an array, so we have to 
+## provide our own default 'value_delegate' to negate the default value_delegate behavior of 
+## eating arrayrefs when accepts_multiple is false.
+
 
 sub get_additional_configuration {
     my ($self) = @_;
@@ -82,12 +86,34 @@ sub get_additional_configuration {
 sub set_selection {
     my ($self) = shift;
     
+    $self->value( [ ] );
+    return $self->add_selection(@_);
+}
+
+sub add_selection {
+    my ($self) = shift;
     
-    if (!$self->accepts_multiple || !defined($self->value())) {
-        $self->value([ $_[0] ]);
+    if (!$self->accepts_multiple) {
+        $self->value(@_);
     } else {
-        push @{$self->value}, @_;
+        if (!defined($self->value()) || ref($self->value()) ne 'ARRAY') {
+            $self->value( [ ] );
+        }
+        
+        my %selection = map { $_ => 1 } @{$self->value()};
+        my $providedoptions = [ @_ ];
+        if ($#_ == 0 && ref($_[0]) eq 'ARRAY') {
+            $providedoptions = $_[0];
+        }
+        
+        foreach my $item (@{$providedoptions}) {
+            if (!exists($selection{$item})) {
+                push @{$self->value()}, $item;
+                $selection{$item} = 1;
+            }
+        }
     }
+    return $self->value();
 }
 
 sub add_option {
@@ -125,6 +151,26 @@ around 'validate' => sub {
     return @errors;
 };
 
+around 'value' => sub {
+    my $orig = shift;
+    my $self = shift;
+    
+    if ($#_ == -1) { 
+        return $self->$orig();
+    } else {
+        my $values;
+        if (ref($_[0]) ne 'ARRAY') 
+        {
+            $values = [ ];
+            push @{$values}, @_;
+        } else {
+            $values = $_[0];            
+        }
+        return $self->$orig($values);
+    }
+    
+};
+
 __PACKAGE__->meta->make_immutable;
 1;
 
@@ -146,7 +192,8 @@ Form::Sensible::Field::Select - A multiple-choice option field
     $select_field->add_option('wheat', 'Wheat Bread');
     $select_field->add_option('white', 'White Bread');
     $select_field->add_option('sour', 'Sourdough Bread');
-    $select_field->set_selection('sour');
+    
+    $select_field->set_selection('sour', 'white');
 
 
 
@@ -157,9 +204,6 @@ provided set of options.  This could be rendered as a select box,
 a radio group or even a series of checkboxes, depending on the renderer
 and the render_hints provided.
 
-Note that the value returned by a select field will always be an arrayref,
-even if only a single option was selected.
-
 =head1 ATTRIBUTES
 
 =over 8
@@ -168,6 +212,9 @@ even if only a single option was selected.
 =item C<accepts_multiple>
 
 Does this field allow multiple options to be selected.  Defaults to false.
+B<Note> that the value returned by a select field where 'accepts_multiple' is true 
+will always be an arrayref, even if only a single option was selected.
+
 
 =back 
 
@@ -180,10 +227,15 @@ Does this field allow multiple options to be selected.  Defaults to false.
 Returns an array ref containing the allowed options. Each option is represented as a
 hash containing a C<name> element and a C<value> element for the given option.
 
+=item C<add_selection($selected_option,...)> 
+
+Adds the provided option values as selected.  If C<accepts_multiple> is 
+true, the provided options will be set B<IN ADDITION> to any existing selections;
+
 =item C<set_selection($selected_option,...)> 
 
 Set's the provided option values as selected.  If C<accepts_multiple> is 
-false, only the first item will be set as selected.
+false, only the first item will be set as selected.  
 
 
 =item C<add_option($option_value, $option_display_name)>

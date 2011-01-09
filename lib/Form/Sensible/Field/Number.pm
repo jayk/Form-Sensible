@@ -36,6 +36,20 @@ around 'validate' => sub {
     
     my @errors;
     push @errors, $self->$orig(@_);
+    
+    my $regex = qr/^[-+]?[0-9]*\.?[0-9]+$/;
+    if (defined($self->validation->{'regex'})) {
+        $regex = $self->validation->{'regex'};
+        if (ref($regex) ne 'REGEX') {            
+            $regex = qr/$regex/;
+        }
+    
+    }
+    
+    if ($self->value !~ $regex ) {
+        push @errors, "_FIELDNAME_ is not a number";
+    }
+    
     if (defined($self->lower_bound) && $self->value < $self->lower_bound) {
         push @errors, "_FIELDNAME_ is lower than the minimum allowed value";
     }
@@ -43,13 +57,10 @@ around 'validate' => sub {
         push @errors, "_FIELDNAME_ is higher than the maximum allowed value";
     }
 
-    if ( $self->integer_only ){
-        if( $self->value !~ /^[-]?\d+$/ ){
-            push @errors, "_FIELDNAME_ must be a number";
-        } elsif ( $self->value != int($self->value)) {
-            push @errors, "_FIELDNAME_ must be an integer.";
-        }
+    if ( $self->integer_only && $self->value != int($self->value)) {
+        push @errors, "_FIELDNAME_ must be an integer.";
     }
+    
     ## we ran the gauntlet last check is to see if value is in step.
     if (defined($self->step) && !$self->in_step()) {
         push @errors, "_FIELDNAME_ must be a multiple of " . $self->step;
@@ -233,6 +244,35 @@ hash containing a C<name> element and a C<value> element for the given option.
 
 On a Select field, this defines whether a the field can have multiple values.  For
 a Number field, only one value is allowed, so this always returns false. 
+
+=back
+
+=head1 VALIDATION OPTIONS
+
+=over 8
+
+=item C<regex>
+
+The number field type by default checks that what was passed looks like a
+number based on the following regex: C< ^[-+]?[0-9]*\.?[0-9]+$ >. This will
+handle most numbers you are likely to encounter. However, if this regex is
+insufficient, such as when you need to process numbers in exponential
+notation, you can provide a replacement regex in the field's 'validation' hash:
+
+    my $object = Form::Sensible::Field::Number->new(
+                                                    validation => {
+                                                        # allow exponential notation
+                                                        regex => qr/^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/,
+                                                    }
+                                                );
+
+Note that the Number validation routines outlined above are not built to
+handle numbers Perl can not handle natively. That is to say, if you are
+working with numbers that Perl can not parse, or that require you to use
+modules such as L<Math::BigInt>, you can still use the Number class, but it's
+best to avoid Number's builtin validation. You can perform your validation
+yourself in a C<code> validation block or by subclassing Form::Sensible's
+Number or Text field classes.
 
 =back
 

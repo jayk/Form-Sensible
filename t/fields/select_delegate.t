@@ -62,7 +62,6 @@ my $form = Form::Sensible->create_form( {
                                                             field_class => 'Select',
                                                             name => 'choices',
                                                             options_delegate => FSConnector( \&the_options )
-#                                                            options_delegate => \&the_options
                                                          },
                                                       ],
                                         } );

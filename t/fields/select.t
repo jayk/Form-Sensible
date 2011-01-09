@@ -50,7 +50,14 @@ $select_field->add_option('sour', 'Sourdough Bread');
 
 ok(has_option($select_field->get_options, 'white'), "Has options we added programmatically");
 
-$select_field->set_selection('white');
+$select_field->add_selection('white');
+
+ok(ref($select_field->value()) ne 'ARRAY', 'value is not an array if accepts_multiple is off');
+
+$select_field->add_selection('white', 'sour');
+
+ok($select_field->value() eq 'white', 'only first option is used when accepts_multiple is off');
+
 
 my @results = $select_field->validate();
 ok($#results == -1, "Valid option passes validation.");
@@ -59,5 +66,54 @@ $select_field->value('junk');
 
 
 ok(grep(/invalid/, $select_field->validate()), "Invalid option fails validation.");
+
+$form = undef;
+$form = Form::Sensible->create_form( {
+                                            name => 'test',
+                                            fields => [
+                                                         { 
+                                                            field_class => 'Select',
+                                                            name => 'choices',
+                                                            options => the_options(),
+                                                            accepts_multiple => 1,
+                                                         },
+                                                      ],
+                                        } );
+
+my $select_field = $form->field('choices');
+
+$select_field->add_selection('foo_five');
+
+ok(ref($select_field->value()) eq 'ARRAY', 'value is an array if accepts_multiple is on, even with only one selected item');
+
+isa_ok($select_field->value(), 'ARRAY', 'value is an array, even with only one item');
+
+$select_field->add_selection('foo_good');
+
+is_deeply($select_field->value(), [ 'foo_five', 'foo_good' ], "all values added via add_selection are present");
+
+$select_field->set_selection('foo_are', 'foo_very');
+
+is_deeply($select_field->value(), [ 'foo_are', 'foo_very' ], "set_selection sets ONLY those requested");
+
+$select_field->set_selection(['foo_good', 'foo_are']);
+
+is_deeply($select_field->value(), [ 'foo_good', 'foo_are' ], "add_selection / set_selection can cope with a single arrayref of values");
+
+$select_field->add_selection('foo_good');
+
+is_deeply($select_field->value(), [ 'foo_good', 'foo_are' ], "add_selection prevents option duplication" );
+
+$select_field->add_selection('foo_very', 'foo_very', 'foo_very');
+
+is_deeply($select_field->value(), [ 'foo_good', 'foo_are', 'foo_very' ], "add_selection prevents option duplication, even within the same call" );
+
+
+
+my @newresults = $select_field->validate();
+
+ok($#newresults == -1, "multiple valid options on 'accepts_multiple' are ok.");
+
+
 
 done_testing();
