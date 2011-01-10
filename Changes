@@ -1,5 +1,8 @@
 Revision history for Form::Sensible
 
+0.20011 2011-01-09
+    * Minor fixes related to Reflector that slipped us by.
+
 0.20010 2011-01-08
     * More comprehensive Select tests
     * More Numbers tests
