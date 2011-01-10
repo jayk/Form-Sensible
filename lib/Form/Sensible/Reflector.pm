@@ -95,9 +95,9 @@ sub get_all_field_definitions {
 
         if (defined($new_fieldname) || exists($additionalfields->{$new_fieldname} )) {    
             my $field_def;
-            if (exists($additional_fields->{$new_fieldname})) {
-                $field_def = $additional_fields->{$new_fieldname};
-                delete($additional_fields->{$new_fieldname});
+            if (exists($additionalfields->{$new_fieldname})) {
+                $field_def = $additionalfields->{$new_fieldname};
+                delete($additionalfields->{$new_fieldname});
             } else {
                 $field_def = $self->get_field_definition( $form, $handle, $fieldname );
             }

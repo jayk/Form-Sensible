@@ -11,13 +11,14 @@ has 'filename' => (
     isa         => 'Str',
     lazy        => 1,
     default     => sub {
-                        return fileparse(shift->full_path)[0];
+                        return ${fileparse(shift->full_path)}[0];
                    }
 );
 
 has 'full_path' => (
     is          => 'rw',
     isa         => 'Str',
+    lazy        => 1,
     default     => sub {
                         return shift->value();
                    }

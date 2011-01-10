@@ -80,7 +80,7 @@ $form = Form::Sensible->create_form( {
                                                       ],
                                         } );
 
-my $select_field = $form->field('choices');
+$select_field = $form->field('choices');
 
 $select_field->add_selection('foo_five');
 
