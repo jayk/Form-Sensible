@@ -5,6 +5,18 @@ use Carp;
 
 # ABSTRACT: A simple reflector class for Form::Sensible
 
+=head2 $self->with_trigger
+
+Add a submit button to the form.  Defaults to 0.
+
+=cut
+
+has 'with_trigger' => (
+    is => 'rw',
+    lazy => 1,
+    default => 0,
+);
+
 sub reflect_from {
     my ( $self, $handle, $options) = @_;
 
@@ -36,10 +48,9 @@ sub reflect_from {
         $form->add_field( $field_def );
     }
     
-    ## convenience - add a submit button
-    ##my $submit_button = Form::Sensible::Field::Trigger->new( name => 'submit' );
-    ##$form->add_field($submit_button);
-    #warn "Form in create_form: " . Dumper $form;
+    my $trigger = $self->with_trigger;
+    $form->add_field(Form::Sensible::Field::Trigger->new( name => 'submit' )) 
+      if $trigger;
     return $self->finalize_form($form, $handle);
 }
 
