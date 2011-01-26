@@ -3,6 +3,9 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 
+our $VERSION = "0.01";
+eval $VERSION;
+
 # ABSTRACT: A simple reflector class for Form::Sensible
 
 =head2 $self->with_trigger
