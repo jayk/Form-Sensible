@@ -50,7 +50,7 @@ sub reflect_from {
     
     my $trigger = $self->with_trigger;
     $form->add_field(Form::Sensible::Field::Trigger->new( name => 'submit' )) 
-      if $trigger;
+      if $trigger == 1;
     return $self->finalize_form($form, $handle);
 }
 
