@@ -8,8 +8,8 @@ use lib "t/lib";
 use MockReflector;
 use Data::Dumper;
 
-my $reflector = MockReflector->new( with_trigger => 1 );
-my $form = $reflector->reflect_from( undef, { form => { name => 'test' } } );
+my $reflector = MockReflector->new(  );
+my $form = $reflector->reflect_from( undef, { form => { name => 'test' }, with_trigger => 1 } );
 my $reflector_without_submit = MockReflector->new();
 my $form_without_submit =
   $reflector_without_submit->reflect_from( undef,

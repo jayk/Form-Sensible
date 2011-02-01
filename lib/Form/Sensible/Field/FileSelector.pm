@@ -11,7 +11,7 @@ has 'filename' => (
     isa         => 'Str',
     lazy        => 1,
     default     => sub {
-                        return ${fileparse(shift->full_path)}[0];
+                        return scalar fileparse(shift->full_path);
                    }
 );
 

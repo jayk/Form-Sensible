@@ -63,8 +63,11 @@ t/fields/number.t
 t/fields/select.t
 t/fields/select_delegate.t
 t/fields/text.t
+t/fields/fileselector.t
+t/reflector/trigger.t
 t/simple_form.t
 t/test_output.t
 t/test_output_wrappers.t
 t/test_value_delegate.t
 t/validation_testing.t
+

@@ -1,5 +1,9 @@
 Revision history for Form::Sensible
 
+0.20012 2011-02-01
+    * BUGFIX FileSelector problem related to basename usage
+    * Addition of 'with_trigger' to options processing in Reflector
+
 0.20011 2011-01-09
     * Minor fixes related to Reflector that slipped us by.
 

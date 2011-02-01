@@ -14,11 +14,11 @@ Add a submit button to the form.  Defaults to 0.
 
 =cut
 
-has 'with_trigger' => (
-    is => 'rw',
-    lazy => 1,
-    default => 0,
-);
+#has 'with_trigger' => (
+#    is => 'rw',
+#    lazy => 1,
+#    default => 0,
+#);
 
 sub reflect_from {
     my ( $self, $handle, $options) = @_;
@@ -51,9 +51,9 @@ sub reflect_from {
         $form->add_field( $field_def );
     }
     
-    my $trigger = $self->with_trigger;
-    $form->add_field(Form::Sensible::Field::Trigger->new( name => 'submit' )) 
-      if $trigger == 1;
+    if (exists($options->{'with_trigger'}) && $options->{'with_trigger'}) {
+        $form->add_field(Form::Sensible::Field::Trigger->new( name => 'submit' ));
+    }
     return $self->finalize_form($form, $handle);
 }
 
