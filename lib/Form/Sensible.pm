@@ -343,6 +343,8 @@ Luke Saunders - E<lt>luke.saunders@gmail.comE<gt>
 
 Devin Austin - E<lt>dhoss@cpan.orgE<gt>
 
+Alan Rafagudinov - E<lt>alan.rafagudinov@ionzero.comE<gt>
+
 =head1 SPONSORED BY
 
 Ionzero LLC. L<http://ionzero.com/>

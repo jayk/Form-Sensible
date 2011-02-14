@@ -1,5 +1,8 @@
 Revision history for Form::Sensible
 
+NEXT VERSION
+		* Reflector allows skipping fields by leaving them out of the field definition
+
 0.20012 2011-02-01
     * BUGFIX FileSelector problem related to basename usage
     * Addition of 'with_trigger' to options processing in Reflector

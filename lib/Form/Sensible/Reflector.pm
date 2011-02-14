@@ -114,6 +114,7 @@ sub get_all_field_definitions {
                 delete($additionalfields->{$new_fieldname});
             } else {
                 $field_def = $self->get_field_definition( $form, $handle, $fieldname );
+                next unless defined $field_def;
             }
             $field_def->{name} = $new_fieldname;
             push @allfields, $field_def;
