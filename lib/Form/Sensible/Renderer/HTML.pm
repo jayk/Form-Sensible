@@ -95,7 +95,7 @@ sub render {
     ## create one, but we don't keep it if we create it,
     ## we just use it for this render.
     if (!defined($template)) {
-        $template = $self->new_template();
+        $template = $self->new_template( $options->{additional_tt_options} );
     }
     
     my %args = (
@@ -168,9 +168,12 @@ sub path_to_theme {
 
 # create a new Template instance with the provided options. 
 sub new_template {
-    my ($self) = @_;
+    my ($self, $additional_tt_options ) = @_;
     
-    return Template->new( $self->tt_config );
+    $additional_tt_options ||= {};
+    my %template_options = ( %{$self->tt_config}, %$additional_tt_options );
+
+    return Template->new( \%template_options );
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -259,9 +262,19 @@ Default options to pass through to the L<RenderedForm|Form::Sensible::Renderer::
 
 =over 8
 
-=item C<render($form)> 
+=item C<render($form, $stash_prefill, $options)>
 
 Returns a L<RenderedForm|Form::Sensible::Renderer::HTML::RenderedForm> for the form provided.
+
+options:
+
+=over
+
+=item additional_tt_options
+
+These are passed to the Template::Toolkit constructor C<< Template->new >>
+
+=back
 
 =item C<new_template()>
 

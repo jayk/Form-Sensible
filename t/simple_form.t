@@ -56,6 +56,21 @@ my $output_2 = $renderer2->render($form)->complete;
     
 ok( $output eq $output_2, "flat creation and programmatic creation produce the same results");
 
+# Check that we can pass INCLUDE_PATH and WRAPPER as an additional_tt_option
+my $renderer3 = Form::Sensible->get_renderer('HTML');
+isa_ok( $renderer3, 'Form::Sensible::Renderer::HTML' );
+my $output3 = $renderer3->render(
+    $form,
+    {}, # stash_prefill
+    {
+        additional_tt_options => {
+            WRAPPER      => undef,
+            INCLUDE_PATH => [ $lib_dir . '/share/templates/default' ]
+        }
+    }
+)->complete();
+is( $output3, $output, "additional_tt_options are observed" );
+
 ## Checking that fields that don't accept multiple behave properly
 $form->set_values({ username => ['test','foo'], password => 'test' });
 
