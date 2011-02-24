@@ -49,7 +49,11 @@ sub validate {
     my $validation_result = Form::Sensible::Validator::Result->new();
     
     foreach my $field ($form->get_fields()) {
-                
+        if(ref $field eq 'Form::Sensible::Field::SubForm') {
+            $validation_result->merge_from_result($field->form->validate);
+            next;
+        }
+
         my $fieldname = $field->name;
         my $results = $self->validate_field($field);
         
