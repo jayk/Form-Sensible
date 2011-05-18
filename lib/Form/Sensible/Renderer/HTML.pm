@@ -40,11 +40,18 @@ has 'tt_config' => (
     default     => sub {
                               my $self = shift;
                               return {
+                                      %{$self->default_tt_config},
                                       INCLUDE_PATH => $self->complete_include_path(),
                                       WRAPPER => 'pre_process.tt'
                               }; 
                          },
     lazy        => 1,
+);
+
+has default_tt_config => (
+    is          => 'ro',
+    isa         => 'HashRef',
+    default     => sub { return {} },
 );
 
 has 'fs_template_dir' => (

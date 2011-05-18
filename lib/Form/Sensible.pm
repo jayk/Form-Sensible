@@ -39,6 +39,8 @@ around BUILDARGS => sub {
 ## This module is a simple factory class which will load and create the various
 ## types of modules required when working with Form::Sensible
 
+sub form_class { 'Form::Sensible::Form' }
+
 sub create_form {
     my ($class, $template) = @_;
     
@@ -46,7 +48,7 @@ sub create_form {
     delete($formhash->{'fields'});
     delete($formhash->{'field_order'});
     
-    my $form = Form::Sensible::Form->new(%{$formhash});
+    my $form = $class->form_class->new(%{$formhash});
     
     if (ref($template->{'fields'}) eq 'ARRAY') {
         foreach my $field (@{$template->{'fields'}}) {
