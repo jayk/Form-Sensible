@@ -345,6 +345,8 @@ Devin Austin - E<lt>dhoss@cpan.orgE<gt>
 
 Alan Rafagudinov - E<lt>alan.rafagudinov@ionzero.comE<gt>
 
+Andrew Moore - E<lt>amoore@cpan.orgE<gt>
+
 =head1 SPONSORED BY
 
 Ionzero LLC. L<http://ionzero.com/>
