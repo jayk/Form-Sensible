@@ -235,20 +235,11 @@ sub render_field {
                     };
         
         ## if we have field-specific render_hints, we have to add them
-        ## ourselves.  First we load any already-set render_hints
-        $vars->{'render_hints'} = { %{ $self->render_hints } };
-        my $field_hints = $self->render_hints_for('HTML', $field);
-        if (scalar keys %{$field_hints}) {
-            foreach my $key (keys %{$field_hints}) {
-                $vars->{'render_hints'}{$key} = $field_hints->{$key};
-            }
-        }
-        if (ref($manual_hints) eq 'HASH') {
-            foreach my $key (keys %{$manual_hints}) {
-                $vars->{'render_hints'}{$key} = $manual_hints->{$key};
-            }
-        }
-        
+        ## ourselves.  First we check any already-set render_hints,
+        ## Then, check render_hints for this renderer
+        ## Then, any manual hints added in the template.
+        $vars->{render_hints} = { %{$self->render_hints}, %{$self->render_hints_for('HTML', $field)}, %{$manual_hints||{}} };
+
         if (exists($self->error_messages->{$fieldname}) && 
             ref($self->error_messages->{$fieldname}) eq 'ARRAY' &&
             $#{$self->error_messages->{$fieldname}} > -1) {
