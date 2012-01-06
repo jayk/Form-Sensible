@@ -171,12 +171,9 @@ sub flatten {
 
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {
-        if (ref($self->validation->{$key})) {
-            my $f = $self->validation->{$key};
-            $config{'validation'}{$key} = "$f";
-        } else {
-            $config{'validation'}{$key} = $self->validation->{$key};   
-        }
+        my $value = $self->validation->{$key};
+        $value = "$value" if ref($value);
+        $config{'validation'}{$key} = $value;
     }
     my $additional = $self->get_additional_configuration($template_only);
     foreach my $key (keys %{$additional}) {
@@ -201,24 +198,18 @@ sub validate {
     my @errors;
 
     if (defined($self->validation->{'regex'})) {
-        my $invalid = $self->validate_with_regex($self->validation->{'regex'});
-        if ($invalid) {
-            push @errors, $invalid;
-        }
+        push @errors, $self->validate_with_regex($self->validation->{'regex'});
     }
     ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
     ## don't bother.
     if (defined($self->validation->{'code'}) && $#errors == -1) {
-        my $invalid = $self->validate_with_coderef($self->validation->{'code'});
-        if ($invalid) {
-            push @errors, $invalid;
-        }
+        push @errors, $self->validate_with_coderef($self->validation->{'code'});
     }
     if (defined($self->validation_delegate)) {
         push @errors, $self->validation_delegate->($self, $self->value);
     }
-    
-    return @errors;
+
+    return grep { defined } @errors;
 
 }
 
@@ -229,15 +220,10 @@ sub validate_with_regex {
     if (ref($regex) ne 'Regexp') {
         $regex = qr/$regex/;
     }
-    if ($self->value() !~ $regex) {
-        if (exists($self->validation->{'invalid_message'})) {
-            return $self->validation->{'invalid_message'};
-        } else {
-            return "_FIELDNAME_ is invalid.";
-        }
-    } else {
-        return;
-    }
+    return if $self->value() =~ $regex;
+    return exists($self->validation->{'invalid_message'})
+        ? $self->validation->{'invalid_message'}
+        : '_FIELDNAME_ is invalid.';
 }
 
 sub validate_with_coderef {
@@ -251,15 +237,10 @@ sub validate_with_coderef {
 
     ## if we get $results of 0 or a message, we return it.
     ## if we get $results of simply one, we generate the invalid message
-    if ($results && $results eq "1") {
-        if (exists($self->validation->{invalid_message})) {
-            return $self->validation->{invalid_message};
-        } else {
-            return "_FIELDNAME_ is invalid.";
-        }
-    } else {
-        return $results;
-    }
+    return $results if defined $results && $results ne "1";
+    return exists($self->validation->{'invalid_message'})
+        ? $self->validation->{'invalid_message'}
+        : '_FIELDNAME_ is invalid.';
 }
 
 
