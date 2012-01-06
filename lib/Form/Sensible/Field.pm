@@ -235,9 +235,9 @@ sub validate_with_coderef {
 
     my $results = $code->($self->value(), $self);
 
-    ## if we get $results of 0 or a message, we return it.
+    ## if we get $results of "false" or a message, we return it.
     ## if we get $results of simply one, we generate the invalid message
-    return $results if defined $results && $results ne "1";
+    return $results if ! $results || $results ne "1";
     return exists($self->validation->{'invalid_message'})
         ? $self->validation->{'invalid_message'}
         : '_FIELDNAME_ is invalid.';
