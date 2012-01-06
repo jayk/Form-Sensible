@@ -123,27 +123,9 @@ has 'default_value' => (
     is          => 'rw',
 );
 
-sub BUILD {
-      my $self = shift;
-      my $args = shift;
-      
-      # this deals with the 'value' placed in the constructor, which doesn't work anymore
-      # because a Field's value is not an attribute, it is delegated.
-
-      if (defined($args->{'value'})) {
-          $self->value($args->{'value'});
-      }
-}
-
-sub _default_value {
-    my $self = shift;
-    
-    return $self->default_value();
-}
-
 sub _default_field_type {
     my $self = shift;
-    
+
     my $class = ref($self);
     $class =~ m/::([^:]*)$/;
     return lc($1);
@@ -166,32 +148,27 @@ sub required {
 
 sub flatten {
     my ($self, $template_only) = @_;
-    
-    my %config = (
-                    name => $self->name,
-                    display_name => $self->display_name,
-                    default_value => $self->default_value,
-                    field_type => $self->field_type,
-                    render_hints => $self->render_hints,
-                 );
-    
+
+    my %config = map { $_ => $self->$_ }
+        qw(name display_name default_value field_type render_hints);
+
     my $class = ref($self);
-    if ($class =~ /^Form::Sensible::Field::(.*)$/) {
+    if ($class =~ /^(Form::Sensible::Field::(.*)$/) {
         $class = $1;
     } else {
         $class = '+' . $class;
     }
-    
+
     $config{'field_class'} = $class;
-    
+
     if (!$template_only) {
         $config{'value'} = $self->value;
     }
-    
+
     if ($self->accepts_multiple) {
         $config{'accepts_multiple'} =$self->accepts_multiple;
     }
-    
+
     $config{'validation'} = {};
     foreach my $key (keys %{$self->validation}) {
         if (ref($self->validation->{$key})) {
@@ -205,14 +182,14 @@ sub flatten {
     foreach my $key (keys %{$additional}) {
         $config{$key} = $additional->{$key};
     }
-    
+
     return \%config;
 }
 
 ## hook for adding additional config without having to do 'around' every time.
 sub get_additional_configuration {
     my ($self) = @_;
-    
+
     return {};
 }
 
@@ -220,9 +197,9 @@ sub get_additional_configuration {
 ## by default just calls the validation_delegate.
 sub validate {
     my ($self) = @_;
-    
+
     my @errors;
-    
+
     if (defined($self->validation->{'regex'})) {
         my $invalid = $self->validate_with_regex($self->validation->{'regex'});
         if ($invalid) {
@@ -230,7 +207,7 @@ sub validate {
         }
     }
     ## if we have a coderef, and we passed regex, run the coderef.  Otherwise we
-    ## don't bother. 
+    ## don't bother.
     if (defined($self->validation->{'code'}) && $#errors == -1) {
         my $invalid = $self->validate_with_coderef($self->validation->{'code'});
         if ($invalid) {
@@ -248,7 +225,7 @@ sub validate {
 
 sub validate_with_regex {
     my ($self, $regex) = @_;
-    
+
     if (ref($regex) ne 'Regexp') {
         $regex = qr/$regex/;
     }
