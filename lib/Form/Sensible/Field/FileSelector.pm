@@ -77,7 +77,7 @@ around 'validate' => sub {
             push @errors, "_FIELDNAME_ does not exist.";
         }
         if ($#{$self->valid_extensions} != -1) {
-            if ( ! grep { $self->$filename =~ /\.$_$/ } @{$self->valid_extensions} )
+            if ( ! grep { $self->filename =~ /\.$_$/ } @{$self->valid_extensions} )
             {
                 push @errors, "_FIELDNAME_ is not a valid file type";
             }
