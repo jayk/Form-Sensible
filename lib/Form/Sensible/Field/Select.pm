@@ -77,10 +77,8 @@ has 'values_ok_delegate' => (
 
 sub get_additional_configuration {
     my ($self) = @_;
-    
-    return { 
-                'options' => $self->options,
-           };    
+
+    return { map { $_ => $self->$_ } qw/accepts_multiple options/  };
 }
 
 sub set_selection {
@@ -94,23 +92,23 @@ sub add_selection {
     my ($self) = shift;
 
     if (!$self->accepts_multiple) {
-        $self->value(@_);
-    } else {
-        if (!defined($self->value()) || ref($self->value()) ne 'ARRAY') {
-            $self->value( [ ] );
-        }
-        
-        my %selection = map { $_ => 1 } @{$self->value()};
-        my $providedoptions = [ @_ ];
-        if ($#_ == 0 && ref($_[0]) eq 'ARRAY') {
-            $providedoptions = $_[0];
-        }
-        
-        foreach my $item (@{$providedoptions}) {
-            if (!exists($selection{$item})) {
-                push @{$self->value()}, $item;
-                $selection{$item} = 1;
-            }
+        return $self->value(@_);
+    }
+
+    if (!defined($self->value()) || ref($self->value()) ne 'ARRAY') {
+        $self->value( [ ] );
+    }
+
+    my %selection = map { $_ => 1 } @{$self->value()};
+    my $providedoptions = [ @_ ];
+    if ($#_ == 0 && ref($_[0]) eq 'ARRAY') {
+        $providedoptions = $_[0];
+    }
+
+    foreach my $item (@{$providedoptions}) {
+        if (!exists($selection{$item})) {
+            push @{$self->value()}, $item;
+            $selection{$item} = 1;
         }
     }
     return $self->value();
@@ -142,32 +140,31 @@ around 'validate' => sub {
     use Data::Dumper;
     #warn Dumper($values);
     #warn Dumper($self->options);
-    
+
     push @errors, $self->$orig(@_);
-    
+
     push @errors, $self->values_ok_delegate->($self, $values);
-    
+
     return @errors;
 };
 
 around 'value' => sub {
     my $orig = shift;
     my $self = shift;
-    
-    if ($#_ == -1) { 
+
+    if ($#_ == -1) {
         return $self->$orig();
-    } else {
-        my $values;
-        if (ref($_[0]) ne 'ARRAY') 
-        {
-            $values = [ ];
-            push @{$values}, @_;
-        } else {
-            $values = $_[0];            
-        }
-        return $self->$orig($values);
     }
-    
+
+    my $values;
+    if (ref($_[0]) ne 'ARRAY')
+    {
+        $values = [ ];
+        push @{$values}, @_;
+    } else {
+        $values = $_[0];
+    }
+    return $self->$orig($values);
 };
 
 __PACKAGE__->meta->make_immutable;
