@@ -151,14 +151,10 @@ sub in_step {
 
 sub get_additional_configuration {
     my $self = shift;
-    
-    my $result_hash = {};
-    foreach my $field (qw/step lower_bound upper_bound integer_only/) {
-        if (defined($self->$field())) {
-            $result_hash->{$field} = $self->$field();
-        }
-    }
-    return $result_hash;
+
+    return { map { defined ($self->$_) ? ( $_ => $self->$_ ) : () }
+            qw/step lower_bound upper_bound integer_only/
+        };
 }
 
 __PACKAGE__->meta->make_immutable;
