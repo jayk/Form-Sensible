@@ -266,10 +266,19 @@ a Number field, only one value is allowed, so this always returns false.
 =item C<regex>
 
 The number field type by default checks that what was passed looks like a
-number based on the following regex: C< ^[-+]?[0-9]*\.?[0-9]+$ >. This will
-handle most numbers you are likely to encounter. However, if this regex is
-insufficient, such as when you need to process numbers in exponential
-notation, you can provide a replacement regex in the field's 'validation' hash:
+number based on the following regex:
+
+    qr/^[-+]?                   # Sign
+        (?: [0-9]+              # Integer portion ...
+            (?: \. [0-9]* )?    # Fractional portion
+        |   \. [0-9]+           # Just a decimal
+        )
+      $/xms
+
+This will handle most numbers you are likely to encounter. However, if this
+regex is insufficient, such as when you need to process numbers in exponential
+notation, you can provide a replacement regex in the field's 'validation'
+hash:
 
     my $object = Form::Sensible::Field::Number->new(
                                                     validation => {
