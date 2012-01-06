@@ -33,11 +33,11 @@ has 'off_label' => (
 
 sub get_additional_configuration {
     my $self = shift;
-    
-    return { 
-                'on_value' => $self->on_value,
-                'off_value' => $self->off_value
-           };
+
+    return {
+            map { $_ => $self->$_ }
+            qw/on_value off_value on_label off_label/
+        };
 
 }
 
