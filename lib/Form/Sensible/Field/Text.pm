@@ -30,17 +30,14 @@ has 'should_truncate' => (
 around 'value' => sub {
     my $orig = shift;
     my $self = shift;
-    
-    if (@_) {
-        my $value = shift;
-        if ($self->should_truncate) {
-            $self->$orig(substr($value,0,$self->maximum_length));
-        } else {
-            $self->$orig($value);
-        }
-    } else {
-        return $self->$orig()
+
+    return $self->$orig() if ! @_;
+
+    my $value = shift;
+    if ($self->should_truncate) {
+        return $self->$orig(substr($value,0,$self->maximum_length));
     }
+    return $self->$orig($value);
 };
 
 sub get_additional_configuration {
