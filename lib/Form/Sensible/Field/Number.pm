@@ -46,7 +46,7 @@ around 'validate' => sub {
 
     if (defined($self->validation->{'regex'})) {
         $regex = $self->validation->{'regex'};
-        if (ref($regex) ne 'REGEX') {            
+        if (ref($regex) ne 'Regexp') {
             $regex = qr/$regex/;
         }
     }
