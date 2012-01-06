@@ -42,11 +42,10 @@ around 'value' => sub {
 
 sub get_additional_configuration {
     my ($self) = @_;
-    
-    return { 
-                'maximum_length' => $self->maximum_length,
-                'should_truncate' => $self->should_truncate
-           };    
+
+    return { map { defined( $self->$_ ) ? ( $_ => $self->$_ ) : () }
+            qw/maximum_length minimum_length should_truncate/
+           };
 }
 
 around 'validate' => sub {
