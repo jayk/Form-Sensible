@@ -57,13 +57,10 @@ has 'must_be_readable' => (
 
 sub get_additional_configuration {
     my ($self) = @_;
-    
-    return { 
-                'maximum_size' => $self->maximum_size,
-                'valid_extensions' => $self->valid_extensions,
-                'must_exist' => $self->must_exist,
-                'must_be_readable' => $self->must_be_readable
-           };    
+
+    return { map { $_ => $self->$_ }
+                qw(maximum_size valid_extensions must_exist must_be_readable)
+           };
 }
 
 around 'validate' => sub {
@@ -90,8 +87,7 @@ around 'validate' => sub {
             push @errors, "_FIELDNAME_ is not readable";
         }
         if ($self->maximum_size) {
-            my $filesize = -s $self->full_path;
-            if ($filesize > $self->maximum_size) {
+            if (-s $self->full_path > $self->maximum_size) {
                 push @errors, "_FIELDNAME_ is too large";
             }
         }
