@@ -80,14 +80,17 @@ sub get_potential_values {
 
     if (!$step) {
         $step = $self->step || 1;
-    } 
-    if (!defined($lower_bound)) {
+    }
+    if (!defined($lower_bound) && defined $self->lower_bound ) {
         $lower_bound = $self->lower_bound;
     }
-    if (!defined($upper_bound)) {
+    if (!defined($upper_bound) && defined $self->upper_bound ) {
         $upper_bound = $self->upper_bound;
     }
-    
+
+    # If either the lower or upper bound is not set, no potential values
+    return if ! defined $upper_bound || ! defined $lower_bound;
+
     my $value = $lower_bound;
 
     ## this check ensures that we start with a value that is within our
@@ -96,9 +99,9 @@ sub get_potential_values {
     ## producing a bunch of options that were always invalid.
     ## Technically speaking, we shouldn't have a lower bound that is invalid
     ## but who are we kidding?  It will happen.
-    
-    if (!$self->in_step($lower_bound, $step)) {
-        # lower bound doesn't lie on a step boundry.  Bump $div by 1 and 
+
+    if (!$self->in_step($value, $step)) {
+        # lower bound doesn't lie on a step boundary.  Bump $div by 1 and
         # multiply by step.  Should be the first value that lies above our
         # provided bound.
         my $div = $value / $step;
@@ -117,8 +120,10 @@ sub get_potential_values {
 ## this allows a Number to behave like a Select if used that way.
 sub get_options {
     my ($self) = @_;
-    
-    return [ map { { name => $_, value => $_ } } $self->get_potential_values() ];
+
+    my @values = $self->get_potential_values();
+    return [ map { { name => $_, value => $_ } } @values ] if @values;
+    return $self->value;
 }
 
 sub accepts_multiple {
@@ -131,7 +136,7 @@ sub in_step {
     my ($self, $value, $step) = @_;
 
     if (!$step) {
-        $step = $self->step;
+        $step = $self->step || 1;
     }
     if (!defined($value)) {
         $value = $self->value;
