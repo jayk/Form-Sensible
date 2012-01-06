@@ -153,7 +153,7 @@ sub flatten {
         qw(name display_name default_value field_type render_hints);
 
     my $class = ref($self);
-    if ($class =~ /^(Form::Sensible::Field::(.*)$/) {
+    if ($class =~ /^Form::Sensible::Field::(.*)$/) {
         $class = $1;
     } else {
         $class = '+' . $class;
