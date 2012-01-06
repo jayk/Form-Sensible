@@ -36,8 +36,14 @@ around 'validate' => sub {
 
     my @errors;
     push @errors, $self->$orig(@_);
-    
-    my $regex = qr/^[-+]?[0-9]*\.?[0-9]+$/;
+
+    my $regex = qr/^[-+]?                   # Sign
+                    (?: [0-9]+              # Integer portion
+                        (?: \. [0-9]* )?    # Fractional portion
+                    |   \. [0-9]+           # Just a decimal
+                    )
+                    $/xms;
+
     if (defined($self->validation->{'regex'})) {
         $regex = $self->validation->{'regex'};
         if (ref($regex) ne 'REGEX') {            
