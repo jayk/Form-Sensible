@@ -253,7 +253,7 @@ hash containing a C<name> element and a C<value> element for the given option.
 
 =item C<accepts_multiple>
 
-On a Select field, this defines whether a the field can have multiple values.  For
+On a Select field, this defines whether the field can have multiple values.  For
 a Number field, only one value is allowed, so this always returns false.
 
 
