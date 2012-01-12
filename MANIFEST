@@ -1,4 +1,4 @@
-examples/dump_basic.pl
+examples/html_basic.pl
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -16,6 +16,7 @@ Changes
 lib/Form/Sensible/DelegateConnection.pm
 lib/Form/Sensible/Delegation.pod
 lib/Form/Sensible/FAQ.pod
+lib/Form/Sensible/Field/DateTime.pm
 lib/Form/Sensible/Field/FileSelector.pm
 lib/Form/Sensible/Field/LongText.pm
 lib/Form/Sensible/Field/Number.pm
@@ -59,6 +60,7 @@ share/templates/table/form_start.tt
 share/templates/table/subform_end.tt
 share/templates/table/subform_messages.tt
 share/templates/table/subform_start.tt
+t/fields/datetime.t
 t/fields/number.t
 t/fields/select.t
 t/fields/select_delegate.t
