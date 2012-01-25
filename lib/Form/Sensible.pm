@@ -5,6 +5,7 @@ use namespace::autoclean;
 use Class::MOP;
 use Form::Sensible::Form;
 use Form::Sensible::Field;
+use Form::Sensible::Field::DateTime;
 use Form::Sensible::Field::Number;
 use Form::Sensible::Field::Select;
 use Form::Sensible::Field::Text;

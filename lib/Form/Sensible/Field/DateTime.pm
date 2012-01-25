@@ -5,9 +5,26 @@ use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 use DateTime::Format::Natural;
 use DateTime::Span;
+use Form::Sensible::DelegateConnection;
 extends 'Form::Sensible::Field';
 
 coerce 'CodeRef' => from 'Str' => via \&_string_to_code_recurrence;
+
+has '+value_delegate' => (
+    default     => sub {
+        my $self = shift;
+        my $value = _validate_datetime( $self->default_value );
+        my $sub =  sub {
+            my $caller = shift;
+            if ( @_ ) {
+                my $valid = _validate_datetime($_[0]);
+                $value = $valid if defined $valid;
+            }
+            return $value;
+        };
+        return FSConnector($sub);
+    },
+);
 
 has 'recurrence' => (
     is          => 'rw',
@@ -22,6 +39,23 @@ has 'span' => (
     required    => 0,
 );
 
+sub _validate_datetime {
+    my $value = shift;
+
+    return if ! defined $value;
+    return $value if 'DateTime' eq ref $value;
+
+    my $parser = DateTime::Format::Natural->new;
+    my $date_string = $parser->extract_datetime( $value );
+
+    if ( $date_string ) {
+        my $dt = $parser->parse_datetime( $date_string );
+        return $dt if $parser->success;
+    }
+
+    return;
+}
+
 around 'validate' => sub {
     my $orig = shift;
     my $self = shift;
@@ -29,9 +63,8 @@ around 'validate' => sub {
     my @errors;
     push @errors, $self->$orig(@_);
 
-    my $datetime_error = $self->_validate_datetime;
     my $span_error = $self->_validate_span;
-    push @errors, $_ for grep { length } $datetime_error, $span_error;
+    push @errors, $span_error if length $span_error;
 
     return @errors;
 };
@@ -60,25 +93,6 @@ sub _string_to_code_recurrence {
     return $recurrence{'_DEFAULT'};
 }
 
-sub _validate_datetime {
-    my ( $self ) = @_;
-
-    if ( ref($self->value) ne 'DateTime' ) {
-        my $parser = DateTime::Format::Natural->new;
-        my $date_string = $parser->extract_datetime( $self->value );
-        if ( ! $date_string ) {
-            return '_FIELDNAME_ does not contain datetime';
-        }
-        my $dt = $parser->parse_datetime( $date_string );
-
-        if ( ! $parser->success ) {
-            return '_FIELDNAME_ is not a parsable datetime';
-        }
-        $self->value( $dt );
-    }
-    return;
-}
-
 sub _validate_span {
     my ( $self ) = @_;
 
@@ -101,6 +115,11 @@ sub _validate_span {
     return;
 }
 
+sub set_selection {
+    my ( $self ) = @_;
+    return $self->value;
+}
+
 sub get_options {
     my ($self, $recurrence ) = @_;
 
@@ -119,7 +138,7 @@ sub get_options {
 sub accepts_multiple {
     my ($self) = @_;
 
-    return 1;
+    return 0;
 }
 
 sub get_additional_configuration {
@@ -223,16 +242,22 @@ Fields for rendering purposes.
 
 =over 8
 
-=item C<get_options>
+=item C<get_options()>
 
 An array ref containing the allowed options. Each option is represented as a
 hash containing a C<name> element and a C<value> element for the given option.
+
+=item C<set_selection()>
+
+Sets whatever is the current C<< $self->value >> option as the selected option
+selected. This is used when a C<DateTime> field is used as a C<Select> field
+and overrides L<Select|Form::Sensible::Field::Select/"METHODS">'s
+C<set_selection> method.
 
 =item C<accepts_multiple>
 
 On a Select field, this defines whether the field can have multiple values.  For
 a DateTime field, only one value is allowed, so this always returns false.
-
 
 =back
 
