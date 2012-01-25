@@ -1,4 +1,6 @@
 examples/html_basic.pl
+examples/html_datetime.pl
+examples/html_datetime_select.pl
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -35,6 +37,7 @@ lib/Form/Sensible/Renderer.pm
 lib/Form/Sensible/Validator/Result.pm
 lib/Form/Sensible/Validator.pm
 lib/Form/Sensible.pm
+share/templates/default/datetime.tt
 share/templates/default/field_wrapper.tt
 share/templates/default/fileselector.tt
 share/templates/default/form_end.tt
