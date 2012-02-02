@@ -1,6 +1,6 @@
 package Form::Sensible::Field::Text;
 
-use Moose; 
+use Moose;
 use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
@@ -30,32 +30,28 @@ has 'should_truncate' => (
 around 'value' => sub {
     my $orig = shift;
     my $self = shift;
-    
-    if (@_) {
-        my $value = shift;
-        if ($self->should_truncate) {
-            $self->$orig(substr($value,0,$self->maximum_length));
-        } else {
-            $self->$orig($value);
-        }
-    } else {
-        return $self->$orig()
+
+    return $self->$orig() if ! @_;
+
+    my $value = shift;
+    if ($self->should_truncate) {
+        return $self->$orig(substr($value,0,$self->maximum_length));
     }
+    return $self->$orig($value);
 };
 
 sub get_additional_configuration {
     my ($self) = @_;
-    
-    return { 
-                'maximum_length' => $self->maximum_length,
-                'should_truncate' => $self->should_truncate
-           };    
+
+    return { map { defined( $self->$_ ) ? ( $_ => $self->$_ ) : () }
+            qw/maximum_length minimum_length should_truncate/
+           };
 }
 
 around 'validate' => sub {
     my $orig = shift;
     my $self = shift;
-    
+
     my @errors;
     push @errors, $self->$orig(@_);
     if (length($self->value) > $self->maximum_length) {
@@ -75,7 +71,7 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::Text - Field for representing character-strings 
+Form::Sensible::Field::Text - Field for representing character-strings
 
 =head1 SYNOPSIS
 
@@ -101,19 +97,29 @@ Form::Sensible::Field subclass for representing character-string based data.
 
 The maximum length this text field should accept. Note that any size of string
 can be placed in the field, it will simply fail validation if it is too large.
-Alternately if 'should_truncate' is true, the value will be truncated when it
+Alternately if C<should_truncate> is true, the value will be truncated when it
 is set.
 
 =item C<minimum_length>
 
-The minimum length this text field should accept. If definied, validation will
+The minimum length this text field should accept. If defined, validation will
 fail if the field value is less than this.
 
 =item C<should_truncate>
 
-Indicates that if value is set to a string larger than maximum_length, it
-should be automatically truncated to maximum_length. This has to be manually
-turned on, by default should_truncate is false.
+Indicates that if value is set to a string larger than C<maximum_length>, it
+should be automatically truncated to C<maximum_length>. This has to be
+manually turned on, by default C<should_truncate> is false.
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<get_additional_configuration()>
+
+Returns the attributes' names and values as a hash ref.
 
 =back
 

@@ -8,7 +8,7 @@ eval $VERSION;
 
 # ABSTRACT: A simple reflector class for Form::Sensible
 
-=head2 $self->with_trigger
+=head1 $self->with_trigger
 
 Add a submit button to the form.  Defaults to 0.
 
@@ -27,7 +27,7 @@ sub reflect_from {
     if (exists($options->{'form'})) {
         if ( ref($options->{'form'}) eq 'HASH' ) {
     		$form = $self->create_form_object($handle, $options->{'form'});
-        } elsif ( ref($options->{'form'}) && 
+        } elsif ( ref($options->{'form'}) &&
                   UNIVERSAL::can($options->{'form'}, 'isa') &&
                   $options->{'form'}->isa('Form::Sensible::Form') ) {
 
@@ -46,11 +46,11 @@ sub reflect_from {
 
 
     my @allfields = $self->get_all_field_definitions($handle, $options, $form);
-    
+
     foreach my $field_def (@allfields) {
         $form->add_field( $field_def );
     }
-    
+
     if (exists($options->{'with_trigger'}) && $options->{'with_trigger'}) {
         $form->add_field(Form::Sensible::Field::Trigger->new( name => 'submit' ));
     }
@@ -59,7 +59,7 @@ sub reflect_from {
 
 sub get_all_field_definitions {
     my ($self, $handle, $options, $form) = @_;
-    
+
     my @allfields;
     my @fields = $self->get_fieldnames( $form, $handle );
 
@@ -107,7 +107,7 @@ sub get_all_field_definitions {
         }
         #warn "Processing: " . $fieldname . " as " . $new_fieldname;
 
-        if (defined($new_fieldname) || exists($additionalfields->{$new_fieldname} )) {    
+        if (defined($new_fieldname) || exists($additionalfields->{$new_fieldname} )) {
             my $field_def;
             if (exists($additionalfields->{$new_fieldname})) {
                 $field_def = $additionalfields->{$new_fieldname};
@@ -120,13 +120,13 @@ sub get_all_field_definitions {
             push @allfields, $field_def;
         }
     }
-    
+
     return @allfields;
 }
 
 sub create_form_object {
     my ($self, $handle, $form_options) = @_;
-    
+
     if (!defined($form_options)) {
         croak "No form provided, and no form name provided.  Give me something to work with?";
     }
@@ -135,7 +135,7 @@ sub create_form_object {
 
 sub finalize_form {
     my ($self, $form, $handle) = @_;
-    
+
     return $form;
 }
 
@@ -172,33 +172,33 @@ data source type.
 =head1 USAGE
 
     my $reflector = Form::Sensible::Form::Reflector::SomeSubclass->new();
-
-    my $generated_form = $reflector->reflect_from($data_source, $options);
     
-By default, a Reflector will create a new form using the exact fields found 
-within the datasource.  It is possible, however, to adjust this behavior 
-using the C<$options> hashref passed to the C<reflect_from> call.  
+    my $generated_form = $reflector->reflect_from($data_source, $options);
 
-=head3 Adjusting the parameters of your new form
+By default, a Reflector will create a new form using the exact fields found
+within the datasource.  It is possible, however, to adjust this behavior
+using the C<$options> hashref passed to the C<reflect_from> call.
 
-    my $generated_form = $reflector->reflect_from($data_source, 
-                                                  { 
+=head2 Adjusting the parameters of your new form
+
+    my $generated_form = $reflector->reflect_from($data_source,
+                                                  {
                                                     form => {
                                                         name => 'profile_form',
-                                                        validation => { 
+                                                        validation => {
                                                             code => sub { ... }
                                                         }
                                                     }
                                                   });
 
-If you want to adjust the parameters of the new form, you can provide a hashref 
-in the C<< $options->{form} >> that will be passed to the 
-C<< Form::Sensible::Form->new() >> call.  
+If you want to adjust the parameters of the new form, you can provide a hashref
+in the C<< $options->{form} >> that will be passed to the
+C<< Form::Sensible::Form->new() >> call.
 
-=head3 Providing your own form
+=head2 Providing your own form
 
-    $reflector->reflect_from($data_source, 
-                            { 
+    $reflector->reflect_from($data_source,
+                            {
                                 form => $my_existing_form_object
                             }
                             );
@@ -207,9 +207,9 @@ If you do not want to create a new form, but instead want the fields appended
 to an existing form, you can provide an existing form object in the options
 hash ( C<< $options->{form} >> )
 
-=head3 Adding additional fields
+=head2 Adding additional fields
 
-    $reflector->reflect_from($data_source, 
+    $reflector->reflect_from($data_source,
                             {
                                 additional_fields => [
                                                 {
@@ -225,46 +225,45 @@ hash ( C<< $options->{form} >> )
                                                 }
                                             ]
                             }
- 
 
 This allows you to add fields to your form in addition to the ones provided by
-your data source.  It also allows you to override your data source, as any 
+your data source.  It also allows you to override your data source, as any
 additional field with the same name as a reflected field will take precedence
 over the reflected field.  This is also a good way to automatically add triggers
 to your form, such as a 'submit' or 'save' button.
 
 B<NOTE:> The reflector base class used to add a submit button automatically. The
 additional_fields mechanism replaces that functionality.  This means your reflector
-call needs to add the submit button, as shown above, or it needs to be added 
+call needs to add the submit button, as shown above, or it needs to be added
 programmatically later.
 
-=head3 Changing field order
+=head2 Changing field order
 
-    $reflector->reflect_from($data_source, 
-                            { 
+    $reflector->reflect_from($data_source,
+                            {
                                 ## sort fields alphabetically
-                                fieldname_filter => sub { 
+                                fieldname_filter => sub {
                                                         return sort(@_);
                                                     },
                             }
                             );
-                            
-If you are unhappy with the order that your fields are displaying in you can 
+
+If you are unhappy with the order that your fields are displaying in you can
 adjust it by providing a subroutine in C<< $options->{'fieldname_filter'} >>.
 The subroutine takes the list of fields as returned by C<< get_fieldnames() >>
 and should return an array (not an array ref) of the fields in the new order.
 Note that you can also remove fields this way.  Note also that no checking
 is done to verify that the fieldnames you return are valid, if you return
-any fields that were not in the original array, you are likely to cause an 
+any fields that were not in the original array, you are likely to cause an
 exception when the field definition is created.
 
-=head3 Changing field names
+=head2 Changing field names
 
-$reflector->reflect_from($data_source, 
-                        { 
+$reflector->reflect_from($data_source,
+                        {
                             ## change 'logon' field to be 'username' in the form
                             ## and other related adjustments.
-                            fieldname_map => { 
+                            fieldname_map => {
                                                 logon => 'username',
                                                 pass => 'password',
                                                 address => 'email',
@@ -275,14 +274,14 @@ $reflector->reflect_from($data_source,
                         );
 
 By default, the C<Form::Sensible> field names are exactly the same as the data
-source's feild names. If you would rather not expose your internal field names
-or have other reason to change them, you can provide a 
+source's field names. If you would rather not expose your internal field names
+or have other reason to change them, you can provide a
 C<< $options->{'fieldname_map'} >> hashref to change them on the fly. The
-C<fieldname_map> is simply an mapping between the original field name and the
-Form::Sensible field name you would like it to use. If you use this method you
-must provide a mapping for B<ALL> fields as a missing field (or a field with
-an undef value) is treated as a request to remove the field from the form
-entirely.  
+C<fieldname_map> is simply a mapping between the original field name and the
+C<Form::Sensible> field name you would like it to use. If you use this method
+you must provide a mapping for B<ALL> fields as a missing field (or a field
+with an undef value) is treated as a request to remove the field from the form
+entirely.
 
 =head1 CREATING YOUR OWN REFLECTOR
 
@@ -294,8 +293,8 @@ As you might expect, C<get_fieldnames> should return an array containing the
 names of the fields that are to be created. C<get_field_definition> is then
 called for each field to be created and should return a hashref representing
 that field suitable for passing to the
-L<Form::Sensible::Field|Form::Sensible::Field> C<create_from_flattened>
-method.
+L<Form::Sensible::Field|Form::Sensible::Field/"METHODS">'s
+C<create_from_flattened> method.
 
 Note that in both cases, the contents of C<$datasource> are specific to your
 reflector subclass and are not inspected in any way by the base class.
@@ -306,7 +305,7 @@ reflector subclass and are not inspected in any way by the base class.
     use Moose;
     use namespace::autoclean;
     extends 'Form::Sensible::Reflector';
-
+    
     sub get_fieldnames {
         my ($self, $form, $datasource) = @_;
         my @fieldnames;
@@ -316,8 +315,8 @@ reflector subclass and are not inspected in any way by the base class.
         }
         return @fieldnames;
     }
-
-    sub get_field_definition { 
+    
+    sub get_field_definition {
         my ($self, $form, $datasource, $fieldname) = @_;
         
         my $field_definition = {
@@ -329,11 +328,12 @@ reflector subclass and are not inspected in any way by the base class.
         return $field_definition;
     }
 
-Note that while the C<$form> that your field will likely be added to is available for inspection, your 
-reflector should NOT make changes to the passed form.  It is present for inspection purposes only.  If your
-module DOES have a reason to look at C<$form>, be aware that in some cases, such as when only the field 
-definitions are requested, C<$form> will be null.  Your reflector should do the sensible thing in this 
-case, namely, not crash.
+Note that while the C<$form> that your field will likely be added to is
+available for inspection, your reflector should NOT make changes to the passed
+form.  It is present for inspection purposes only.  If your module DOES have a
+reason to look at C<$form>, be aware that in some cases, such as when only the
+field definitions are requested, C<$form> will be null.  Your reflector should
+do the sensible thing in this case, namely, not crash.
 
 =head2 Customizing the forms your reflector creates
 
@@ -341,38 +341,38 @@ If you need to customize the form object that your reflector will return,
 there are two methods that Form::Sensible::Reflector will look for. You only
 need to provide these in your subclass if you need to modify the form object
 itself.  If not, the default behaviors will work fine. The first is
-C<create_form_object> which Form::Sensible::Reflector calls in order to
+C<create_form_object> which C<Form::Sensible::Reflector> calls in order to
 instantiate a form object. It should return an instantiated
-Form::Sensible::Form object. The default C<create_form_object> method simply
-passes the provided arguments to the L<Form::Sensible::Form>'s C<new> call:
+L<Form::Sensible::Form> object. The default C<create_form_object> method
+simply passes the provided arguments to the
+L<Form::Sensible::Form/"METHODS">'s C<new> call:
 
- sub create_form_object {
-     my ($self, $handle, $form_options) = @_;
+    sub create_form_object {
+        my ($self, $handle, $form_options) = @_;
+        
+        return Form::Sensible::Form->new($form_options);
+    }
 
-     return Form::Sensible::Form->new($form_options);
- }
+Note that this will B<NOT> be called if the user provides a form object, so if
+special adjustments are absolutely required, you should consider making those
+changes using the C<finalize_form> method described below.
 
-Note that this will NOT be called if the user provides a form object, so if
-special adjustments are absolutely required, you should consider making
-those changes using the C<finalize_form> method described below.
-
-The second method is C<finalize_form>.  This method is called after the 
+The second method is C<finalize_form>.  This method is called after the
 form has been created and all the fields have been added to the form.  This
 allows you to do any final form customization prior to the form actually
-being used.  This is a good way to add whole-form 
-validation, for example:
+being used.  This is a good way to add whole-form validation, for example:
 
- sub finalize_form {
-     my ($self, $form, $handle) = @_;
+    sub finalize_form {
+        my ($self, $form, $handle) = @_;
 
-     return $form;
- }
+        return $form;
+    }
 
-Note that the C<finalize_form> call must return a form object.  Most of the 
-time this will be the form object passed to the method call.  The return 
+Note that the C<finalize_form> call must return a form object.  Most of the
+time this will be the form object passed to the method call.  The return
 value of C<finalize_form> is what is returned to the user calling C<reflect_from>.
 
-=head2 Author's note 
+=head2 Author's note
 
 This is a base class to write reflectors for things like, configuration files,
 or my favorite, a database schema.
