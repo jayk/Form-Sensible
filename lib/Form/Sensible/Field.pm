@@ -20,7 +20,7 @@ has 'display_name' => (
     required    => 1,
     default     => sub {
                             my $name = ucfirst(shift->name());
-                            $name =~ s/_/ /;
+                            $name =~ s/_/ /g;
                             return $name;
                         },
     lazy        => 1,
