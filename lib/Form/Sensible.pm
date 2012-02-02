@@ -5,6 +5,7 @@ use namespace::autoclean;
 use Class::MOP;
 use Form::Sensible::Form;
 use Form::Sensible::Field;
+use Form::Sensible::Field::DateTime;
 use Form::Sensible::Field::Number;
 use Form::Sensible::Field::Select;
 use Form::Sensible::Field::Text;
@@ -274,11 +275,11 @@ a simple (and all too familiar) login form.
 This example creates the exact same form as the first example. This time,
 however, it is done by creating each field object individually, and then
 adding each in turn to the form.
-    
+
 Both of these methods will produce the exact same results when rendered.
 
 =head3 Form validation
-    
+
     ## set_values takes a hash of name->value pairs 
     $form->set_values($c->req->params);
     
@@ -294,7 +295,7 @@ Both of these methods will produce the exact same results when rendered.
         my $output = $renderer->render($form)->complete;    
     }
 
-Here we fill in the values provided to us via $c->req->params and then run validation
+Here we fill in the values provided to us via C<< $c->req->params >> and then run validation
 on the form.  Validation follows the rules provided in the B<validation> definitions for
 each field.  Whole-form validation is can also be done if provided.  When validation
 is run using this process, the messages are automatically available during rendering.
@@ -303,8 +304,8 @@ is run using this process, the messages are automatically available during rende
 =head1 METHODS
 
 All methods in the Form::Sensible package are class methods. Note that by
-C<use>ing the Form::Sensible module, the C<Form::Sensible::Form> and
-C<Form::Sensible::Field::*> classes are also C<use>d.
+C<use>ing the Form::Sensible module, the L<Form::Sensible::Form> and
+L<Form::Sensible::Field::*|Form::Sensible::Field/DESCRIPTION> classes are also C<use>d.
 
 =over 8
 
@@ -321,7 +322,7 @@ Creates a renderer of the given class using the C<$options> provided. The
 format of the class name follows the convention of a bare name being appended
 to C<Form::Sensible::Renderer::>. In other words if you call
 C<<Form::Sensible->get_renderer('HTML', { 'foo' => 'bar' })>> Form::Sensible
-will ensure the Form::Sensible::Renderer::HTML class is loaded and will create
+will ensure the L<Form::Sensible::Renderer::HTML> class is loaded and will create
 an object by passing the hashref provided to the C<new> method. If you wish to
 provide a class outside of the C<Form::Sensible::Renderer::> namespace,
 prepend the string with a C<+>. For example, to load the class
@@ -357,6 +358,7 @@ Form::Sensible Wiki: L<http://wiki.catalyzed.org/cpan-modules/form-sensible>
 
 Form::Sensible Discussion: L<http://groups.google.com/group/formsensible>
 
+Form::Sensible Github: L<https://github.com/jayk/Form-Sensible>
 
 L<Form::Sensible>
 

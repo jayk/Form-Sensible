@@ -1,6 +1,6 @@
 package Form::Sensible::Field::LongText;
 
-use Moose; 
+use Moose;
 use namespace::autoclean;
 extends 'Form::Sensible::Field::Text';
 
@@ -18,7 +18,7 @@ __END__
 
 =head1 NAME
 
-Form::Sensible::Field::LongText - Field for representing large amounts of character-string data. 
+Form::Sensible::Field::LongText - Field for representing large amounts of character-string data.
 
 =head1 SYNOPSIS
 
@@ -33,11 +33,11 @@ Form::Sensible::Field::LongText - Field for representing large amounts of charac
 
 =head1 DESCRIPTION
 
-Form::Sensible::Field subclass for representing large amounts of
+L<Form::Sensible::Field> subclass for representing large amounts of
 character-string based data. It has all the same attributes and behaviors as
-Text, only is intended for larger amounts of text. It is separate from Text fields
-only because it is likely larger-blocks of text will require additional formatting and
-processing options.  
+Text, only is intended for larger amounts of text. It is separate from Text
+fields only because arger-blocks of text will likely require additional
+formatting and processing options.
 
 =head1 ATTRIBUTES
 
@@ -47,14 +47,9 @@ processing options.
 
 The maximum length this text field should accept. Note that any size of string
 can be placed in the field, it will simply fail validation if it is too large.
-Alternately if 'should_truncate' is true, the value will be truncated when it
-is set.
-
-=item C<'should_truncate'>
-
-Indicates that if value is set to a string larger than maximum_length, it
-should be automatically truncated to maximum_length. This has to be manually
-turned on, by default should_truncate is false.
+Defaults to 51200. Alternately if
+L<should_truncate|Form::Sensible::Form::Text/"ATTRIBUTES"> is true, the value
+will be truncated when it is set. (C<should_truncate> is false by default. )
 
 =back
 

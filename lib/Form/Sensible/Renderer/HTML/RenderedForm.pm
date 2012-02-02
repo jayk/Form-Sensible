@@ -445,8 +445,9 @@ A template called C<field_wrapper_file.tt> will be used. The C<field_wrapper>
 hint overrides the built-in wrapper, so only the actual input field will be available
 and you will need to provide any enclosing elements or labels.  Note also that it 
 uses the standard L<Template|Template::Toolkit> C<WRAPPER> mechanism.  Thus the field wrapper
-template will be rendered, and the actual input elements will be available as C<< [% content %] within
-your wrapper template. So your wrapper template might end up looking like:
+template will be rendered, and the actual input elements will be available as
+C<< [% content %] >> within your wrapper template. So your wrapper template
+might end up looking like:
 
     <tr class="form-row">
       <td>[% field.display_name %]</td>

@@ -1,6 +1,6 @@
 package Form::Sensible::Field::SubForm;
 
-use Moose; 
+use Moose;
 use namespace::autoclean;
 extends 'Form::Sensible::Field';
 
@@ -12,12 +12,12 @@ has 'form' => (
 
 sub BUILDARGS {
     my $class = shift;
-    
+
     my $args = $_[0];
     if (!ref($args)) {
         $args = { @_ };
     }
-    
+
     ## could probably do this with some sort of coersion - not sure if I want to though.
     if (ref($args->{'form'}) eq 'HASH') {
         $args->{'form'} = Form::Sensible->create_form($args->{'form'});
@@ -27,21 +27,21 @@ sub BUILDARGS {
 
 sub BUILD {
     my $self = shift;
-    
+
     if (!exists($self->form->render_hints->{'form_template_prefix'})) {
         $self->form->render_hints->{'form_template_prefix'} = 'subform';
-    } 
+    }
 }
 
 around 'value_delegate' => sub {
     my $orig = shift;
     my $self = shift;
-    
+
     return $self->$orig()
               unless @_;
-    
+
     my $delegate = shift;
-              
+
     foreach my $field ($self->form->get_fields()) {
         $field->value_delegate( $delegate );
     }
@@ -50,8 +50,8 @@ around 'value_delegate' => sub {
 
 sub get_additional_configuration {
     my ($self, $template_only) = @_;
-    
-    return { 
+
+    return {
                 'form' => $self->form->flatten($template_only),
            };
 
@@ -61,7 +61,7 @@ around 'validate' => sub {
     my $orig = shift;
     my $self = shift;
 
-    return ($self->form->validate(), $self->$orig(@_));    
+    return ($self->form->validate(), $self->$orig(@_));
 };
 
 __PACKAGE__->meta->make_immutable;
@@ -84,19 +84,45 @@ Form::Sensible::Field::SubForm - encapsulate an entire form within another.
 
 =head1 DESCRIPTION
 
-The subform field type allows you to embed one form within another. The fields
-in the subform are submitted and validated as though they belong to the
-primary form, meaning the fieldnames are used 'as is.' Please note that this
-feature is experimental at best and how it is used is still subject to change.
+The subform L<Field|Form::Sensible::Field> type allows you to embed one form
+within another. The fields in the subform are submitted and validated as
+though they belong to the primary form, meaning the fieldnames are used 'as
+is.' Please note that this feature is experimental at best and how it is used
+is still subject to change.
 
-
-=head1 Attributes
+=head1 ATTRIBUTES
 
 =over 8
 
 =item C<form>
 
 The sub-form to include into this field.
+
+=back
+
+=head1 METHODS
+
+=over 8
+
+=item C<get_additional_configuration($template_only)>
+
+Returns the name and content of the attributes for this field in a hash ref.
+
+=back
+
+=head1 MOOSE CLASS METHODS
+
+=over 8
+
+=item C<BUILDARGS(%params|$params)>
+
+See L<Moose::Object>. Calls other C<BUILDARGS> in the inheritance hiearchy
+after first seeing if there is a farm that has been passed in and needs to be
+created for the object to be instantiated.
+
+=item C<BUILD>
+
+Sets the C<render_hints> for this field to 'subform'.
 
 =back
 

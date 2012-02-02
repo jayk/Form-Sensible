@@ -4,11 +4,11 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Data::Dumper;
 
-## This overloads our object to be treated as a method call to 'call' if accessed directly as a sub ref.
+## This overloads our object to be treated as a method call to 'call' if #accessed directly as a code ref.
 use overload q/&{}/ => sub { my $self = shift; return sub { $self->call(@_) } };
 
 Moose::Exporter->setup_import_methods(
-      as_is     => [ 'FSConnector', \&Form::Sensible::DelegateConnection::FSConnector ]  
+      as_is     => [ 'FSConnector', \&Form::Sensible::DelegateConnection::FSConnector ]
 );
 
 coerce 'Form::Sensible::DelegateConnection' => from 'HashRef' => via { Form::Sensible::DelegateConnection->new( %{$_} ) };
@@ -26,29 +26,22 @@ sub call {
     my $callingobject = shift;
     #die "asplode!";
     #print STDERR "Delegate Being Called\n";
-    
+
     return $self->delegate_function->($callingobject,  @_);
 }
 
-# creates a delegate connection 
+# creates a delegate connection
 sub FSConnector {
-    my $function = shift;
-    if (ref($function) eq 'CODE') {
-        if ($#_ > -1) {
-            my $args = [ @_ ];
-            return Form::Sensible::DelegateConnection->new( delegate_function => sub { return $function->(@_, @{$args}) } );
-        } else {
-            return Form::Sensible::DelegateConnection->new( delegate_function => $function );
-        }
-    } else {
-        my $object = $function;
-        my $method_name = shift;
+    my $object = shift;
+    my $args = [ @_ ];
+    my $sub = @{$args} ? sub { return $object->( @_, @{$args} ) } : $object;
 
-        my $args = [ @_ ];
-        return Form::Sensible::DelegateConnection->new( delegate_function => sub { 
-                                                                                    return $object->$method_name(@_, @{$args}); 
-                                                                                 });
+    if ( ref($object) ne 'CODE' ) {
+        my $method_name = shift @$args;
+        $sub = sub { return $object->$method_name( @_, @{$args} ) };
     }
+
+    return Form::Sensible::DelegateConnection->new( delegate_function => $sub );
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -92,19 +85,15 @@ Form::Sensible::DelegateConnection - Represents a connection between one object 
  ## OR --
  
  my $options_delegate = Form::Sensible::DelegateConnection->new( delegate_function => \&the_options );
- 
-
-
-
 
 =head1 DESCRIPTION
 
 Form::Sensible::DelegateConnection is an object that represents a connection
-between one object and another.  In Form::Sensible when an object can have
-its behavior customized by another object, a Delegate, a C<DelegateConnection>
-object is usually used to create the link between the two objects.  See 
-L<Form::Sensible::Delegation> for more information on how DelegateConnections
-are used within Form::Sensible.
+between one object and another.  In Form::Sensible when an object can have its
+behavior customized by another object, a Delegate, a C<DelegateConnection>
+object is usually used to create the link between the two objects.  See
+L<Form::Sensible::Delegation> for more information on how DelegateConnection
+objects are used within Form::Sensible.
 
 =head1 ATTRIBUTES
 
@@ -112,9 +101,10 @@ are used within Form::Sensible.
 
 =item C<delegate_function($calling_object, $optional_additional_arguments, ...  )>
 
-The C<delegate_function> refers to a function that will be run when this delegate
-connection is used.  In most cases you will not access this attribute directly, 
-preferring the C<FSConnector()> method, though if you are into deep voodoo, you may.
+The C<delegate_function> refers to a function that will be run when this
+delegate connection is used.  In most cases you will not access this attribute
+directly, preferring the C<FSConnector()> method, though if you are into deep
+voodoo, you may.
 
 =back
 
@@ -124,10 +114,19 @@ preferring the C<FSConnector()> method, though if you are into deep voodoo, you 
 
 =item C<new( %options )>
 
-Creates a new DelegateConnection object with the provided options.  All the attributes above may be passed.
+Creates a new DelegateConnection object with the provided options.  All the
+attributes above may be passed.
+
+=item C<call( $calling_object, @argument_list )>
+
+Calls the delegate function for the C<$calling_object> using the
+C<@argument_list>. This is essentially a wrapper to overload an object so that
+if it is accessed directly as a code ref, it will call the delegate function:
+
+    my $options_delegate = Form::Sensible::DelegateConnection->new( delegate_function => \&the_options );
+    $options_delegate->( ... ); # same as $options_delegate->delegate_function->( ... )
 
 =back
-
 
 =head1 FUNCTIONS
 
@@ -135,35 +134,35 @@ Creates a new DelegateConnection object with the provided options.  All the attr
 
 =item C<FSConnector(...)>
 
-The FSConnector function is available if you have C<use>d either C<Form::Sensible> 
-or C<Form::Sensible::DelegateConnection>.  It is used to easily create a C<Form::Sensible::DelegateConnection> 
-object in-place.  You can call it two ways, first, passing a code ref:
+The C<FSConnector> function is available if you have C<use>d either
+C<Form::Sensible> or C<Form::Sensible::DelegateConnection>.  It is used to
+easily create a C<Form::Sensible::DelegateConnection> object in-place.  You
+can call it two ways, first, passing a code ref:
 
- 
  # instead of:
  my $connection = Form::Sensible::DelegateConnection->new( delegate_function => sub { ... } );
  
  # this does the same thing:
  
  my $connection = FSConnector( sub { ... } );
- 
+
 This is a modest savings in typing, but can be very convenient when you are
 defining a number of delegates during form creation, for example.
 
-The C<FSConnector( ... )> is particularly useful when linking a delegate
+C<FSConnector( ... )> is particularly useful when linking a delegate
 connection to a method on an object. This method looks like this:
 
  my $connection = FSConnector( $object, 'method_to_call');
- 
-When used this way, The C<FSConnector> routine will create a subroutine ref
-for you automatically capturing the passed object in a closure. Again, you can
-do this yourself, but this makes your setup code a lot clearer.
+
+When used this way, The C<FSConnector> function will create a code ref for you
+automatically capturing the passed object in a closure. Again, you can do this
+yourself, but this makes your setup code a lot clearer.
 
 As a further benefit, both methods will take additional args which will be
 passed to the function or method after the args passed by the calling object:
 
  my $connection = FSConnector( $object, 'method_to_call', 'additional','args');
- 
+
 This can be useful, for example, when you are using the same object / method
 repeatedly, but need slightly different information in each case.
 
