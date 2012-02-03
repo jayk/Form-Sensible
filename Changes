@@ -1,8 +1,11 @@
 Revision history for Form::Sensible
 
-NEXT VERSION
+0.20020 2012-02-02
 		* Reflector allows skipping fields by leaving them out of the field definition
 		* added "additional_tt_options" option to Form::Sensible::Renderer::HTML->render() to pass options to Template::Toolkit
+		* Corrected bug in Number that caused warnings when invalid number input was provided
+		* Numerous documentation fixes (Thanks unobe)
+		* Added Datetime fields and tests (Thanks unobe)
 
 0.20012 2011-02-01
     * BUGFIX FileSelector problem related to basename usage
