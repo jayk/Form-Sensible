@@ -44,7 +44,7 @@ my $form = Form::Sensible->create_form( {
     ok( !$validation_result->is_valid(), "form with field shorter than min length failed");
     is( scalar(keys %{$validation_result->{error_fields}}), 2, "correct number of incorrect fields" );
     is( $validation_result->{error_fields}->{string}->[0], "String is too short", "correct field is invalid with correct text");
-    is( $validation_result->{error_fields}->{string_no_trunc}->[0], "String no_trunc is too long", "correct field is invalid with correct text");
+    is( $validation_result->{error_fields}->{string_no_trunc}->[0], "String no trunc is too long", "correct field is invalid with correct text");
 }
 
 done_testing();
