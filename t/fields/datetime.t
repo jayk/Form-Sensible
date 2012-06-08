@@ -14,8 +14,14 @@ $lib_dir = join('/', @dirs);
 use DateTime;
 use DateTime::Span;
 
+my %end = (
+    year  => DateTime->now->year + 1,
+    month => 5,
+    day   => 25,
+);
+
 my $start = DateTime->new( year => 2005, month => 6, day => 10, hour => 7, minute => 2, second => 5 );
-my $end = DateTime->new( year => 2012, month => 5, day => 25, hour => 10, minute => 59, second => 38 );
+my $end = DateTime->new( year => $end{year}, month => $end{month}, day => $end{day}, hour => 10, minute => 59, second => 38 );
 my $span = DateTime::Span->from_datetimes( start=> $start, end => $end );
 
 my $form = Form::Sensible->create_form( {
@@ -126,7 +132,7 @@ ok( $validation_result->is_valid(), 'valid datetime values are considered valid'
           error => 'year before valid range'
         },
         { nok => 1,
-          value => DateTime->new( year => 2013 ),
+          value => DateTime->new( year => $end{year}+1 ),
           error => 'year after valid range'
         },
         { nok => 1,
@@ -171,7 +177,7 @@ ok( $validation_result->is_valid(), 'valid datetime values are considered valid'
           error => 'month before valid range',
         },
         { nok => 1,
-          value => DateTime->new( year => 2013, month => 1 ),
+          value => DateTime->new( year => $end{year}, month => $end{month}+1 ),
           error => 'month after valid range'
         },
         { nok => 1,
@@ -214,7 +220,7 @@ ok( $validation_result->is_valid(), 'valid datetime values are considered valid'
           error => 'day before valid range',
         },
         { nok => 1,
-          value => DateTime->new( year => 2013, month => 1, day => 9 ),
+          value => DateTime->new( year => $end{year}, month => $end{month}, day => $end{day}+1 ),
           error => 'day after valid range'
         },
         { nok => 1,
