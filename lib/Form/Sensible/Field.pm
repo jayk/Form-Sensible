@@ -376,9 +376,10 @@ The field name, used to identify this field in your program.
 =item C<display_name>
 
 The name used when displaying messages about this field, such as errors, etc.
-Defaults to C<<uc($field->name)>>.
+Defaults to C<< uc($field->name) >>.
 
 =item C<field_type>
+
 A string identifying this type of field.  Normally defaults to the last
 portion of the classname, for example, for the C<Form::Simple::Field::Text>
 class the field_type would be 'text'.
