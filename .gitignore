@@ -1,1 +1,4 @@
 *.swp
+META.yml
+inc/
+Makefile.old
