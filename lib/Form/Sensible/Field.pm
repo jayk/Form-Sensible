@@ -4,7 +4,7 @@ use Moose;
 use namespace::autoclean;
 use Carp;
 use Data::Dumper;
-use Class::MOP;
+use Class::Load;
 use Form::Sensible::DelegateConnection;
 
 
@@ -264,7 +264,7 @@ sub create_from_flattened {
     } else {
         $class_to_load = 'Form::Sensible::Field::' . $fieldclass;
     }
-    Class::MOP::load_class($class_to_load);
+    Class::Load::load_class($class_to_load);
 
     # copy because we are going to remove class, as it wasn't there to begin with.
     my $config = { %{$fieldconfig} };
