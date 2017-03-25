@@ -6,7 +6,7 @@ use Form::Sensible::DelegateConnection;
 use Form::Sensible::Validator;
 use Carp qw/croak/;
 use Data::Dumper;
-use Class::MOP;    ## I don't believe this is required
+use Class::Load;    ## I don't believe this is required
 
 ## a form is a collection of fields. Different form types will work differently.
 
@@ -267,7 +267,7 @@ sub _create_validator {
     } else {
         $classname = 'Form::Sensible::Validator::' . $classname;
     }
-    Class::MOP::load_class($classname);
+    Class::Load::load_class($classname);
     $validator = $classname->new(@{$self->validator_args});
     
     return $validator;

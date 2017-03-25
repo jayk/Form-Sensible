@@ -7,7 +7,7 @@ all_from        'lib/Form/Sensible.pm';
 # Specific dependencies
 requires        'Moose';
 requires        'namespace::autoclean';
-requires        'Class::MOP';
+requires        'Class::Load' => '0.20';
 requires        'DateTime';
 requires        'DateTime::Set';
 requires        'DateTime::Format::Natural';

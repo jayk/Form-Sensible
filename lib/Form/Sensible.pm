@@ -2,7 +2,7 @@ package Form::Sensible;
 
 use Moose; 
 use namespace::autoclean;
-use Class::MOP;
+use Class::Load;
 use Form::Sensible::Form;
 use Form::Sensible::Field;
 use Form::Sensible::Field::DateTime;
@@ -81,7 +81,7 @@ sub get_renderer {
     } else {
         $class_to_load = 'Form::Sensible::Renderer::' . $type;
     }
-    Class::MOP::load_class($class_to_load);
+    Class::Load::load_class($class_to_load);
     if (!$options) {
         $options = {};
     }
@@ -101,7 +101,7 @@ sub get_validator {
     } else {
         $class_to_load = 'Form::Sensible::Validator::' . $type;
     }
-    Class::MOP::load_class($class_to_load);
+    Class::Load::load_class($class_to_load);
     
     return $class_to_load->new($options);   
 }
